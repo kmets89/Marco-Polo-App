@@ -1,6 +1,7 @@
 package com.polo.marco.marcopoloapp;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -11,6 +12,9 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.widget.BaseAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -26,6 +30,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -165,6 +171,66 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if(client != null){
             LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
+        }
+    }
+
+    class NavItem {
+        String mTitle;
+        String mSubtitle;
+        int mIcon;
+
+        public NavItem(String title, String subtitle, int icon){
+            mTitle = title;
+            mSubtitle = subtitle;
+            mIcon = icon;
+        }
+    }
+
+    class DrawerListAdapter extends BaseAdapter {
+
+        Context mContext;
+        ArrayList<NavItem> mNavItems;
+
+        public DrawerListAdapter(Context context, ArrayList<NavItem> navItems) {
+            mContext = context;
+            mNavItems = navItems;
+        }
+
+        @Override
+        public int getCount() {
+            return mNavItems.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mNavItems.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view;
+
+            if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                view = inflater.inflate(R.layout.drawer_item, null);
+            } else {
+                view = convertView;
+            }
+
+            TextView titleView = (TextView) view.findViewById(R.id.title);
+            TextView subtitleView = (TextView) view.findViewById(R.id.subTitle);
+            ImageView iconView = (ImageView) view.findViewById(R.id.icon);
+
+            titleView.setText(mNavItems.get(position).mTitle);
+            subtitleView.setText(mNavItems.get(position).mSubtitle);
+            iconView.setImageResource(mNavItems.get(position).mIcon);
+
+            return view;
         }
     }
 }
