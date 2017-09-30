@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="seaBlue">#3a0d3d3</color>
+    <color name="grassGreen">#afca89</color>
+    <color name="streetGray">#e5e3df</color>
+    <color name="MarcoBlue">#3d8f9e</color>
+    <color name="poloRed">#bd3021</color>
 </resources>
