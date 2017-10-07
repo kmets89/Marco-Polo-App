@@ -15,7 +15,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Switch;
 import android.widget.Toast;
+import android.widget.ToggleButton;
+
 import com.polo.marco.marcopoloapp.R;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -37,6 +42,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
+    //Google maps stuff
     private GoogleMap mMap;
     private GoogleApiClient client;
     private LocationRequest locationRequest;
@@ -44,8 +50,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Marker currentLocationMarker;
     public static final int REQUEST_LOCATION_CODE = 99;
 
+    //Hamburger menu stuff
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+
+    private Switch publicSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +65,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
+        publicSwitch = (Switch) findViewById(R.id.switch_public);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             checkLocationPermission();
@@ -68,6 +77,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
+
+    public void onClickBtnMarco(View view){
+        Log.d("something", "marco button click");
+        boolean switchStatus = publicSwitch.isChecked();
+        Toast toast;
+        Log.d("CRAP", "onClickBtnMarco: something");
+        //TODO: Write code to send out a public Marco.
+        if(switchStatus){
+            Toast.makeText(this, "Sending a Public Marco!", Toast.LENGTH_SHORT).show();
+        }
+        //TODO: Write code to send out a private Marco.
+        else{
+            Toast.makeText(this, "Sending a Private Marco!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -191,4 +215,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
         }
     }
+
+
 }
