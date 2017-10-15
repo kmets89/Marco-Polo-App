@@ -4,13 +4,28 @@
     android:layout_height="match_parent"
     android:background="@color/grassGreen">
 
+    <!--<Spinner android:id="@+id/spinGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:paddingLeft="100sp"/>
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="5dp"
+        android:background="@color/poloRed"
+        android:padding="5dp"
+        android:text="Testing, testing..."/>-->
     <ExpandableListView
         android:id="@+id/notificationListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/transparent"
         android:divider="@color/MarcoBlue"
-        android:dividerHeight="1dp"
-        android:listSelector="@color/streetGray"
-        android:padding="20dp" />
+        android:dividerHeight="2sp"
+        android:childDivider="@color/streetGray"
+        android:listSelector="@color/streetGray"/>
 </RelativeLayout>

@@ -13,6 +13,16 @@
     <string name="account">Account</string>
     <string name="settings">Settings</string>
 
+    <!-- Expandable Menu Test Area -->
+    <string-array name="dept_array">
+        <item>Vegetable</item>
+        <item>Fruits</item>
+        <item>Grocery</item>
+        <item>Electronics</item>
+        <item>Books</item>
+        <item>Language</item>
+    </string-array>
+
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
