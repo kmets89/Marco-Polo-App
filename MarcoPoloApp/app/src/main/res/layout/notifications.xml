@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grassGreen">
+
+    <ExpandableListView
+        android:id="@+id/notificationListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:divider="@color/MarcoBlue"
+        android:dividerHeight="1dp"
+        android:listSelector="@color/streetGray"
+        android:padding="20dp" />
+</RelativeLayout>

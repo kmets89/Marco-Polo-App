@@ -1,6 +1,7 @@
 package com.polo.marco.marcopoloapp;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -14,6 +15,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 import com.polo.marco.marcopoloapp.R;
@@ -71,12 +74,37 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
     }
 
+    //Handle action bar items
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(mDrawerToggle.onOptionsItemSelected(item)){
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
+        if (item.getItemId() == R.id.nav_notifications) {
+                startActivity(new Intent(MapsActivity.this, Notifications.class));
+                return true;
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    //Inflate the menu so that action buttons are visible while
+    //using a navigation drawer
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.navigation_menu, menu);
+        return true;
+    }
+
+    //Sets all menu options other than notifications to invisible so that only notifications
+    //icon is visible in the action bar.  MUST be updated if other menu items are added later.
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu){
+        MenuItem item = menu.findItem(R.id.nav_account);
+        item.setVisible(false);
+        item = menu.findItem(R.id.nav_settings);
+        item.setVisible(false);
+        super.onPrepareOptionsMenu(menu);
+        return true;
     }
 
     @Override

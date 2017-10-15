@@ -10,6 +10,7 @@ import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobile.auth.core.StartupAuthResult;
 import com.amazonaws.mobile.auth.core.StartupAuthResultHandler;
 import com.amazonaws.mobile.config.AWSConfiguration;
+import android.support.multidex.MultiDexApplication;
 
 public class SplashActivity extends AppCompatActivity {
 

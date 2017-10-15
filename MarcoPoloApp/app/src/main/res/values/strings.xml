@@ -5,6 +5,13 @@
 
     <string name="open">Open</string>
     <string name="close">Close</string>
+    <string name="marco">Marco</string>
+    <string name="recentMarcos">Your Recent Marcos</string>
+
+    <!-- Menu Strings -->
+    <string name="notifications">Notifications</string>
+    <string name="account">Account</string>
+    <string name="settings">Settings</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
