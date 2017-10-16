@@ -1,6 +1,7 @@
 package com.polo.marco.marcopoloapp;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -37,6 +39,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -55,6 +59,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ActionBarDrawerToggle mDrawerToggle;
 
     private Switch publicSwitch;
+    private String[] friendsList;
+    private boolean[] checkedItems;
+    ArrayList<Integer> mSelectedItems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +73,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
         publicSwitch = (Switch) findViewById(R.id.switch_public);
+
+        friendsList = getResources().getStringArray(R.array.friends_list);
+        checkedItems = new boolean[friendsList.length];
+
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -80,9 +91,57 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void onClickBtnMarco(View view){
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+        mBuilder.setTitle("Select your friends.");
+        mBuilder.setMultiChoiceItems(friendsList, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int position, boolean isChecked) {
+                if(isChecked){
+                    if(!mSelectedItems.contains(position)){
+                        mSelectedItems.add(position);
+                    }
+                }
+                else if(mSelectedItems.contains(position)){
+                    mSelectedItems.remove(mSelectedItems.indexOf(position));
+                }
+            }
+        });
+        mBuilder.setCancelable(false);
+        mBuilder.setPositiveButton("Send!", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int position) {
+                String item = "";
+                for (int i = 0; i < mSelectedItems.size(); i++){
+                    item = item + friendsList[mSelectedItems.get(i)];
+                    if(i != mSelectedItems.size() - 1){
+                        item = item + ", ";
+                    }
+                }
+                SendMarco();
+            }
+        });
+        mBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int position) {
+                dialog.dismiss();
+            }
+        });
+        mBuilder.setNeutralButton("Clear all", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int position) {
+                for (int i = 0; i < checkedItems.length; i++){
+                    checkedItems[i] = false;
+                    mSelectedItems.clear();
+                }
+            }
+        });
+        AlertDialog mDialog = mBuilder.create();
+        mDialog.show();
+    }
+
+    public void SendMarco(){
         Log.d("something", "marco button click");
         boolean switchStatus = publicSwitch.isChecked();
-        Toast toast;
         Log.d("CRAP", "onClickBtnMarco: something");
         //TODO: Write code to send out a public Marco.
         if(switchStatus){
@@ -119,7 +178,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 else{
                     Toast.makeText(this, "Permission was Denied!", Toast.LENGTH_LONG).show();
                 }
-                return;
         }
     }
 
