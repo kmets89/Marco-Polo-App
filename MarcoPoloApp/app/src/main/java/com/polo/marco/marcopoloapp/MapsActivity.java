@@ -21,9 +21,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
 import android.widget.Toast;
-import android.widget.ToggleButton;
-
-import com.polo.marco.marcopoloapp.R;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.location.LocationListener;
@@ -58,6 +55,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
+    //UI stuff
     private Switch publicSwitch;
     private String[] friendsList;
     private boolean[] checkedItems;
@@ -90,11 +88,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
     }
 
+    //Function that's called when the marco button is clicked
     public void onClickBtnMarco(View view){
+        //Begins building the Dialog
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         mBuilder.setTitle("Select your friends.");
         mBuilder.setMultiChoiceItems(friendsList, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
+            //Adds each checked friend to the arrayList "mSelectedItems".
             public void onClick(DialogInterface dialog, int position, boolean isChecked) {
                 if(isChecked){
                     if(!mSelectedItems.contains(position)){
@@ -109,25 +110,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mBuilder.setCancelable(false);
         mBuilder.setPositiveButton("Send!", new DialogInterface.OnClickListener() {
             @Override
+            //This event listener calls the function which will sound out the Marco.
             public void onClick(DialogInterface dialog, int position) {
-                String item = "";
-                for (int i = 0; i < mSelectedItems.size(); i++){
-                    item = item + friendsList[mSelectedItems.get(i)];
-                    if(i != mSelectedItems.size() - 1){
-                        item = item + ", ";
-                    }
-                }
                 SendMarco();
             }
         });
         mBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
+            //Cancels the Marco
             public void onClick(DialogInterface dialog, int position) {
                 dialog.dismiss();
             }
         });
         mBuilder.setNeutralButton("Clear all", new DialogInterface.OnClickListener() {
             @Override
+            //When "Clear all" is called, all the checkedItems are reset.
             public void onClick(DialogInterface dialog, int position) {
                 for (int i = 0; i < checkedItems.length; i++){
                     checkedItems[i] = false;
@@ -135,6 +132,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
         });
+        //creates and displays the Dialog.
         AlertDialog mDialog = mBuilder.create();
         mDialog.show();
     }
