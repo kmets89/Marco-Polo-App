@@ -19,4 +19,10 @@
         android:title="@string/notifications"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/nav_privacy_policy"
+        android:icon="@android:drawable/ic_lock_idle_lock"
+        android:title="@string/privacy_policy"
+        app:showAsAction="never" />
+
 </menu>

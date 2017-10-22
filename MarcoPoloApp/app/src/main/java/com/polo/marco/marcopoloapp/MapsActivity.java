@@ -3,14 +3,17 @@ package com.polo.marco.marcopoloapp;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -38,7 +41,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener,
+        NavigationView.OnNavigationItemSelectedListener{
 
     private GoogleMap mMap;
     private GoogleApiClient client;
@@ -47,6 +51,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Marker currentLocationMarker;
     public static final int REQUEST_LOCATION_CODE = 99;
 
+    private NavigationView mDrawer;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
@@ -57,6 +62,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawer = (NavigationView) findViewById(R.id.main_drawer);
+        mDrawer.setNavigationItemSelectedListener(this);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
@@ -74,7 +81,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
     }
 
-    //Handle action bar items
+    //Handle action bar items only
+    //The regular menu items are handled in OnNavigationItemClickListener()
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
@@ -103,8 +111,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         item.setVisible(false);
         item = menu.findItem(R.id.nav_settings);
         item.setVisible(false);
+        item = menu.findItem(R.id.nav_privacy_policy);
+        item.setVisible(false);
         super.onPrepareOptionsMenu(menu);
         return true;
+    }
+
+    //Ensures drawer toggle behavior if the state of the app changes
+    @Override
+    public void onConfigurationChanged(Configuration newConfig){
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -219,5 +236,37 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if(client != null){
             LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
         }
+    }
+
+    //This is where we handle the clicks for the drawer menu items
+    //Each option creates a new activity, see corresponding .java/.xml files
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        Intent intent = null;
+        if(menuItem.getItemId() == R.id.nav_account){
+            intent = new Intent(this, AccountSettings.class);
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            startActivity(intent);
+            return true;
+        }
+        if(menuItem.getItemId() == R.id.nav_settings){
+            intent = new Intent(this, AppSettings.class);
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            startActivity(intent);
+            return true;
+        }
+        if(menuItem.getItemId() == R.id.nav_notifications){
+            intent = new Intent(this, Notifications.class);
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            startActivity(intent);
+            return true;
+        }
+        if(menuItem.getItemId() == R.id.nav_privacy_policy){
+            intent = new Intent(this, PrivacyPolicy.class);
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            startActivity(intent);
+            return true;
+        }
+        return false;
     }
 }

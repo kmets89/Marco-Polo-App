@@ -41,7 +41,6 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps">
-
         </activity>
         <activity
             android:name=".SplashActivity"
@@ -53,9 +52,21 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".AccountSettings"
+            android:label="@string/title_activity_account_settings">
+        </activity>
+        <activity
+            android:name=".AppSettings"
+            android:label="@string/title_activity_app_settings">
+        </activity>
+        <activity
             android:name=".Notifications"
-            android:label="@string/title_activity_maps"
+            android:label="@string/title_activity_notifications"
             android:theme="@style/AppTheme.ScreenBelow">
+        </activity>
+        <activity
+            android:name=".PrivacyPolicy"
+            android:label="@string/title_activity_privacy_policy">
         </activity>
     </application>
 
