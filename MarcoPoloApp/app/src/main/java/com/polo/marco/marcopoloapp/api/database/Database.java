@@ -11,6 +11,8 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 import com.amazonaws.regions.Region;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 
+import java.util.List;
+
 /**
  * Created by Chase on 10/23/2017.
  */
@@ -76,15 +78,37 @@ public class Database {
     @DynamoDBTable(tableName = DEFAULT_TABLE_NAME)
     public static class User {
         private String userId;
+        private String name;
         private String loginApiType;
+        private List<String> friendsList;
 
-        public User(String userId, String loginApiType) {
+        public User(String userId, String name, String loginApiType, List<String> friendsList) {
             this.userId = userId;
+            this.name = name;
             this.loginApiType = loginApiType;
+            this.friendsList = friendsList;
         }
 
-        @DynamoDBHashKey(attributeName = "UserId")
-        @DynamoDBIndexRangeKey(attributeName = "UserId")
+        @DynamoDBAttribute(attributeName = "name")
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        @DynamoDBAttribute(attributeName = "friendList")
+        public List<String> getFriendsList() {
+            return friendsList;
+        }
+
+        public void setFriendsList(List<String> friendsList) {
+            this.friendsList = friendsList;
+        }
+
+        @DynamoDBHashKey(attributeName = "userId")
+        @DynamoDBIndexRangeKey(attributeName = "userId")
         public String getUserId() {
             return userId;
         }
