@@ -22,6 +22,8 @@ import android.widget.Button;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapperConfig;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -35,8 +37,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.polo.marco.marcopoloapp.api.database.Database;
+import com.polo.marco.marcopoloapp.api.database.types.User;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -74,7 +79,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         friendsList = getResources().getStringArray(R.array.friends_list);
         checkedItems = new boolean[friendsList.length];
-
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
