@@ -37,4 +37,8 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.amazonaws:aws-android-sdk-core:2.6.0'
     testCompile 'junit:junit:4.12'
+    compile 'com.google.android.gms:play-services-auth:11.0.4'
 }
+
+//Following plugin for implementing Google Play Services for Google+ Sign On
+apply plugin: 'com.google.gms.google-services'
