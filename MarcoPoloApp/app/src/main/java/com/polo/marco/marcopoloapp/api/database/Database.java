@@ -82,6 +82,10 @@ public class Database {
         private String loginApiType;
         private List<String> friendsList;
 
+        public User() {
+
+        }
+
         public User(String userId, String name, String loginApiType, List<String> friendsList) {
             this.userId = userId;
             this.name = name;
