@@ -2,14 +2,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
-    <TextView
+
+    <ScrollView
         android:id="@+id/textView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_margin="5dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+        <TextView
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:background="@color/poloRed"
+        android:textColor="@color/streetGray"
         android:padding="5dp"
-        android:text="Testing, testing..."/>
-
+        android:fillViewport="true"
+        android:text="@string/privacy_policy_content">
+</TextView>
+    </ScrollView>
 </RelativeLayout>
