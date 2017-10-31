@@ -11,8 +11,11 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 import com.amazonaws.regions.Region;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.polo.marco.marcopoloapp.api.database.tasks.InitializeDatabaseTask;
+import com.polo.marco.marcopoloapp.api.database.tasks.LoadUserTask;
+import com.polo.marco.marcopoloapp.api.database.tasks.SaveUserTask;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Chase on 10/23/2017.
@@ -33,7 +36,7 @@ public class Database {
         *
      */
     static {
-        new InitializeDatabaseTask().doInBackground("us-east-2");
+        new InitializeDatabaseTask().execute("us-east-2");
     }
 
     /*
@@ -50,72 +53,13 @@ public class Database {
         return mapper;
     }
 
-    /*
-    * User object. We will be using this to store relevant data about the user.
-    * Feel free to add new fields: these correlate to columns in DynamoDB.
-    * */
-    @DynamoDBTable(tableName = DEFAULT_TABLE_NAME)
-    public static class User {
-        private String userId;
-        private String name;
-        private String loginApiType;
-        private List<String> friendsList;
-
-        public User() {
-
-        }
-
-        public User(String userId, String name, String loginApiType, List<String> friendsList) {
-            this.userId = userId;
-            this.name = name;
-            this.loginApiType = loginApiType;
-            this.friendsList = friendsList;
-        }
-
-        @DynamoDBAttribute(attributeName = "name")
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        @DynamoDBAttribute(attributeName = "friendList")
-        public List<String> getFriendsList() {
-            return friendsList;
-        }
-
-        public void setFriendsList(List<String> friendsList) {
-            this.friendsList = friendsList;
-        }
-
-        @DynamoDBHashKey(attributeName = "userId")
-        @DynamoDBIndexRangeKey(attributeName = "userId")
-        public String getUserId() {
-            return userId;
-        }
-
-        public void setUserId(String userId) {
-            this.userId = userId;
-        }
-
-        @DynamoDBAttribute(attributeName = "loginApiType")
-        public String getLoginApiType() {
-            return loginApiType;
-        }
-
-        public void setLoginApiType(String loginApiType) {
-            this.loginApiType = loginApiType;
-        }
-    }
 
     /*
     * Pass a User object and this method will either add it or update the current
     * User row within the database.
     * */
     public static void updateUser(final User user) {
-        mapper.save(user);
+        new SaveUserTask().execute(user);
     }
 
     /*
@@ -123,7 +67,14 @@ public class Database {
     * UserId, to grab that object from the database. Note: untested.
     * */
     public static User getUser(final String userId) {
-        return mapper.load(User.class, userId);
+        try {
+            return new LoadUserTask().execute(userId).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

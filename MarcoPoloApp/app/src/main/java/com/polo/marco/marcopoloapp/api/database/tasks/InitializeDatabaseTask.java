@@ -16,7 +16,7 @@ import com.polo.marco.marcopoloapp.api.database.Database;
 
 public class InitializeDatabaseTask extends AsyncTask<String, Void, Void> {
     @Override
-    public Void doInBackground(String... params) {
+    protected Void doInBackground(String... params) {
         Database.dbClient = Region.getRegion(params[0]).createClient(AmazonDynamoDBClient.class, new AWSCredentialsProvider() {
             @Override
             public AWSCredentials getCredentials() {

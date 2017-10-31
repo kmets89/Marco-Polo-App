@@ -82,7 +82,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
 
@@ -93,7 +93,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     //Function that's called when the marco button is clicked
-    public void onClickBtnMarco(View view){
+    public void onClickBtnMarco(View view) {
+
+        User user = Database.getUser("0");
+        Toast.makeText(this, user.getName(), Toast.LENGTH_LONG).show();
+
         //Begins building the Dialog
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         mBuilder.setTitle("Select your friends.");
@@ -101,12 +105,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             //Adds each checked friend to the arrayList "mSelectedItems".
             public void onClick(DialogInterface dialog, int position, boolean isChecked) {
-                if(isChecked){
-                    if(!mSelectedItems.contains(position)){
+                if (isChecked) {
+                    if (!mSelectedItems.contains(position)) {
                         mSelectedItems.add(position);
                     }
-                }
-                else if(mSelectedItems.contains(position)){
+                } else if (mSelectedItems.contains(position)) {
                     mSelectedItems.remove(mSelectedItems.indexOf(position));
                 }
             }
@@ -130,7 +133,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             //When "Clear all" is called, all the checkedItems are reset.
             public void onClick(DialogInterface dialog, int position) {
-                for (int i = 0; i < checkedItems.length; i++){
+                for (int i = 0; i < checkedItems.length; i++) {
                     checkedItems[i] = false;
                     mSelectedItems.clear();
                 }
@@ -141,23 +144,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mDialog.show();
     }
 
-    public void SendMarco(){
+    public void SendMarco() {
         Log.d("something", "marco button click");
         boolean switchStatus = publicSwitch.isChecked();
         Log.d("CRAP", "onClickBtnMarco: something");
         //TODO: Write code to send out a public Marco.
-        if(switchStatus){
+        if (switchStatus) {
             Toast.makeText(this, "Sending a Public Marco!", Toast.LENGTH_SHORT).show();
         }
         //TODO: Write code to send out a private Marco.
-        else{
+        else {
             Toast.makeText(this, "Sending a Private Marco!", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(mDrawerToggle.onOptionsItemSelected(item)){
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -165,19 +168,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
+        switch (requestCode) {
             case REQUEST_LOCATION_CODE:
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //permission is granted
-                    if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                        if(client == null){
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        if (client == null) {
                             buildGoogleApiClient();
                         }
                         mMap.setMyLocationEnabled(true);
                     }
                 }
                 //permission is denied
-                else{
+                else {
                     Toast.makeText(this, "Permission was Denied!", Toast.LENGTH_LONG).show();
                 }
         }
@@ -196,7 +199,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
         }
@@ -220,22 +223,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         locationRequest.setFastestInterval(1000);
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(client, locationRequest, this);
         }
     }
 
-    public boolean checkLocationPermission(){
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)){
-                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_CODE);
-            }
-            else{
-                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_CODE);
+    public boolean checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_CODE);
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_CODE);
             }
             return false;
-        }
-        else{
+        } else {
             return true;
         }
     }
@@ -254,7 +255,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onLocationChanged(Location location) {
         lastLocation = location;
 
-        if(currentLocationMarker != null){
+        if (currentLocationMarker != null) {
             currentLocationMarker.remove();
         }
 
@@ -270,7 +271,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
         mMap.animateCamera(CameraUpdateFactory.zoomBy(10));
 
-        if(client != null){
+        if (client != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
         }
     }

@@ -8,7 +8,7 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 import java.util.List;
 
 /**
- * Created by Krazy on 10/30/2017.
+ * Created by Chase on 10/30/2017.
  */
 
     /*
