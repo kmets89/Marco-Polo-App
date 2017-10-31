@@ -10,6 +10,7 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 import com.amazonaws.regions.Region;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.polo.marco.marcopoloapp.api.database.tasks.InitializeDatabaseTask;
 
 import java.util.List;
 
@@ -18,12 +19,12 @@ import java.util.List;
  */
 
 public class Database {
-    private static final String DEFAULT_TABLE_NAME = "datastore";
-    private static final String AWS_ACCESS_KEY_ID = "AKIAIGU3FC76IFSNIO6Q";
-    private static final String AWS_SECRET_KEY = "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";
+    public static final String DEFAULT_TABLE_NAME = "datastore";
+    public static final String AWS_ACCESS_KEY_ID = "AKIAIGU3FC76IFSNIO6Q";
+    public static final String AWS_SECRET_KEY = "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";
 
-    private static AmazonDynamoDBClient dbClient;
-    private static DynamoDBMapper mapper;
+    public static AmazonDynamoDBClient dbClient;
+    public static DynamoDBMapper mapper;
 
     /*
         * Static initializier: initializes at startup. Creates a new instance
@@ -32,29 +33,7 @@ public class Database {
         *
      */
     static {
-        dbClient = Region.getRegion("us-east-2").createClient(AmazonDynamoDBClient.class, new AWSCredentialsProvider() {
-            @Override
-            public AWSCredentials getCredentials() {
-                return new AWSCredentials() {
-                    @Override
-                    public String getAWSAccessKeyId() {
-                        return AWS_ACCESS_KEY_ID;
-                    }
-
-                    @Override
-                    public String getAWSSecretKey() {
-                        return AWS_SECRET_KEY;
-                    }
-                };
-            }
-
-            @Override
-            public void refresh() {
-
-            }
-        }, new ClientConfiguration());
-
-        mapper = new DynamoDBMapper(dbClient);
+        new InitializeDatabaseTask().doInBackground("us-east-2");
     }
 
     /*
