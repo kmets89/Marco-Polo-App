@@ -34,6 +34,7 @@ public class Login extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        mStatusTextView = (TextView) findViewById(R.id.status);
         // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
 
@@ -111,7 +112,10 @@ public class Login extends AppCompatActivity implements
 
     private void updateUI(boolean signedIn) {
         if (signedIn) {
-            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+            Intent intent = new Intent(this, MapsActivity.class);
+            startActivity(intent);
+            this.finish();
+//            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
 //            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
         } else {
             mStatusTextView.setText(R.string.signed_out);

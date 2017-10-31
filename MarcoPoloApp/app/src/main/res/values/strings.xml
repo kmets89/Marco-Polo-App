@@ -58,4 +58,6 @@
     <string name="signed_in_fmt">Signed in as: %s</string>
     <string name="signed_out">Signed out</string>
 
+    <string name="logo">Marco Polo Logo</string>
+
 </resources>

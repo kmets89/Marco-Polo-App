@@ -19,8 +19,10 @@
             android:id="@+id/login_logo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/login_logo"/>
-            <!--android:contentDescription="Marco Polo Logo"-->
+            android:contentDescription="@string/logo"
+            app:srcCompat="@drawable/login_logo" />
+
+        <!--android:contentDescription="Marco Polo Logo"-->
             <!--tools:ignore="HardcodedText" />-->
     </LinearLayout>
 
@@ -29,11 +31,20 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/signed_out"
+            android:visibility="invisible" />
+
         <com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true" >
+
+        </com.google.android.gms.common.SignInButton>
     </RelativeLayout>
 
 </LinearLayout>
