@@ -1,17 +1,17 @@
-package com.polo.marco.marcopoloapp.api.database.types;
+package com.polo.marco.marcopoloapp.api.database;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBAttribute;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBIndexRangeKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
-import com.polo.marco.marcopoloapp.api.database.Database;
 
 import java.util.List;
 
 /**
- * Created by Krazy on 10/23/2017.
+ * Created by Krazy on 10/30/2017.
  */
 
-/*
+    /*
     * User object. We will be using this to store relevant data about the user.
     * Feel free to add new fields: these correlate to columns in DynamoDB.
     * */
@@ -52,6 +52,7 @@ public class User {
     }
 
     @DynamoDBHashKey(attributeName = "userId")
+    @DynamoDBIndexRangeKey(attributeName = "userId")
     public String getUserId() {
         return userId;
     }
@@ -68,5 +69,4 @@ public class User {
     public void setLoginApiType(String loginApiType) {
         this.loginApiType = loginApiType;
     }
-
 }

@@ -38,7 +38,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.polo.marco.marcopoloapp.api.database.Database;
-import com.polo.marco.marcopoloapp.api.database.types.User;
+import com.polo.marco.marcopoloapp.api.database.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -183,7 +183,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -275,6 +274,4 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
         }
     }
-
-
 }
