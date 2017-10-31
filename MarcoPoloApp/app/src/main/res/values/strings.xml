@@ -5,6 +5,36 @@
 
     <string name="open">Open</string>
     <string name="close">Close</string>
+    <string name="marco">Marco</string>
+    <string name="recentMarcos">Your Recent Marcos</string>
+
+    <!-- Menu Strings -->
+    <string name="notifications">Notifications</string>
+    <string name="account">Account</string>
+    <string name="settings">Settings</string>
+    <string name="privacy_policy">Privacy Policy</string>
+
+    <!-- Expandable Menu Test Area -->
+    <string-array name="dept_array">
+        <item>Vegetable</item>
+        <item>Fruits</item>
+        <item>Grocery</item>
+        <item>Electronics</item>
+        <item>Books</item>
+        <item>Language</item>
+    </string-array>
+
+    <!-- Account settings activity strings -->
+    <string name="title_activity_account_settings">Account</string>
+
+    <!-- App settings activity strings -->
+    <string name="title_activity_app_settings">Settings</string>
+
+    <!-- Privacy policy activity strings -->
+    <string name="title_activity_notifications">Notifications</string>
+
+    <!-- Privacy policy activity strings -->
+    <string name="title_activity_privacy_policy">Privacy Policy</string>
 
     <string-array name="friends_list">
         <item>David</item>

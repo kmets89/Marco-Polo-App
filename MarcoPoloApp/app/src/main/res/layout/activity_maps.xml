@@ -13,8 +13,10 @@
         tools:context="com.polo.marco.marcopoloapp.MapsActivity" />
 
     <RelativeLayout
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/btn_marco"
@@ -22,24 +24,13 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="53dp"
-            android:onClick="onClickBtnMarco"
-            android:text="MARCO"
+            android:layout_marginBottom="54dp"
+            android:text="@string/marco"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
-
-        <Switch
-            android:id="@+id/switch_public"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Public"
-            android:textSize="18sp"
-            android:layout_marginTop="18dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
-
     </RelativeLayout>
 
     <android.support.design.widget.NavigationView
+        android:id="@+id/main_drawer"
         android:layout_height="match_parent"
         android:layout_width="wrap_content"
         app:menu= "@menu/navigation_menu"
