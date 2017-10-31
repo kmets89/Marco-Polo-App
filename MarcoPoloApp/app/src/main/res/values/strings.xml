@@ -52,6 +52,21 @@
     <!-- Privacy policy activity strings -->
     <string name="title_activity_privacy_policy">Privacy Policy</string>
 
+    <string-array name="friends_list">
+        <item>David</item>
+        <item>Chase</item>
+        <item>Daphnie</item>
+        <item>Joseph</item>
+        <item>Aleck</item>
+        <item>Andrew</item>
+        <item>Dummy1</item>
+        <item>Dummy2</item>
+        <item>Dummy3</item>
+        <item>Dummy4</item>
+        <item>Dummy5</item>
+        <item>Dummy6</item>
+    </string-array>
+
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
