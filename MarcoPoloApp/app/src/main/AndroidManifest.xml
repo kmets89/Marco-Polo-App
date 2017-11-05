@@ -17,6 +17,7 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -40,34 +41,30 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps">
-        </activity>
+            android:label="@string/title_activity_maps"></activity>
         <activity
             android:name=".SplashActivity"
             android:label="@string/title_activity_splash"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".AccountSettings"
-            android:label="@string/title_activity_account_settings">
-        </activity>
+            android:label="@string/title_activity_account_settings"></activity>
         <activity
             android:name=".AppSettings"
-            android:label="@string/title_activity_app_settings">
-        </activity>
+            android:label="@string/title_activity_app_settings"></activity>
         <activity
             android:name=".Notifications"
             android:label="@string/title_activity_notifications"
-            android:theme="@style/AppTheme.ScreenBelow">
-        </activity>
+            android:theme="@style/AppTheme.ScreenBelow"></activity>
         <activity
             android:name=".PrivacyPolicy"
-            android:label="@string/title_activity_privacy_policy">
-        </activity>
+            android:label="@string/title_activity_privacy_policy"></activity>
     </application>
 
 </manifest>
