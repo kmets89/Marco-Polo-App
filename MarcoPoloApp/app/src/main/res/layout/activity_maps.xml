@@ -24,9 +24,21 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="54dp"
-            android:text="@string/marco"
+            android:layout_marginBottom="53dp"
+            android:onClick="onClickBtnMarco"
+            android:text="MARCO"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
+        <Switch
+            android:id="@+id/switch_public"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Public"
+            android:textSize="18sp"
+            android:layout_marginTop="18dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
     </RelativeLayout>
 
     <android.support.design.widget.NavigationView
