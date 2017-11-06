@@ -37,6 +37,7 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.amazonaws:aws-android-sdk-core:2.6.0'
     testCompile 'junit:junit:4.12'
+    compile files('commons-logging-1.2.jar')
     compile 'com.google.android.gms:play-services-auth:11.0.4'
 }
 
