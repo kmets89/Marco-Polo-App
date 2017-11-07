@@ -8,24 +8,9 @@
     <string name="marco">Marco</string>
     <string name="recentMarcos">Your Recent Marcos</string>
 
-    <!-- Test friends list -->
-    <string-array name="friends_list">
-        <item>David</item>
-        <item>Chase</item>
-        <item>Daphnie</item>
-        <item>Joseph</item>
-        <item>Aleck</item>
-        <item>Andrew</item>
-        <item>Dummy1</item>
-        <item>Dummy2</item>
-        <item>Dummy3</item>
-        <item>Dummy4</item>
-        <item>Dummy5</item>
-        <item>Dummy6</item>
-    </string-array>
-
     <!-- Menu Strings -->
     <string name="notifications">Notifications</string>
+    <string name="friends">Friends</string>
     <string name="account">Account</string>
     <string name="settings">Settings</string>
     <string name="privacy_policy">Privacy Policy</string>
@@ -42,6 +27,9 @@
 
     <!-- Account settings activity strings -->
     <string name="title_activity_account_settings">Account</string>
+
+    <!-- Friends list activity strings -->
+    <string name="title_activity_friends">Friends</string>
 
     <!-- App settings activity strings -->
     <string name="title_activity_app_settings">Settings</string>

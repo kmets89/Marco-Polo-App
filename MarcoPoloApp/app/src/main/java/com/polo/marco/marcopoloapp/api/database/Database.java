@@ -11,6 +11,7 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 import com.amazonaws.regions.Region;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.polo.marco.marcopoloapp.api.database.tasks.InitializeDatabaseTask;
+import com.polo.marco.marcopoloapp.api.database.tasks.LoadBatchUsersTask;
 import com.polo.marco.marcopoloapp.api.database.tasks.LoadUserTask;
 import com.polo.marco.marcopoloapp.api.database.tasks.SaveUserTask;
 
@@ -69,6 +70,17 @@ public class Database {
     public static User getUser(final String userId) {
         try {
             return new LoadUserTask().execute(userId).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static User[] getListOfFriends(final String[] users){
+        try {
+            return new LoadBatchUsersTask().execute(users).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

@@ -194,6 +194,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         item.setVisible(false);
         item = menu.findItem(R.id.nav_privacy_policy);
         item.setVisible(false);
+        item = menu.findItem(R.id.nav_friends);
+        item.setVisible(false);
         super.onPrepareOptionsMenu(menu);
         return true;
     }
@@ -343,6 +345,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         if(menuItem.getItemId() == R.id.nav_privacy_policy){
             intent = new Intent(this, PrivacyPolicy.class);
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            startActivity(intent);
+            return true;
+        }
+        if(menuItem.getItemId() == R.id.nav_friends){
+            intent = new Intent(this, FriendsList.class);
             mDrawerLayout.closeDrawer(GravityCompat.START);
             startActivity(intent);
             return true;
