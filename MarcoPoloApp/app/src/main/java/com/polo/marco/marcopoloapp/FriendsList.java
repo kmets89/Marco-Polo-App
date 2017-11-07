@@ -23,7 +23,7 @@ public class FriendsList extends AppCompatActivity {
         setContentView(R.layout.activity_friends_list);
 
         listView = (ListView)findViewById(R.id.friendsListView);
-        User user = Database.getUser("0102112301");
+        User user = Database.getUser("0");
         List<String> friendsList = user.getFriendsList();
         User[] friends = Database.getListOfFriends(friendsList.toArray(new String[0]));
         String[] friendNames = new String[friends.length];
