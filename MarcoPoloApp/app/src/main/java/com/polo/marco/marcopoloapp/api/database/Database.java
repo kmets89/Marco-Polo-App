@@ -10,6 +10,7 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 import com.amazonaws.regions.Region;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.polo.marco.marcopoloapp.api.database.tasks.DeleteUserTask;
 import com.polo.marco.marcopoloapp.api.database.tasks.InitializeDatabaseTask;
 import com.polo.marco.marcopoloapp.api.database.tasks.LoadBatchUsersTask;
 import com.polo.marco.marcopoloapp.api.database.tasks.LoadUserTask;
@@ -61,6 +62,14 @@ public class Database {
     * */
     public static void updateUser(final User user) {
         new SaveUserTask().execute(user);
+    }
+
+    /*
+    * Pass a User object and this method will either delete the current
+    * User row within the database.
+    * */
+    public static void deleteUser(final User user) {
+        new DeleteUserTask().execute(user);
     }
 
     /*

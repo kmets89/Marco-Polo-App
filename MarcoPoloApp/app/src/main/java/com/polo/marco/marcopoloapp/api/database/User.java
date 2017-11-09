@@ -5,6 +5,7 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBIndexRangeKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -21,16 +22,36 @@ public class User {
     private String name;
     private String loginApiType;
     private List<String> friendsList;
+    private double latitude;
+    private double longitude;
 
     public User() {
 
     }
 
-    public User(String userId, String name, String loginApiType, List<String> friendsList) {
+    public User(String userId, String name, String loginApiType, List<String> friendsList, double latitude, double longitude) {
         this.userId = userId;
         this.name = name;
         this.loginApiType = loginApiType;
         this.friendsList = friendsList;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     @DynamoDBAttribute(attributeName = "name")
@@ -68,5 +89,9 @@ public class User {
 
     public void setLoginApiType(String loginApiType) {
         this.loginApiType = loginApiType;
+    }
+
+    public String toString() {
+        return "[" + userId + "] " + name + ": LoginAPIType~" + loginApiType + ":friendsList~" + Arrays.toString(getFriendsList().toArray(new String[friendsList.size()]));
     }
 }
