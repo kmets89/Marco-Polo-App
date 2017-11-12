@@ -42,6 +42,10 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"></activity>
         <activity
+            android:name=".MarcoActivity"
+            android:label="Marco"
+            android:theme="@style/AppTheme.ScreenBelow"></activity>
+        <activity
             android:name=".SplashActivity"
             android:label="@string/title_activity_splash"
             android:theme="@style/AppTheme.NoActionBar">

@@ -54,8 +54,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private GoogleApiClient client;
     private LocationRequest locationRequest;
-    private Location lastLocation;
-    private Marker currentLocationMarker;
+    private Location lastLocation = null;
+    private Marker currentLocationMarker = null;
     public static final int REQUEST_LOCATION_CODE = 99;
 
     //Hamburger menu stuff
@@ -63,11 +63,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    //UI stuff
+    /*//UI stuff
     private Switch publicSwitch;
     private String[] friendsList;
     private boolean[] checkedItems;
-    ArrayList<Integer> mSelectedItems = new ArrayList<>();
+    ArrayList<Integer> mSelectedItems = new ArrayList<>();*/
 
     //test
     @Override
@@ -81,10 +81,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
-
-        publicSwitch = (Switch) findViewById(R.id.switch_public);
-        friendsList = getResources().getStringArray(R.array.friends_list);
-        checkedItems = new boolean[friendsList.length];
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -100,66 +96,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     //Function that's called when the marco button is clicked
-    public void onClickBtnMarco(View view){
-        //Begins building the Dialog
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
-        mBuilder.setTitle("Select your friends.");
-        mBuilder.setMultiChoiceItems(friendsList, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
-            @Override
-            //Adds each checked friend to the arrayList "mSelectedItems".
-            public void onClick(DialogInterface dialog, int position, boolean isChecked) {
-                if(isChecked){
-                    if(!mSelectedItems.contains(position)){
-                        mSelectedItems.add(position);
-                    }
-                }
-                else if(mSelectedItems.contains(position)){
-                    mSelectedItems.remove(mSelectedItems.indexOf(position));
-                }
-            }
-        });
-        mBuilder.setCancelable(false);
-        mBuilder.setPositiveButton("Send!", new DialogInterface.OnClickListener() {
-            @Override
-            //This event listener calls the function which will sound out the Marco.
-            public void onClick(DialogInterface dialog, int position) {
-                SendMarco();
-            }
-        });
-        mBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            //Cancels the Marco
-            public void onClick(DialogInterface dialog, int position) {
-                dialog.dismiss();
-            }
-        });
-        mBuilder.setNeutralButton("Clear all", new DialogInterface.OnClickListener() {
-            @Override
-            //When "Clear all" is called, all the checkedItems are reset.
-            public void onClick(DialogInterface dialog, int position) {
-                for (int i = 0; i < checkedItems.length; i++){
-                    checkedItems[i] = false;
-                    mSelectedItems.clear();
-                }
-            }
-        });
-        //creates and displays the Dialog.
-        AlertDialog mDialog = mBuilder.create();
-        mDialog.show();
-    }
-
-    public void SendMarco(){
-        Log.d("something", "marco button click");
-        boolean switchStatus = publicSwitch.isChecked();
-        Log.d("CRAP", "onClickBtnMarco: something");
-        //TODO: Write code to send out a public Marco.
-        if(switchStatus){
-            Toast.makeText(this, "Sending a Public Marco!", Toast.LENGTH_SHORT).show();
-        }
-        //TODO: Write code to send out a private Marco.
-        else{
-            Toast.makeText(this, "Sending a Private Marco!", Toast.LENGTH_SHORT).show();
-        }
+    public void onClickBtnMarco(View view) {
+        Intent intent = new Intent(this, MarcoActivity.class);
+        startActivity(intent);
     }
 
     //Handle action bar items only

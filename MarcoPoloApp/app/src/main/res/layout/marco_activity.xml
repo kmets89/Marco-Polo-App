@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:animateLayoutChanges="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grassGreen">
+
+    <Switch
+        android:id="@+id/switch_public"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        android:text="Private Mode"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/marcoText"
+        android:background="@color/poloRed"
+        android:layout_width="match_parent"
+        android:layout_height="200sp"
+        android:layout_below="@+id/switch_public"
+        android:layout_marginTop="10sp"
+        android:layout_marginLeft="10sp"
+        android:layout_marginRight="10sp"
+        android:hint="What would you like to say?" />
+
+    <Button
+        android:id="@+id/sendMarco"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"/>
+    <Button
+        android:id="@+id/cancelMarco"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/sendMarco"/>
+
+    <!--<TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="5dp"
+        android:background="@color/poloRed"
+        android:padding="5dp"
+        android:text="Testing, testing..."/>-->
+
+</RelativeLayout>
