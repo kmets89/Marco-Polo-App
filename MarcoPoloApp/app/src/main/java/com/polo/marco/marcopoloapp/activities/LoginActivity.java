@@ -1,11 +1,10 @@
 package com.polo.marco.marcopoloapp.activities;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -85,14 +84,17 @@ public class LoginActivity extends AppCompatActivity implements
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
+        mGoogleApiClient.connect();
         // [END build_client]
 
         // [START customize_button]
-        // Set the dimensions of the sign-in button.
-        SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
-        signInButton.setSize(SignInButton.SIZE_WIDE);
-        signInButton.setScaleX(1.2f);
-        signInButton.setScaleY(1.2f);
+        // Set the dimensions of the sign-in buttons.
+        SignInButton GoogleSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
+        GoogleSignInButton.setSize(SignInButton.SIZE_WIDE);
+        GoogleSignInButton.setScaleX(1.2f);
+        GoogleSignInButton.setScaleY(1.2f);
+        facebookLoginButton.setScaleX(1.2f);
+        facebookLoginButton.setScaleY(1.3f);
         // [END customize_button]
 
 
