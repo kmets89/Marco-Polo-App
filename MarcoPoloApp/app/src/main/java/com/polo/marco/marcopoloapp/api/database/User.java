@@ -66,6 +66,10 @@ public class User {
         return loginApiType;
     }
 
+    public boolean usingFacebook() {
+        return loginApiType.equalsIgnoreCase("facebook");
+    }
+
     public void setLoginApiType(String loginApiType) {
         this.loginApiType = loginApiType;
     }

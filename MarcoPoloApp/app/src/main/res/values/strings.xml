@@ -59,10 +59,10 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
     <string name="title_activity_navigation_drawer">NavigationDrawer</string>
+    <string name="facebook_app_id">359143984533075</string>
+    <string name="fb_login_protocol_scheme">fb359143984533075</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -71,7 +71,6 @@
     <string name="title_activity_splash">SplashActivity</string>
 
     <string name="signed_in_fmt">Signed in as: %s</string>
-    <string name="signed_out">Signed out</string>
 
     <string name="logo">Marco Polo Logo</string>
 

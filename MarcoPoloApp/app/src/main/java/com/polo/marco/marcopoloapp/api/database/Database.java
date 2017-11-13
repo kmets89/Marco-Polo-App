@@ -10,7 +10,9 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 import com.amazonaws.regions.Region;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.polo.marco.marcopoloapp.api.database.tasks.DeleteUserTask;
 import com.polo.marco.marcopoloapp.api.database.tasks.InitializeDatabaseTask;
+import com.polo.marco.marcopoloapp.api.database.tasks.LoadBatchUsersTask;
 import com.polo.marco.marcopoloapp.api.database.tasks.LoadUserTask;
 import com.polo.marco.marcopoloapp.api.database.tasks.SaveUserTask;
 
@@ -63,12 +65,32 @@ public class Database {
     }
 
     /*
+    * Pass a User object and this method will either delete the current
+    * User row within the database.
+    * */
+    public static void deleteUser(final User user) {
+        new DeleteUserTask().execute(user);
+    }
+
+    /*
     * Returns an instance of the current User within DynamoDB. Requries a unique identifier,
     * UserId, to grab that object from the database. Note: untested.
     * */
     public static User getUser(final String userId) {
         try {
             return new LoadUserTask().execute(userId).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // Returns an array of users. Params: an array of user ID's to get.
+    public static User[] getListOfFriends(final String[] users){
+        try {
+            return new LoadBatchUsersTask().execute(users).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

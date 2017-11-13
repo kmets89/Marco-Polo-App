@@ -1,4 +1,4 @@
-package com.polo.marco.marcopoloapp;
+package com.polo.marco.marcopoloapp.api.notifications;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,7 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
-import java.lang.reflect.Array;
+import com.polo.marco.marcopoloapp.R;
+
 import java.util.ArrayList;
 
 //This class handles the behavior of groups and children inside an expandable list and how data

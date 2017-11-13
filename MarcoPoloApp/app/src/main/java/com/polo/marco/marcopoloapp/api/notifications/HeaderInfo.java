@@ -1,4 +1,4 @@
-package com.polo.marco.marcopoloapp;
+package com.polo.marco.marcopoloapp.api.notifications;
 
 import java.util.ArrayList;
 
