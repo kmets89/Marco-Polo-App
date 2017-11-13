@@ -14,8 +14,7 @@
             android:layout_width="match_parent"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:background="@color/poloRed"
-        android:textColor="@color/streetGray"
+        android:textColor="@color/colorPrimaryDark"
         android:padding="5dp"
         android:fillViewport="true"
         android:text="@string/privacy_policy_content">

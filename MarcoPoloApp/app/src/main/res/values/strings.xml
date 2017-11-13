@@ -7,22 +7,6 @@
     <string name="marco">Marco</string>
     <string name="recentMarcos">Your Recent Marcos</string>
 
-    <!-- Test friends list -->
-    <string-array name="friends_list">
-        <item>David</item>
-        <item>Chase</item>
-        <item>Daphnie</item>
-        <item>Joseph</item>
-        <item>Aleck</item>
-        <item>Andrew</item>
-        <item>Dummy1</item>
-        <item>Dummy2</item>
-        <item>Dummy3</item>
-        <item>Dummy4</item>
-        <item>Dummy5</item>
-        <item>Dummy6</item>
-    </string-array>
-
     <!-- Menu Strings -->
     <string name="notifications">Notifications</string>
     <string name="account">Account</string>
@@ -90,5 +74,13 @@
     <string name="signed_out">Signed out</string>
 
     <string name="logo">Marco Polo Logo</string>
+
+    <string name="account_name">You are currently logged in as:</string>
+    <string name="account_email">Linked Google Email:</string>
+
+    <string name="current_user"></string>
+
+    <!--Web Application Client ID for authenticating with Google-->
+    <string name="server_client_id">736384937236-g8i7jp2e64icddv79grql1haosjkbhd0.apps.googleusercontent.com</string>
 
 </resources>
