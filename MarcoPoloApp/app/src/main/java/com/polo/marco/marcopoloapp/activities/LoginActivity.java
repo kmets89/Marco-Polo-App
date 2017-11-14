@@ -219,11 +219,11 @@ public class LoginActivity extends AppCompatActivity implements
         Log.d(TAG, "User with ID Token:" + name + " logged in.");
         Log.d(TAG, "User is in database: " + isInDatabase);
         if (!isInDatabase) {
-            User new_user = new User(id, name, google ? "Google" : "Facebook", null);
+            User new_user = new User(id, name, google ? "Google" : "Facebook", null,0,0);
             Database.updateUser(new_user);
         }
 
-        currentUser = new User(id, name, google ? "Google" : "Facebook", null);
+        currentUser = new User(id, name, google ? "Google" : "Facebook", null,0,0);
 
         updateUI(true, name);
     }
