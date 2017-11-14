@@ -34,8 +34,8 @@
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"
-            android:layout_width="205dp"
-            android:layout_height="35dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true">
 
@@ -43,12 +43,11 @@
 
         <com.facebook.login.widget.LoginButton
             android:id="@+id/facebook_login_button"
-            android:layout_width="230dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/sign_in_button"
-            android:layout_marginTop="6dp"
             android:layout_centerHorizontal="true"
-        />
+            android:layout_marginTop="15dp" />
 
     </RelativeLayout>
 
