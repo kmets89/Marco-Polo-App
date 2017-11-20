@@ -346,6 +346,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             startActivity(intent);
             return true;
         }
+        if(menuItem.getItemId() == R.id.nav_friends){
+            intent = new Intent(this, FriendsList.class);
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            startActivity(intent);
+            return true;
+        }
         return false;
     }
 }
