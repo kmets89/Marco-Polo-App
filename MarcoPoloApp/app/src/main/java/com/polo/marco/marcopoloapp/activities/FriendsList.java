@@ -1,4 +1,4 @@
-package com.polo.marco.marcopoloapp;
+package com.polo.marco.marcopoloapp.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.api.database.Database;
 import com.polo.marco.marcopoloapp.api.database.User;
 
