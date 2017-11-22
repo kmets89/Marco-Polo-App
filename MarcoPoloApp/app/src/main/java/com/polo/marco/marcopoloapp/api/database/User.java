@@ -63,7 +63,7 @@ public class User {
         this.name = name;
     }
 
-    @DynamoDBAttribute(attributeName = "friendList")
+    @DynamoDBAttribute(attributeName = "friendsList")
     public List<String> getFriendsList() {
         return friendsList;
     }
@@ -80,6 +80,11 @@ public class User {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public boolean usingFacebook()
+    {
+        return loginApiType.equalsIgnoreCase("facebook");
     }
 
     @DynamoDBAttribute(attributeName = "loginApiType")

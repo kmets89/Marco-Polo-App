@@ -1,4 +1,4 @@
-package com.polo.marco.marcopoloapp;
+package com.polo.marco.marcopoloapp.api.notifications;
 
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -8,11 +8,11 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
-import android.widget.Spinner;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.Toast;
-import android.widget.EditText;
+
+import com.polo.marco.marcopoloapp.R;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

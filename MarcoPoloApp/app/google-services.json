@@ -1,0 +1,52 @@
+{
+  "project_info": {
+    "project_number": "736384937236",
+    "project_id": "marco-polo-app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:736384937236:android:1913cf31fdbb4e2e",
+        "android_client_info": {
+          "package_name": "com.polo.marco.marcopoloapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "736384937236-p30nh992t8dtdiqfgal972blqbjgk0nk.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "736384937236-g8i7jp2e64icddv79grql1haosjkbhd0.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "736384937236-efjlbpqlitfi6naq8e8ik92fk3km5m8h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.polo.marco.marcopoloapp",
+            "certificate_hash": "179e9a64c201c2a85ae0d7fa38970dd9ea0c6835"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzJQ1WspR05Kf1c4zGU1FarrzLeGxanxg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
