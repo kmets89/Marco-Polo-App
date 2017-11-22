@@ -1,11 +1,14 @@
 package com.polo.marco.marcopoloapp;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.Window;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -22,6 +25,7 @@ public class MarcoActivity extends AppCompatActivity {
     private String[] friendsList;
     private boolean[] checkedItems;
     ArrayList<Integer> mSelectedItems = new ArrayList<>();
+    private View publicView, privateView;
 
     @Override
     //Opens a popup window containing user's notifications in an expandable list.
@@ -29,11 +33,13 @@ public class MarcoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //friendsList = getResources().getStringArray(R.array.friends_list);
-        //checkedItems = new boolean[friendsList.length];
+        friendsList = getResources().getStringArray(R.array.friends_list);
+        checkedItems = new boolean[friendsList.length];
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.marco_activity);
+        publicView = getLayoutInflater().inflate(R.layout.marco_activity, null);
+        privateView = getLayoutInflater().inflate(R.layout.private_marco_activity, null);
+        setContentView(publicView);
 
         publicSwitch = (Switch) findViewById(R.id.switch_public);
 
@@ -44,11 +50,12 @@ public class MarcoActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
                     Toast.makeText(getApplicationContext(), "PRIVATE", Toast.LENGTH_LONG).show();
-                    setWinSize(winWidth, privateHeight);
+                    //setWinSize(winWidth, privateHeight);
+                    showFriendsList(findViewById(android.R.id.content));
                 }
                 else{
                     Toast.makeText(getApplicationContext(), "PUBLIC", Toast.LENGTH_LONG).show();
-                    setWinSize(winWidth, publicHeight);
+                    //setWinSize(winWidth, publicHeight);
                 }
             }
         });
@@ -67,9 +74,19 @@ public class MarcoActivity extends AppCompatActivity {
         getWindow().setLayout((int) (width * w), (int) (height * h));
     }
 
+    public void onClickCancelMarco(View view){
+        Toast.makeText(getApplicationContext(), "CANCEL", Toast.LENGTH_LONG).show();
+        finish();
+    }
 
-   /* //Function that's called when the marco button is clicked
-    public void onClickBtnMarco(View view){
+    public void onClickSendMarco(View view){
+        Toast.makeText(getApplicationContext(), "SEND", Toast.LENGTH_LONG).show();
+        finish();
+    }
+
+
+   //Function that's called when the marco button is clicked
+    public void showFriendsList(View view){
         //Begins building the Dialog
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         mBuilder.setTitle("Select your friends.");
@@ -92,13 +109,17 @@ public class MarcoActivity extends AppCompatActivity {
             @Override
             //This event listener calls the function which will sound out the Marco.
             public void onClick(DialogInterface dialog, int position) {
-                SendMarco();
+                Toast.makeText(getApplicationContext(), "SEND", Toast.LENGTH_LONG).show();
+                //SendMarco();
             }
         });
         mBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             //Cancels the Marco
             public void onClick(DialogInterface dialog, int position) {
+                Toast.makeText(getApplicationContext(), "CANCEL", Toast.LENGTH_LONG).show();
+                for (int i = 0; i < checkedItems.length; i++){
+                    checkedItems[i] = false;}
                 dialog.dismiss();
             }
         });
@@ -115,7 +136,7 @@ public class MarcoActivity extends AppCompatActivity {
         //creates and displays the Dialog.
         AlertDialog mDialog = mBuilder.create();
         mDialog.show();
-    }*/
+    }
 
     /*public void SendMarco(){
         Log.d("something", "marco button click");

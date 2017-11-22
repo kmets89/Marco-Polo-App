@@ -13,7 +13,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="18dp"
         android:text="Private Mode"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:checked="true"/>
 
     <EditText
         android:id="@+id/marcoText"
@@ -43,14 +44,13 @@
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@+id/sendMarco"/>
 
-    <!--<TextView
+    <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_margin="5dp"
         android:background="@color/poloRed"
-        android:padding="5dp"
-        android:text="Testing, testing..."/>-->
+        android:layout_below="@+id/marcoText"
+        android:text="Testing, testing..."></TextView>
 
 </RelativeLayout>
