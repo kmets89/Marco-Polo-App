@@ -347,7 +347,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return true;
         }
         if(menuItem.getItemId() == R.id.nav_friends){
-            intent = new Intent(this, FriendsList.class);
+            intent = new Intent(this, FriendsListActivity.class);
             mDrawerLayout.closeDrawer(GravityCompat.START);
             startActivity(intent);
             return true;

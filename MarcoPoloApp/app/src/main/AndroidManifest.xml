@@ -54,14 +54,17 @@
 
         <activity
             android:name=".activities.SettingsActivity"
-            android:label="@string/title_activity_account_settings"></activity>
+            android:label="@string/title_activity_account_settings">
+        </activity>
         <activity
             android:name=".api.notifications.Notifications"
             android:label="@string/title_activity_notifications"
-            android:theme="@style/AppTheme.ScreenBelow"></activity>
+            android:theme="@style/AppTheme.ScreenBelow">
+        </activity>
         <activity
             android:name=".activities.PrivacyPolicyActivity"
-            android:label="@string/title_activity_privacy_policy"></activity>
+            android:label="@string/title_activity_privacy_policy">
+        </activity>
 
         <activity
             android:name=".activities.LoginActivity"

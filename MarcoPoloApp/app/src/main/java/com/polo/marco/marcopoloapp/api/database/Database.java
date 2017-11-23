@@ -88,9 +88,9 @@ public class Database {
     }
 
     // Returns an array of users. Params: an array of user ID's to get.
-    public static User[] getListOfFriends(final String[] users){
+    public static List<User> getListOfFriends(final List<String> users){
         try {
-            return new LoadBatchUsersTask().execute(users).get();
+            return new LoadBatchUsersTask().execute(users.toArray(new String[users.size()])).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

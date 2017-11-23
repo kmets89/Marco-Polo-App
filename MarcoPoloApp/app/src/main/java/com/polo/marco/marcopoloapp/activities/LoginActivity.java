@@ -227,11 +227,16 @@ public class LoginActivity extends AppCompatActivity implements
         Log.d(TAG, "User with ID Token:" + name + " logged in.");
         Log.d(TAG, "User is in database: " + isInDatabase);
         if (!isInDatabase) {
-            User new_user = new User(id, name, "Facebook", null,0,0);
+            User new_user = new User(id, name, "Facebook", null,0,0, "");
+            currentUser = new_user;
             Database.updateUser(new_user);
+        }else {
+            //Set the current user from the Databases information
+            User user = Database.getUser(id);
+            currentUser = user;
+            //Load all of the current users' friends information.
+            currentUser.friendsUserList = Database.getListOfFriends(user.getFriendsList());
         }
-
-        currentUser = new User(id, name, "Facebook", null,0,0);
 
         updateUI(true, name);
     }
@@ -284,16 +289,22 @@ public class LoginActivity extends AppCompatActivity implements
             GoogleSignInAccount acct = result.getSignInAccount();
             String id = acct.getId();
             String name = acct.getDisplayName();
+            String imgUrl = acct.getPhotoUrl().toString();
 
             boolean isInDatabase = isInDatabase(id);
             Log.d(TAG, "User with ID Token:" + name + " logged in.");
             Log.d(TAG, "User is in database: " + isInDatabase);
             if (!isInDatabase) {
-                User new_user = new User(id, name, "Google", null, 0, 0);
+                User new_user = new User(id, name, "Google", null, 0, 0, imgUrl);
+                currentUser = new_user;
                 Database.updateUser(new_user);
+            }else{
+                //Set the current user from the Databases information
+                User user = Database.getUser(id);
+                currentUser = user;
+                //Load all of the current users' friends information.
+                currentUser.friendsUserList = Database.getListOfFriends(user.getFriendsList());
             }
-
-            currentUser = new User(id, name, "Google", null, 0, 0);
 
             updateUI(true, name);
         } else {
