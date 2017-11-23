@@ -260,6 +260,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+        getCurrentLocation();
+        LatLng latLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
         locationRequest = new LocationRequest();
 
         locationRequest.setInterval(1000);
@@ -268,6 +272,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(client, locationRequest, this);
+        }
+    }
+    //Getting current location
+    private void getCurrentLocation() {
+        //Creating a location object
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+             lastLocation = LocationServices.FusedLocationApi.getLastLocation(client);
         }
     }
 
@@ -348,8 +359,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             startActivity(intent);
             return true;
         }
-        if(menuItem.getItemId() == R.id.nav_friends){
-            intent = new Intent(this, FriendsListActivity.class);
+        if(menuItem.getItemId() == R.id.nav_settings){
+            intent = new Intent(this, SettingsActivity.class);
             mDrawerLayout.closeDrawer(GravityCompat.START);
             startActivity(intent);
             return true;
