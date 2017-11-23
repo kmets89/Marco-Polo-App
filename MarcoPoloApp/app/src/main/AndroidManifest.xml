@@ -43,7 +43,7 @@
             android:label="@string/title_activity_maps"></activity>
 
         <activity
-            android:name=".MarcoActivity"
+            android:name=".activities.MarcoActivity"
             android:label="Marco"
             android:theme="@style/AppTheme.ScreenBelow"></activity>
         <activity

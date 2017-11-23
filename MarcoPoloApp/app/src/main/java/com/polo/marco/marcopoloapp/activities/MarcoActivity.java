@@ -1,4 +1,4 @@
-package com.polo.marco.marcopoloapp;
+package com.polo.marco.marcopoloapp.activities;
 
 
 import android.app.AlertDialog;
@@ -12,6 +12,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
+
+import com.polo.marco.marcopoloapp.R;
 
 import java.util.ArrayList;
 
@@ -50,12 +52,14 @@ public class MarcoActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
                     Toast.makeText(getApplicationContext(), "PRIVATE", Toast.LENGTH_LONG).show();
-                    //setWinSize(winWidth, privateHeight);
-                    showFriendsList(findViewById(android.R.id.content));
+                    setWinSize(winWidth, privateHeight);
+                    //showFriendsList(findViewById(android.R.id.content));
+                    findViewById(R.id.textView1).setVisibility(View.VISIBLE);
                 }
                 else{
                     Toast.makeText(getApplicationContext(), "PUBLIC", Toast.LENGTH_LONG).show();
-                    //setWinSize(winWidth, publicHeight);
+                    findViewById(R.id.textView1).setVisibility(View.GONE);
+                    setWinSize(winWidth, publicHeight);
                 }
             }
         });

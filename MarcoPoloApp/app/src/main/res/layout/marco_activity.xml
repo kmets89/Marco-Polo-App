@@ -17,7 +17,7 @@
 
     <EditText
         android:id="@+id/marcoText"
-        android:background="@color/poloRed"
+        android:background="@color/MarcoBlue"
         android:layout_width="match_parent"
         android:layout_height="160sp"
         android:layout_below="@+id/switch_public"
@@ -43,14 +43,16 @@
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@+id/sendMarco"/>
 
-    <!--<TextView
+    <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_margin="5dp"
         android:background="@color/poloRed"
+        android:layout_margin="5dp"
+        android:layout_alignBottom="@+id/marcoText"
         android:padding="5dp"
-        android:text="Testing, testing..."/>-->
+        android:text="Testing, testing..."
+        android:visibility="gone"/>
 
 </RelativeLayout>

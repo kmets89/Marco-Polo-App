@@ -101,20 +101,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         startActivity(intent);
     }
 
-    public void SendMarco() {
-        Log.d("something", "marco button click");
-        boolean switchStatus = publicSwitch.isChecked();
-        Log.d("CRAP", "onClickBtnMarco: something");
-        //TODO: Write code to send out a public Marco.
-        if (switchStatus) {
-            Toast.makeText(this, "Sending a Public Marco!", Toast.LENGTH_SHORT).show();
-        }
-        //TODO: Write code to send out a private Marco.
-        else {
-            Toast.makeText(this, "Sending a Private Marco!", Toast.LENGTH_SHORT).show();
-        }
-    }
-
     //Handle action bar items only
     //The regular menu items are handled in OnNavigationItemClickListener()
     @Override
