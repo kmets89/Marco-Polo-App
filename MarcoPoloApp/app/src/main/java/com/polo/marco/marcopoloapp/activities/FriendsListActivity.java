@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 import com.polo.marco.marcopoloapp.*;
 import com.polo.marco.marcopoloapp.api.database.Database;
 import com.polo.marco.marcopoloapp.api.database.User;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -52,6 +54,8 @@ public class FriendsListActivity extends AppCompatActivity {
             User currentFriend = friends.get(position);
 
             TextView nameTextView = (TextView) itemView.findViewById(R.id.friendslist_user_name);
+            ImageView profilePicView = (ImageView) itemView.findViewById(R.id.friendslist_profile_image);
+            Picasso.with(FriendsListActivity.this).load(currentFriend.getImgUrl()).into(profilePicView);
             nameTextView.setText(currentFriend.getName());
 
             return itemView;

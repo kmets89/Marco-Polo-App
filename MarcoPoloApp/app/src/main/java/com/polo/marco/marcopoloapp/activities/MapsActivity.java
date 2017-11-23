@@ -65,7 +65,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //UI stuff
     private Switch publicSwitch;
-    private String[] friendsList;
     private boolean[] checkedItems;
     ArrayList<Integer> mSelectedItems = new ArrayList<>();
 
@@ -83,8 +82,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mDrawerToggle.syncState();
 
         publicSwitch = (Switch) findViewById(R.id.switch_public);
-        friendsList = getResources().getStringArray(R.array.friends_list);
-        checkedItems = new boolean[friendsList.length];
+        checkedItems = new boolean[LoginActivity.currentUser.friendsUserList.size()];
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -101,10 +99,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //Function that's called when the marco button is clicked
     public void onClickBtnMarco(View view) {
+        String[] friendsNames = new String[LoginActivity.currentUser.friendsUserList.size()];
+        for(int i = 0; i < friendsNames.length; i++){
+            friendsNames[i] = LoginActivity.currentUser.friendsUserList.get(i).getName();
+        }
         //Begins building the Dialog
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         mBuilder.setTitle("Select your friends.");
-        mBuilder.setMultiChoiceItems(friendsList, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+        mBuilder.setMultiChoiceItems(friendsNames, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             //Adds each checked friend to the arrayList "mSelectedItems".
             public void onClick(DialogInterface dialog, int position, boolean isChecked) {
