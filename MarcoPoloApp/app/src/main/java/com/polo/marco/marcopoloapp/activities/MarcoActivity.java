@@ -6,10 +6,14 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -27,10 +31,12 @@ public class MarcoActivity extends AppCompatActivity {
     private String[] friendsList;
     private boolean[] checkedItems;
     ArrayList<Integer> mSelectedItems = new ArrayList<>();
-    private View publicView, privateView;
+    CheckBox checkBox;
+    LinearLayout checkView;
+    boolean friendsListExists = false;
 
     @Override
-    //Opens a popup window containing user's notifications in an expandable list.
+    //Opens a popup window for entering and storing Marco information.
     //Popup covers only a percentage of the screen with the previous view displayed underneath
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,36 +45,50 @@ public class MarcoActivity extends AppCompatActivity {
         checkedItems = new boolean[friendsList.length];
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        publicView = getLayoutInflater().inflate(R.layout.marco_activity, null);
-        privateView = getLayoutInflater().inflate(R.layout.private_marco_activity, null);
-        setContentView(publicView);
+        setContentView(R.layout.marco_activity);
+        checkView = (LinearLayout) findViewById(R.id.check_layout);
 
         publicSwitch = (Switch) findViewById(R.id.switch_public);
-
         setWinSize(winWidth, publicHeight);
 
+        //Set behavior for the public/private toggle.  Default is public.  Private enlarges
+        //the window and displays user's friends list members as optional recipients
         publicSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
                     Toast.makeText(getApplicationContext(), "PRIVATE", Toast.LENGTH_LONG).show();
                     setWinSize(winWidth, privateHeight);
-                    //showFriendsList(findViewById(android.R.id.content));
                     findViewById(R.id.textView1).setVisibility(View.VISIBLE);
-                }
+
+                    //create checklist from FriendsList and add to view
+                    if (!friendsListExists) {
+                        for (int i = 0; i < friendsList.length; i++) {
+                            checkBox = new CheckBox(MarcoActivity.this);
+                            checkBox.setId(i);
+                            checkBox.setText(friendsList[i]);
+                            checkBox.setId(i);
+                            checkBox.setOnClickListener(getOnClickDoSomething(checkBox));
+                            checkView.addView(checkBox);
+                            friendsListExists = true;
+                        }
+                    }
+                    else
+                        for (int i = 0; i < friendsList.length; i++)
+                            findViewById(i).setVisibility(View.VISIBLE);
+                    }
                 else{
                     Toast.makeText(getApplicationContext(), "PUBLIC", Toast.LENGTH_LONG).show();
                     findViewById(R.id.textView1).setVisibility(View.GONE);
+                    for (int j = 0; j < friendsList.length; j++)
+                        findViewById(j).setVisibility(View.GONE);
                     setWinSize(winWidth, publicHeight);
                 }
             }
         });
     }
 
-    //Make this view a pop-up over the previous view with dimensions
-    //relative to the parent, goes away when the user click outside
-    //the popup window
-
+    //Resize the activity window as a fraction of the default size
     public void setWinSize(double w, double h){
         DisplayMetrics dispMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dispMetrics);
@@ -78,82 +98,25 @@ public class MarcoActivity extends AppCompatActivity {
         getWindow().setLayout((int) (width * w), (int) (height * h));
     }
 
+    //Handle selections in checklist
+    View.OnClickListener getOnClickDoSomething(final Button button){
+        return new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Log.d("ON_CLICK", "CheckBox ID: " + button.getId() + " Text: " + button.getText().toString());
+            }
+        };
+    }
+
+    //Close the activity, not saving any data
     public void onClickCancelMarco(View view){
         Toast.makeText(getApplicationContext(), "CANCEL", Toast.LENGTH_LONG).show();
         finish();
     }
 
+    //TODO: Add Marco to DB
     public void onClickSendMarco(View view){
         Toast.makeText(getApplicationContext(), "SEND", Toast.LENGTH_LONG).show();
         finish();
     }
-
-
-   //Function that's called when the marco button is clicked
-    public void showFriendsList(View view){
-        //Begins building the Dialog
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
-        mBuilder.setTitle("Select your friends.");
-        mBuilder.setMultiChoiceItems(friendsList, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
-            @Override
-            //Adds each checked friend to the arrayList "mSelectedItems".
-            public void onClick(DialogInterface dialog, int position, boolean isChecked) {
-                if(isChecked){
-                    if(!mSelectedItems.contains(position)){
-                        mSelectedItems.add(position);
-                    }
-                }
-                else if(mSelectedItems.contains(position)){
-                    mSelectedItems.remove(mSelectedItems.indexOf(position));
-                }
-            }
-        });
-        mBuilder.setCancelable(false);
-        mBuilder.setPositiveButton("Send!", new DialogInterface.OnClickListener() {
-            @Override
-            //This event listener calls the function which will sound out the Marco.
-            public void onClick(DialogInterface dialog, int position) {
-                Toast.makeText(getApplicationContext(), "SEND", Toast.LENGTH_LONG).show();
-                //SendMarco();
-            }
-        });
-        mBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            //Cancels the Marco
-            public void onClick(DialogInterface dialog, int position) {
-                Toast.makeText(getApplicationContext(), "CANCEL", Toast.LENGTH_LONG).show();
-                for (int i = 0; i < checkedItems.length; i++){
-                    checkedItems[i] = false;}
-                dialog.dismiss();
-            }
-        });
-        mBuilder.setNeutralButton("Clear all", new DialogInterface.OnClickListener() {
-            @Override
-            //When "Clear all" is called, all the checkedItems are reset.
-            public void onClick(DialogInterface dialog, int position) {
-                for (int i = 0; i < checkedItems.length; i++){
-                    checkedItems[i] = false;
-                    mSelectedItems.clear();
-                }
-            }
-        });
-        //creates and displays the Dialog.
-        AlertDialog mDialog = mBuilder.create();
-        mDialog.show();
-    }
-
-    /*public void SendMarco(){
-        Log.d("something", "marco button click");
-        boolean switchStatus = publicSwitch.isChecked();
-        Log.d("CRAP", "onClickBtnMarco: something");
-        //TODO: Write code to send out a public Marco.
-        if(switchStatus){
-            Toast.makeText(this, "Sending a Public Marco!", Toast.LENGTH_SHORT).show();
-        }
-        //TODO: Write code to send out a private Marco.
-        else{
-            Toast.makeText(this, "Sending a Private Marco!", Toast.LENGTH_SHORT).show();
-        }
-    }*/
-
 }
