@@ -53,7 +53,11 @@ public class MarcoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //Here we need to grab the actual friendsList from the DB
-        friendsList = new String [] {"One", "Two", "Three"};
+        //friendsList = new String [] {"One", "Two", "Three"};
+        friendsList = new String[LoginActivity.currentUser.friendsUserList.size()];
+        for(int i = 0; i < friendsList.length; i++){
+            friendsList[i] = LoginActivity.currentUser.friendsUserList.get(i).getName();
+        }
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_marco);

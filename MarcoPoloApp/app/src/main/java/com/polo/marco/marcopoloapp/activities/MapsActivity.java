@@ -104,68 +104,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //Function that's called when the marco button is clicked
     public void onClickBtnMarco(View view) {
-        String[] friendsNames = new String[LoginActivity.currentUser.friendsUserList.size()];
-        for(int i = 0; i < friendsNames.length; i++){
-            friendsNames[i] = LoginActivity.currentUser.friendsUserList.get(i).getName();
-        }
-        //Begins building the Dialog
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
-        mBuilder.setTitle("Select your friends.");
-        mBuilder.setMultiChoiceItems(friendsNames, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
-            @Override
-            //Adds each checked friend to the arrayList "mSelectedItems".
-            public void onClick(DialogInterface dialog, int position, boolean isChecked) {
-                if (isChecked) {
-                    if (!mSelectedItems.contains(position)) {
-                        mSelectedItems.add(position);
-                    }
-                } else if (mSelectedItems.contains(position)) {
-                    mSelectedItems.remove(mSelectedItems.indexOf(position));
-                }
-            }
-        });
-        mBuilder.setCancelable(false);
-        mBuilder.setPositiveButton("Send!", new DialogInterface.OnClickListener() {
-            @Override
-            //This event listener calls the function which will sound out the Marco.
-            public void onClick(DialogInterface dialog, int position) {
-                SendMarco();
-            }
-        });
-        mBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            //Cancels the Marco
-            public void onClick(DialogInterface dialog, int position) {
-                dialog.dismiss();
-            }
-        });
-        mBuilder.setNeutralButton("Clear all", new DialogInterface.OnClickListener() {
-            @Override
-            //When "Clear all" is called, all the checkedItems are reset.
-            public void onClick(DialogInterface dialog, int position) {
-                for (int i = 0; i < checkedItems.length; i++) {
-                    checkedItems[i] = false;
-                    mSelectedItems.clear();
-                }
-            }
-        });
-        //creates and displays the Dialog.
-        AlertDialog mDialog = mBuilder.create();
-        mDialog.show();
-    }
-
-    public void SendMarco() {
-        Log.d("something", "marco button click");
-        boolean switchStatus = publicSwitch.isChecked();
-        Log.d("CRAP", "onClickBtnMarco: something");
-        //TODO: Write code to send out a public Marco.
-        if (switchStatus) {
-            Toast.makeText(this, "Sending a Public Marco!", Toast.LENGTH_SHORT).show();
-        }
-        //TODO: Write code to send out a private Marco.
-        else {
-            Toast.makeText(this, "Sending a Private Marco!", Toast.LENGTH_SHORT).show();
-        }
+        Intent intent = new Intent(this, MarcoActivity.class);
+        Bundle extras = new Bundle();
+        double lat = lastLocation.getLatitude();
+        double lng = lastLocation.getLongitude();
+        intent.putExtra("userLatitude", lat);
+        intent.putExtra("userLongitude", lng);
+        //extras.putDouble("userLatitude", 50);
+        //extras.putDouble("userLongitude", 50);
+        intent.putExtras(extras);
+        startActivity(intent);
     }
 
     //Handle action bar items only
