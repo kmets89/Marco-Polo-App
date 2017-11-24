@@ -53,10 +53,14 @@ public class MarcoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //Here we need to grab the actual friendsList from the DB
-        friendsList = getResources().getStringArray(R.array.friends_list);
+        //friendsList = new String [] {"One", "Two", "Three"};
+        friendsList = new String[LoginActivity.currentUser.friendsUserList.size()];
+        for(int i = 0; i < friendsList.length; i++){
+            friendsList[i] = LoginActivity.currentUser.friendsUserList.get(i).getName();
+        }
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.marco_activity);
+        setContentView(R.layout.activity_marco);
         checkView = (LinearLayout) findViewById(R.id.check_layout);
 
         //pull user's location from main activity
@@ -93,7 +97,7 @@ public class MarcoActivity extends AppCompatActivity {
                     else
                         for (int i = 0; i < friendsList.length; i++)
                             findViewById(i).setVisibility(View.VISIBLE);
-                    }
+                }
                 else{
                     Toast.makeText(getApplicationContext(), "PUBLIC", Toast.LENGTH_LONG).show();
                     findViewById(R.id.textView1).setVisibility(View.GONE);
