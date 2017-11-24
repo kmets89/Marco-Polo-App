@@ -18,9 +18,9 @@ import static com.polo.marco.marcopoloapp.api.database.Database.mapper;
  * Created by Krazy on 11/4/2017.
  */
 
-public class LoadBatchUsersTask extends AsyncTask<String, Void, User[]> {
+public class LoadBatchUsersTask extends AsyncTask<String, Void, List<User>> {
     @Override
-    protected User[] doInBackground(String[] users) {
+    protected List<User> doInBackground(String[] users) {
         ArrayList<Object> usersToGet = new ArrayList<Object>();
         for(int i = 0; i < users.length; i++){
             User user = new User();
@@ -36,6 +36,6 @@ public class LoadBatchUsersTask extends AsyncTask<String, Void, User[]> {
             returnedUsers.add((User)list.get(i));
         }
 
-        return returnedUsers.toArray(new User[returnedUsers.size()]);
+        return returnedUsers;
     }
 }

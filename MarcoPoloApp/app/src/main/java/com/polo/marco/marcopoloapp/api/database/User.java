@@ -5,6 +5,7 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBIndexRangeKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,18 +26,26 @@ public class User {
     private List<String> friendsList;
     private double latitude;
     private double longitude;
+    private String imgUrl;
+    public List<User> friendsUserList;
 
     public User() {
 
     }
 
-    public User(String userId, String name, String loginApiType, List<String> friendsList, double latitude, double longitude) {
+    public User(String userId, String name, String loginApiType, List<String> friendsList, double latitude, double longitude, String imgUrl) {
         this.userId = userId;
         this.name = name;
         this.loginApiType = loginApiType;
-        this.friendsList = friendsList;
+        if(friendsList == null)
+        {
+            this.friendsList = new ArrayList<String>();
+        }else{
+            this.friendsList = friendsList;
+        }
         this.latitude = latitude;
         this.longitude = longitude;
+        this.imgUrl = imgUrl;
     }
 
     public double getLatitude() {
@@ -63,6 +72,13 @@ public class User {
     public void setName(String name) {
         this.name = name;
     }
+
+    @DynamoDBAttribute(attributeName = "imgUrl")
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String url) { this.imgUrl = url; }
 
     @DynamoDBAttribute(attributeName = "friendsList")
     public List<String> getFriendsList() {
