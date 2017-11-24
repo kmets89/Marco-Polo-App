@@ -16,7 +16,8 @@ import java.util.List;
     * User object. We will be using this to store relevant data about the user.
     * Feel free to add new fields: these correlate to columns in DynamoDB.
     * */
-@DynamoDBTable(tableName = Database.DEFAULT_TABLE_NAME)
+//@DynamoDBTable(tableName = Database.DEFAULT_TABLE_NAME)
+@DynamoDBTable(tableName = "user")
 public class User {
     private String userId;
     private String name;

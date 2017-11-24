@@ -98,6 +98,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //Function that's called when the marco button is clicked
     public void onClickBtnMarco(View view) {
         Intent intent = new Intent(this, MarcoActivity.class);
+        Bundle extras = new Bundle();
+        double lat = lastLocation.getLatitude();
+        double lng = lastLocation.getLongitude();
+        intent.putExtra("userLatitude", lat);
+        intent.putExtra("userLongitude", lng);
+        //extras.putDouble("userLatitude", 50);
+        //extras.putDouble("userLongitude", 50);
+        intent.putExtras(extras);
         startActivity(intent);
     }
 

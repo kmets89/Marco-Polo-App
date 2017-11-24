@@ -10,10 +10,13 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 import com.amazonaws.regions.Region;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.polo.marco.marcopoloapp.api.database.tasks.DeleteMarcoTask;
 import com.polo.marco.marcopoloapp.api.database.tasks.DeleteUserTask;
 import com.polo.marco.marcopoloapp.api.database.tasks.InitializeDatabaseTask;
 import com.polo.marco.marcopoloapp.api.database.tasks.LoadBatchUsersTask;
+import com.polo.marco.marcopoloapp.api.database.tasks.LoadMarcoTask;
 import com.polo.marco.marcopoloapp.api.database.tasks.LoadUserTask;
+import com.polo.marco.marcopoloapp.api.database.tasks.SaveMarcoTask;
 import com.polo.marco.marcopoloapp.api.database.tasks.SaveUserTask;
 
 import java.util.List;
@@ -24,7 +27,7 @@ import java.util.concurrent.ExecutionException;
  */
 
 public class Database {
-    public static final String DEFAULT_TABLE_NAME = "datastore";
+    //public static final String DEFAULT_TABLE_NAME = "datastore";
     public static final String AWS_ACCESS_KEY_ID = "AKIAIGU3FC76IFSNIO6Q";
     public static final String AWS_SECRET_KEY = "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";
 
@@ -91,6 +94,21 @@ public class Database {
     public static User[] getListOfFriends(final String[] users){
         try {
             return new LoadBatchUsersTask().execute(users).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void updateMarco(final Marco marco) { new SaveMarcoTask().execute(marco);}
+
+    public static void deleteMarco(final Marco marco) {new DeleteMarcoTask().execute(marco);}
+
+    public static Marco getMarco(final String userId) {
+        try {
+            return new LoadMarcoTask().execute(userId).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
