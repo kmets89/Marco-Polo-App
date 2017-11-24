@@ -82,7 +82,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mDrawerToggle.syncState();
 
         publicSwitch = (Switch) findViewById(R.id.switch_public);
-        checkedItems = new boolean[LoginActivity.currentUser.friendsUserList.size()];
+        if(LoginActivity.currentUser.friendsUserList == null){
+            checkedItems = new boolean[1];
+        }
+        else{
+            checkedItems = new boolean[LoginActivity.currentUser.friendsUserList.size()];
+        }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

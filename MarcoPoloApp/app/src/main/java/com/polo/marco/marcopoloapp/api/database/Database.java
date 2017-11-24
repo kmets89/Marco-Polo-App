@@ -16,6 +16,7 @@ import com.polo.marco.marcopoloapp.api.database.tasks.LoadBatchUsersTask;
 import com.polo.marco.marcopoloapp.api.database.tasks.LoadUserTask;
 import com.polo.marco.marcopoloapp.api.database.tasks.SaveUserTask;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -90,6 +91,9 @@ public class Database {
     // Returns an array of users. Params: an array of user ID's to get.
     public static List<User> getListOfFriends(final List<String> users){
         try {
+            if(users == null){
+                return new ArrayList<User>();
+            }
             return new LoadBatchUsersTask().execute(users.toArray(new String[users.size()])).get();
         } catch (InterruptedException e) {
             e.printStackTrace();

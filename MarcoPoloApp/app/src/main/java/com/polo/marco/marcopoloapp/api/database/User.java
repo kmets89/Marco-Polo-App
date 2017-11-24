@@ -36,7 +36,12 @@ public class User {
         this.userId = userId;
         this.name = name;
         this.loginApiType = loginApiType;
-        this.friendsList = friendsList;
+        if(friendsList == null)
+        {
+            this.friendsList = new ArrayList<String>();
+        }else{
+            this.friendsList = friendsList;
+        }
         this.latitude = latitude;
         this.longitude = longitude;
         this.imgUrl = imgUrl;
