@@ -63,11 +63,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    /*//UI stuff
+    //UI stuff
     private Switch publicSwitch;
     private String[] friendsList;
-    private boolean[] checkedItems;
-    ArrayList<Integer> mSelectedItems = new ArrayList<>();*/
 
     //test
     @Override
@@ -84,7 +82,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         publicSwitch = (Switch) findViewById(R.id.switch_public);
         friendsList = getResources().getStringArray(R.array.friends_list);
-        checkedItems = new boolean[friendsList.length];
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
