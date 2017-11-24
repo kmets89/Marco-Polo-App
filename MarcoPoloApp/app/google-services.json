@@ -1,7 +1,9 @@
 {
   "project_info": {
     "project_number": "736384937236",
-    "project_id": "marco-polo-app"
+    "firebase_url": "https://marco-polo-app.firebaseio.com",
+    "project_id": "marco-polo-app",
+    "storage_bucket": "marco-polo-app.appspot.com"
   },
   "client": [
     {
@@ -12,6 +14,26 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "736384937236-g47km7rm15j04lhuq0j6524na6b9ch9s.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "736384937236-dm5e87o5krbtnpqn94q6gd043im24pi9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.polo.marco.marcopoloapp",
+            "certificate_hash": "f152e7983aa889dc2ac4833997fad6890b5c06ea"
+          }
+        },
+        {
+          "client_id": "736384937236-95rjvtk5k1npbckl5g0d8qf30eq8uval.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.polo.marco.marcopoloapp",
+            "certificate_hash": "b1d5e771135f09a8caac489bc4b7e196bd5dc193"
+          }
+        },
         {
           "client_id": "736384937236-p30nh992t8dtdiqfgal972blqbjgk0nk.apps.googleusercontent.com",
           "client_type": 3
@@ -39,11 +61,16 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "736384937236-g47km7rm15j04lhuq0j6524na6b9ch9s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }

@@ -27,12 +27,14 @@ public class User {
     private double longitude;
     private String imgUrl;
     public List<User> friendsUserList;
+    private String firebaseToken;
 
     public User() {
 
     }
 
-    public User(String userId, String name, String loginApiType, List<String> friendsList, double latitude, double longitude, String imgUrl) {
+    public User(String userId, String name, String loginApiType, List<String> friendsList,
+                double latitude, double longitude, String imgUrl, String firebaseToken) {
         this.userId = userId;
         this.name = name;
         this.loginApiType = loginApiType;
@@ -45,6 +47,7 @@ public class User {
         this.latitude = latitude;
         this.longitude = longitude;
         this.imgUrl = imgUrl;
+        this.firebaseToken = firebaseToken;
     }
 
     public double getLatitude() {
@@ -63,6 +66,14 @@ public class User {
         this.longitude = longitude;
     }
 
+    @DynamoDBAttribute(attributeName = "firebaseToken")
+    public String getFirebaseToken() {
+        return name;
+    }
+
+    public void setFirebaseToken(String token) {
+        this.firebaseToken = token;
+    }
     @DynamoDBAttribute(attributeName = "name")
     public String getName() {
         return name;

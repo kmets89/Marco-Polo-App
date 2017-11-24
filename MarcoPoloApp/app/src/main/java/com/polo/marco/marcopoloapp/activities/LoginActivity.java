@@ -57,6 +57,7 @@ public class LoginActivity extends AppCompatActivity implements
     private AccessTokenTracker accessTokenTracker;
 
     public static User currentUser = null;
+    public static String firebaseToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -227,13 +228,18 @@ public class LoginActivity extends AppCompatActivity implements
         Log.d(TAG, "User with ID Token:" + name + " logged in.");
         Log.d(TAG, "User is in database: " + isInDatabase);
         if (!isInDatabase) {
-            User new_user = new User(id, name, "Facebook", null,0,0, "");
+            User new_user = new User(id, name, "Facebook", null,0,0, "", firebaseToken);
             currentUser = new_user;
             Database.updateUser(new_user);
         }else {
             //Set the current user from the Databases information
             User user = Database.getUser(id);
             currentUser = user;
+            //updates the firebase token if it has changed.
+            if(!currentUser.getFirebaseToken().equals(firebaseToken)){
+                currentUser.setFirebaseToken(firebaseToken);
+                Database.updateUser(currentUser);
+            }
             //Load all of the current users' friends information.
             currentUser.friendsUserList = Database.getListOfFriends(user.getFriendsList());
         }
@@ -295,13 +301,18 @@ public class LoginActivity extends AppCompatActivity implements
             Log.d(TAG, "User with ID Token:" + name + " logged in.");
             Log.d(TAG, "User is in database: " + isInDatabase);
             if (!isInDatabase) {
-                User new_user = new User(id, name, "Google", null, 0, 0, imgUrl);
+                User new_user = new User(id, name, "Google", null, 0, 0, imgUrl, firebaseToken);
                 currentUser = new_user;
                 Database.updateUser(new_user);
             }else{
                 //Set the current user from the Databases information
                 User user = Database.getUser(id);
                 currentUser = user;
+                //updates the firebase token if it has changed.
+                if(!currentUser.getFirebaseToken().equals(firebaseToken)){
+                    currentUser.setFirebaseToken(firebaseToken);
+                    Database.updateUser(currentUser);
+                }
                 //Load all of the current users' friends information.
                 currentUser.friendsUserList = Database.getListOfFriends(user.getFriendsList());
             }
