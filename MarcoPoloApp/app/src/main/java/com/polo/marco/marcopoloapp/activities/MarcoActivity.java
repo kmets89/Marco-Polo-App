@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -29,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.polo.marco.marcopoloapp.api.database.Database.getMarco;
 import static com.polo.marco.marcopoloapp.api.database.Database.updateMarco;
 
 public class MarcoActivity extends AppCompatActivity {
@@ -94,19 +97,25 @@ public class MarcoActivity extends AppCompatActivity {
                             friendsListExists = true;
                         }
                     }
-                    else
+                    else {
+                        checkDuplicates();
                         for (int i = 0; i < friendsList.length; i++)
                             findViewById(i).setVisibility(View.VISIBLE);
+                    }
                 }
                 else{
-                    Toast.makeText(getApplicationContext(), "PUBLIC", Toast.LENGTH_LONG).show();
-                    findViewById(R.id.textView1).setVisibility(View.GONE);
                     for (int j = 0; j < friendsList.length; j++)
                         findViewById(j).setVisibility(View.GONE);
                     setWinSize(winWidth, publicHeight);
                 }
             }
         });
+
+        Marco test = getMarco(LoginActivity.currentUser.getUserId());
+                    Toast.makeText(getApplicationContext(), "PUBLIC", Toast.LENGTH_LONG).show();
+                    findViewById(R.id.textView1).setVisibility(View.GONE);
+        if (test != null)
+            checkDuplicates();
     }
 
     //Resize the activity window as a fraction of the default size
@@ -174,5 +183,26 @@ public class MarcoActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "SENDPUBLIC", Toast.LENGTH_LONG).show();
         }
         finish();
+    }
+
+    public void checkDuplicates() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        alertDialogBuilder.setMessage("You already have a public Marco!\n"
+                + "Creating a new public Marco will overwrite it.");
+
+        alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                //just continue here
+            }
+        });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+        final Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        LinearLayout.LayoutParams positiveButtonLL = (LinearLayout.LayoutParams) positiveButton.getLayoutParams();
+        positiveButtonLL.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        positiveButton.setLayoutParams(positiveButtonLL);
     }
 }
