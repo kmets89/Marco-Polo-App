@@ -72,4 +72,13 @@
     <!--Web Application Client ID for authenticating with Google-->
     <string name="server_client_id">736384937236-g8i7jp2e64icddv79grql1haosjkbhd0.apps.googleusercontent.com</string>
 
+
+
+    <string name="DummyUser">User</string>
+    <string name="NoUser">No Profile</string>
+    <string name="Username">Username:</string>
+    <string name="about_me_from_facebook">We can pull this from your facebook profile or feel free to write something new! </string>
+    <string name="FacebookProfile">Facebook Profile Attached</string>
+    <string name="GoogleProfile">Google Profile Attached</string>
+    <string name="Logout">Logout</string>
 </resources>
