@@ -80,9 +80,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
-        publicSwitch = (Switch) findViewById(R.id.switch_public);
-        friendsList = getResources().getStringArray(R.array.friends_list);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 

@@ -141,7 +141,9 @@ public class MarcoActivity extends AppCompatActivity {
     //recipients are stored as well
     public void onClickSendMarco(View view){
         boolean isPublic;
-        String userId = "12345";
+        //String userId = "12345";
+        String userId = LoginActivity.currentUser.getUserId();
+
         String message = ((EditText)findViewById(R.id.marcoText)).getText().toString();
         //Log.d("SendMarco", "Message: " + message);
 
