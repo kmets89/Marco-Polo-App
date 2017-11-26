@@ -29,13 +29,20 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.api.database.Database;
-import com.polo.marco.marcopoloapp.api.database.User;
+import com.polo.marco.marcopoloapp.firebase.models.User;
+//import com.polo.marco.marcopoloapp.api.database.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /*
@@ -57,6 +64,9 @@ public class LoginActivity extends AppCompatActivity implements
     private AccessTokenTracker accessTokenTracker;
 
     public static User currentUser = null;
+    public static String firebaseToken = null;
+
+    private DatabaseReference databaseUsers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +79,8 @@ public class LoginActivity extends AppCompatActivity implements
 
         LoginButton facebookLoginButton = (LoginButton) findViewById(R.id.facebook_login_button);
         facebookLoginButton.setReadPermissions(Arrays.asList("public_profile", "user_friends"));
+
+        databaseUsers = FirebaseDatabase.getInstance().getReference("users");
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -223,20 +235,20 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     private void handleFacebookSignInResult(String id, String name) {
-        boolean isInDatabase = isInDatabase(id);
-        Log.d(TAG, "User with ID Token:" + name + " logged in.");
-        Log.d(TAG, "User is in database: " + isInDatabase);
-        if (!isInDatabase) {
-            User new_user = new User(id, name, "Facebook", null,0,0, "");
-            currentUser = new_user;
-            Database.updateUser(new_user);
-        }else {
-            //Set the current user from the Databases information
-            User user = Database.getUser(id);
-            currentUser = user;
-            //Load all of the current users' friends information.
-            currentUser.friendsUserList = Database.getListOfFriends(user.getFriendsList());
-        }
+//        boolean isInDatabase = isInDatabase(id);
+//        Log.d(TAG, "User with ID Token:" + name + " logged in.");
+//        Log.d(TAG, "User is in database: " + isInDatabase);
+//        if (!isInDatabase) {
+//            User new_user = new User(id, name, "Facebook", null,0,0, "");
+//            currentUser = new_user;
+//            Database.updateUser(new_user);
+//        }else {
+//            //Set the current user from the Databases information
+//            User user = Database.getUser(id);
+//            currentUser = user;
+//            //Load all of the current users' friends information.
+//            currentUser.friendsUserList = Database.getListOfFriends(user.getFriendsList());
+//        }
 
         updateUI(true, name);
     }
@@ -244,67 +256,50 @@ public class LoginActivity extends AppCompatActivity implements
     private void handleGoogleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleGoogleSignInResult:" + result.isSuccess());
         if(result.isSuccess()) {
-//            Verify ID Token
-//            Code still in progress to verify ID Token via HTTPS on the Google servers
-
-//            GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
-//            Oauth2 oauth2 = new Oauth2.Builder(new NetHttpTransport(), new JacksonFactory(), credential).setApplicationName(
-//                    "Oauth2").build();
-//            Userinfoplus userinfo = oauth2.userinfo().get().execute();
-//            userinfo.toPrettyString();
-
-//            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
-//                    .setAudience(Collections.singletonList(CLIENT_ID))
-//                    // Or, if multiple clients access the backend:
-//                    //.setAudience(Arrays.asList(CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3))
-//                    .build();
-//
-//// (Receive idTokenString by HTTPS POST)
-//
-//            GoogleIdToken idToken = verifier.verify(idTokenString);
-//            if (idToken != null) {
-//                Payload payload = idToken.getPayload();
-//
-//                // Print user identifier
-//                String userId = payload.getSubject();
-//                System.out.println("User ID: " + userId);
-//
-//                // Get profile information from payload
-//                String email = payload.getEmail();
-//                boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
-//                String name = (String) payload.get("name");
-//                String pictureUrl = (String) payload.get("picture");
-//                String locale = (String) payload.get("locale");
-//                String familyName = (String) payload.get("family_name");
-//                String givenName = (String) payload.get("given_name");
-//
-//                // Use or store profile information
-//                // ...
-//
-//            } else {
-//                System.out.println("Invalid ID token.");
-//            }
-
-
             GoogleSignInAccount acct = result.getSignInAccount();
-            String id = acct.getId();
-            String name = acct.getDisplayName();
-            String imgUrl = acct.getPhotoUrl().toString();
+            final String id = acct.getId();
+            final String name = acct.getDisplayName();
+            final String imgUrl = acct.getPhotoUrl().toString();
 
-            boolean isInDatabase = isInDatabase(id);
-            Log.d(TAG, "User with ID Token:" + name + " logged in.");
-            Log.d(TAG, "User is in database: " + isInDatabase);
-            if (!isInDatabase) {
-                User new_user = new User(id, name, "Google", null, 0, 0, imgUrl);
-                currentUser = new_user;
-                Database.updateUser(new_user);
-            }else{
-                //Set the current user from the Databases information
-                User user = Database.getUser(id);
-                currentUser = user;
-                //Load all of the current users' friends information.
-                currentUser.friendsUserList = Database.getListOfFriends(user.getFriendsList());
-            }
+            databaseUsers.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User retrievedUser = dataSnapshot.getValue(User.class);
+                    if(retrievedUser != null){
+                        currentUser = retrievedUser;
+                        //If the firebasetoken is not null, it means it has been updated.
+                        //So we must update the users' token in the database.
+                        if(firebaseToken != null){
+                            currentUser.setFirebaseToken(firebaseToken);
+                            databaseUsers.child(id).setValue(currentUser);
+                        }
+                    }else{
+                        currentUser = new User(id, name, "Google", imgUrl, firebaseToken, new ArrayList<String>());
+                        databaseUsers.child(id).setValue(currentUser);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.d(TAG, databaseError.getDetails());
+                    Log.d(TAG, databaseError.getMessage());
+                }
+            });
+
+//            boolean isInDatabase = isInDatabase(id);
+//            Log.d(TAG, "User with ID Token:" + name + " logged in.");
+//            Log.d(TAG, "User is in database: " + isInDatabase);
+//            if (!isInDatabase) {
+//                User new_user = new User(id, name, "Google", null, 0, 0, imgUrl);
+//                currentUser = new_user;
+//                Database.updateUser(new_user);
+//            }else{
+//                //Set the current user from the Databases information
+//                User user = Database.getUser(id);
+//                currentUser = user;
+//                //Load all of the current users' friends information.
+//                currentUser.friendsUserList = Database.getListOfFriends(user.getFriendsList());
+//            }
 
             updateUI(true, name);
         } else {
@@ -340,12 +335,13 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     private boolean isInDatabase(String id) {
-        User user = Database.getUser(id);
-
-        if (user == null)
-            return false;
-        else
-            return true;
+//        User user = Database.getUser(id);
+//
+//        if (user == null)
+//            return false;
+//        else
+//            return true;
+        return true;
     }
 
 }

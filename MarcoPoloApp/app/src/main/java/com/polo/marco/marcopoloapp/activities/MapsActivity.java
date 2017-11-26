@@ -27,7 +27,7 @@ import android.widget.Toast;
 
 import com.facebook.login.Login;
 import com.polo.marco.marcopoloapp.api.database.Database;
-import com.polo.marco.marcopoloapp.api.database.User;
+//import com.polo.marco.marcopoloapp.api.database.User;
 import com.polo.marco.marcopoloapp.api.notifications.Notifications;
 import com.polo.marco.marcopoloapp.R;
 
@@ -44,6 +44,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.polo.marco.marcopoloapp.firebase.models.User;
 
 import java.util.ArrayList;
 
@@ -266,9 +267,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         //update User in DB
-        currentUser.setLatitude(location.getLatitude());
-        currentUser.setLongitude(location.getLongitude());
-        Database.updateUser(currentUser);
+//        currentUser.setLatitude(location.getLatitude());
+//        currentUser.setLongitude(location.getLongitude());
+//        Database.updateUser(currentUser);
     }
 
     //This is where we handle the clicks for the drawer menu items

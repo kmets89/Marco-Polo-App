@@ -46,8 +46,10 @@ public class MarcoActivity extends AppCompatActivity {
     LinearLayout checkView;
     boolean friendsListExists = false;
 
-    double lat = LoginActivity.currentUser.getLatitude();
-    double lng = LoginActivity.currentUser.getLongitude();
+//    double lat = LoginActivity.currentUser.getLatitude();
+//    double lng = LoginActivity.currentUser.getLongitude();
+    double lat = 0.0;
+    double lng = 0.0;
 
     @Override
     //Opens a popup window for entering and storing Marco information.
@@ -56,10 +58,11 @@ public class MarcoActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        friendsList = new String[LoginActivity.currentUser.friendsUserList.size()];
-        for(int i = 0; i < friendsList.length; i++){
-            friendsList[i] = LoginActivity.currentUser.friendsUserList.get(i).getName();
-        }
+        friendsList = new String[0];
+//        friendsList = new String[LoginActivity.currentUser.friendsUserList.size()];
+//        for(int i = 0; i < friendsList.length; i++){
+//            friendsList[i] = LoginActivity.currentUser.friendsUserList.get(i).getName();
+//        }
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_marco);
