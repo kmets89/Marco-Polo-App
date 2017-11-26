@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.api.database.Database;
 import com.polo.marco.marcopoloapp.api.database.Marco;
+import com.polo.marco.marcopoloapp.api.database.User;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -45,8 +46,8 @@ public class MarcoActivity extends AppCompatActivity {
     LinearLayout checkView;
     boolean friendsListExists = false;
 
-    Bundle extras;
-    double lat, lng;
+    double lat = LoginActivity.currentUser.getLatitude();
+    double lng = LoginActivity.currentUser.getLongitude();
 
     @Override
     //Opens a popup window for entering and storing Marco information.
@@ -55,8 +56,6 @@ public class MarcoActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        //Here we need to grab the actual friendsList from the DB
-        //friendsList = new String [] {"One", "Two", "Three"};
         friendsList = new String[LoginActivity.currentUser.friendsUserList.size()];
         for(int i = 0; i < friendsList.length; i++){
             friendsList[i] = LoginActivity.currentUser.friendsUserList.get(i).getName();
@@ -65,11 +64,6 @@ public class MarcoActivity extends AppCompatActivity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_marco);
         checkView = (LinearLayout) findViewById(R.id.check_layout);
-
-        //pull user's location from main activity
-        extras = getIntent().getExtras();
-        lat = extras.getDouble("userLatitude");
-        lng = extras.getDouble("userLongitude");
 
         publicSwitch = (Switch) findViewById(R.id.switch_public);
         setWinSize(winWidth, publicHeight);
@@ -80,12 +74,16 @@ public class MarcoActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    Toast.makeText(getApplicationContext(), "PRIVATE", Toast.LENGTH_LONG).show();
                     setWinSize(winWidth, privateHeight);
                     findViewById(R.id.textView1).setVisibility(View.VISIBLE);
 
                     //create checklist from FriendsList and add to view
-                    //TODO: add error checking for people with no friends :(
+                    if (friendsList.length == 0){
+                        showAlert(getResources().getString(R.string.empty_friends_list));
+                        publicSwitch.setChecked(false);
+                        findViewById(R.id.textView1).setVisibility(View.GONE);
+                        setWinSize(winWidth, publicHeight);
+                    }
                     if (!friendsListExists) {
                         for (int i = 0; i < friendsList.length; i++) {
                             checkBox = new CheckBox(MarcoActivity.this);
@@ -98,7 +96,6 @@ public class MarcoActivity extends AppCompatActivity {
                         }
                     }
                     else {
-                        checkDuplicates();
                         for (int i = 0; i < friendsList.length; i++)
                             findViewById(i).setVisibility(View.VISIBLE);
                     }
@@ -106,16 +103,16 @@ public class MarcoActivity extends AppCompatActivity {
                 else{
                     for (int j = 0; j < friendsList.length; j++)
                         findViewById(j).setVisibility(View.GONE);
+                    findViewById(R.id.textView1).setVisibility(View.GONE);
                     setWinSize(winWidth, publicHeight);
                 }
             }
         });
 
         Marco test = getMarco(LoginActivity.currentUser.getUserId());
-                    Toast.makeText(getApplicationContext(), "PUBLIC", Toast.LENGTH_LONG).show();
                     findViewById(R.id.textView1).setVisibility(View.GONE);
         if (test != null)
-            checkDuplicates();
+            showAlert(getResources().getString(R.string.duplicate_marco));
     }
 
     //Resize the activity window as a fraction of the default size
@@ -140,7 +137,6 @@ public class MarcoActivity extends AppCompatActivity {
 
     //Close the activity, not saving any data
     public void onClickCancelMarco(View view){
-        Toast.makeText(getApplicationContext(), "CANCEL", Toast.LENGTH_LONG).show();
         finish();
     }
 
@@ -150,19 +146,13 @@ public class MarcoActivity extends AppCompatActivity {
     //recipients are stored as well
     public void onClickSendMarco(View view){
         boolean isPublic;
-        //String userId = "12345";
         String userId = LoginActivity.currentUser.getUserId();
 
         String message = ((EditText)findViewById(R.id.marcoText)).getText().toString();
-        //Log.d("SendMarco", "Message: " + message);
 
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
         Date date = new Date();
         String currentDate = dateFormat.format(date);
-        //Log.d("SendMarco", "Date is: " + currentDate);
-
-        //Log.d("SendMarco", "Latitude is: " + lat);
-        //Log.d("SendMarco", "Longitude is: " + lng);
 
         if (publicSwitch.isChecked()){
             isPublic = false;
@@ -171,8 +161,6 @@ public class MarcoActivity extends AppCompatActivity {
                 if (((CheckBox)findViewById(i)).isChecked())
                     recv.add(((CheckBox)findViewById(i)).getText().toString());
             }
-            //Log.d("PrivateMarco", Integer.toString(recv.size()));
-            Toast.makeText(getApplicationContext(), "SENDPRIVATE", Toast.LENGTH_LONG).show();
             Marco privateMarco = new Marco(userId, message, currentDate, lat, lng, isPublic, recv);
             updateMarco(privateMarco);
         }
@@ -180,16 +168,14 @@ public class MarcoActivity extends AppCompatActivity {
             isPublic = true;
             Marco publicMarco = new Marco(userId, message, currentDate, lat, lng, isPublic);
             updateMarco(publicMarco);
-            Toast.makeText(getApplicationContext(), "SENDPUBLIC", Toast.LENGTH_LONG).show();
         }
         finish();
     }
 
-    public void checkDuplicates() {
+    public void showAlert(String message) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
-        alertDialogBuilder.setMessage("You already have a public Marco!\n"
-                + "Creating a new public Marco will overwrite it.");
+        alertDialogBuilder.setMessage(message);
 
         alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override

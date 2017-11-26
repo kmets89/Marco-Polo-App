@@ -25,6 +25,9 @@ import android.view.View;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.facebook.login.Login;
+import com.polo.marco.marcopoloapp.api.database.Database;
+import com.polo.marco.marcopoloapp.api.database.User;
 import com.polo.marco.marcopoloapp.api.notifications.Notifications;
 import com.polo.marco.marcopoloapp.R;
 
@@ -63,9 +66,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    //UI stuff
-    private Switch publicSwitch;
-    private String[] friendsList;
+    User currentUser = LoginActivity.currentUser;
 
     //test
     @Override
@@ -82,7 +83,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
@@ -96,14 +96,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //Function that's called when the marco button is clicked
     public void onClickBtnMarco(View view) {
         Intent intent = new Intent(this, MarcoActivity.class);
-        Bundle extras = new Bundle();
-        double lat = lastLocation.getLatitude();
-        double lng = lastLocation.getLongitude();
-        intent.putExtra("userLatitude", lat);
-        intent.putExtra("userLongitude", lng);
-        //extras.putDouble("userLatitude", 50);
-        //extras.putDouble("userLongitude", 50);
-        intent.putExtras(extras);
         startActivity(intent);
     }
 
@@ -272,6 +264,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (client != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
         }
+
+        //update User in DB
+        currentUser.setLatitude(location.getLatitude());
+        currentUser.setLongitude(location.getLongitude());
+        Database.updateUser(currentUser);
     }
 
     //This is where we handle the clicks for the drawer menu items
