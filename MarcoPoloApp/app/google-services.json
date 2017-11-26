@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "736384937236-qmoma523d7odptehf3116cg69v663idj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.polo.marco.marcopoloapp",
+            "certificate_hash": "fc1c70c84628cb458e868448362b1d53603dca16"
+          }
+        },
+        {
           "client_id": "736384937236-050u6thjceooelmlggv49lca7piri444.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
