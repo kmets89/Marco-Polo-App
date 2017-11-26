@@ -43,6 +43,12 @@
             android:label="@string/title_activity_maps"></activity>
 
         <activity
+            android:name=".activities.MarcoActivity"
+            android:label="Marco"
+            android:theme="@style/AppTheme.ScreenBelow"
+            android:windowSoftInputMode="adjustPan"></activity>
+
+        <activity
             android:name=".activities.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>

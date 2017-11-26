@@ -27,6 +27,7 @@ public class FriendsListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_list);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         listView = (ListView)findViewById(R.id.friendsListView);
         friends = LoginActivity.currentUser.friendsUserList;
@@ -60,5 +61,11 @@ public class FriendsListActivity extends AppCompatActivity {
 
             return itemView;
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
     }
 }

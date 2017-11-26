@@ -25,6 +25,9 @@ import android.view.View;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.facebook.login.Login;
+import com.polo.marco.marcopoloapp.api.database.Database;
+import com.polo.marco.marcopoloapp.api.database.User;
 import com.polo.marco.marcopoloapp.api.notifications.Notifications;
 import com.polo.marco.marcopoloapp.R;
 
@@ -54,8 +57,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private GoogleApiClient client;
     private LocationRequest locationRequest;
-    private Location lastLocation;
-    private Marker currentLocationMarker;
+    private Location lastLocation = null;
+    private Marker currentLocationMarker = null;
     public static final int REQUEST_LOCATION_CODE = 99;
 
     //Hamburger menu stuff
@@ -63,10 +66,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    //UI stuff
-    private Switch publicSwitch;
-    private boolean[] checkedItems;
-    ArrayList<Integer> mSelectedItems = new ArrayList<>();
+    User currentUser = LoginActivity.currentUser;
 
     //test
     @Override
@@ -81,16 +81,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
-        publicSwitch = (Switch) findViewById(R.id.switch_public);
-        if(LoginActivity.currentUser.friendsUserList == null){
-            checkedItems = new boolean[1];
-        }
-        else{
-            checkedItems = new boolean[LoginActivity.currentUser.friendsUserList.size()];
-        }
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
@@ -104,68 +95,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //Function that's called when the marco button is clicked
     public void onClickBtnMarco(View view) {
-        String[] friendsNames = new String[LoginActivity.currentUser.friendsUserList.size()];
-        for(int i = 0; i < friendsNames.length; i++){
-            friendsNames[i] = LoginActivity.currentUser.friendsUserList.get(i).getName();
-        }
-        //Begins building the Dialog
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
-        mBuilder.setTitle("Select your friends.");
-        mBuilder.setMultiChoiceItems(friendsNames, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
-            @Override
-            //Adds each checked friend to the arrayList "mSelectedItems".
-            public void onClick(DialogInterface dialog, int position, boolean isChecked) {
-                if (isChecked) {
-                    if (!mSelectedItems.contains(position)) {
-                        mSelectedItems.add(position);
-                    }
-                } else if (mSelectedItems.contains(position)) {
-                    mSelectedItems.remove(mSelectedItems.indexOf(position));
-                }
-            }
-        });
-        mBuilder.setCancelable(false);
-        mBuilder.setPositiveButton("Send!", new DialogInterface.OnClickListener() {
-            @Override
-            //This event listener calls the function which will sound out the Marco.
-            public void onClick(DialogInterface dialog, int position) {
-                SendMarco();
-            }
-        });
-        mBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            //Cancels the Marco
-            public void onClick(DialogInterface dialog, int position) {
-                dialog.dismiss();
-            }
-        });
-        mBuilder.setNeutralButton("Clear all", new DialogInterface.OnClickListener() {
-            @Override
-            //When "Clear all" is called, all the checkedItems are reset.
-            public void onClick(DialogInterface dialog, int position) {
-                for (int i = 0; i < checkedItems.length; i++) {
-                    checkedItems[i] = false;
-                    mSelectedItems.clear();
-                }
-            }
-        });
-        //creates and displays the Dialog.
-        AlertDialog mDialog = mBuilder.create();
-        mDialog.show();
-    }
-
-    public void SendMarco() {
-        Log.d("something", "marco button click");
-        boolean switchStatus = publicSwitch.isChecked();
-        Log.d("CRAP", "onClickBtnMarco: something");
-        //TODO: Write code to send out a public Marco.
-        if (switchStatus) {
-            Toast.makeText(this, "Sending a Public Marco!", Toast.LENGTH_SHORT).show();
-        }
-        //TODO: Write code to send out a private Marco.
-        else {
-            Toast.makeText(this, "Sending a Private Marco!", Toast.LENGTH_SHORT).show();
-        }
+        Intent intent = new Intent(this, MarcoActivity.class);
+        startActivity(intent);
     }
 
     //Handle action bar items only
@@ -333,6 +264,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (client != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
         }
+
+        //update User in DB
+        currentUser.setLatitude(location.getLatitude());
+        currentUser.setLongitude(location.getLongitude());
+        Database.updateUser(currentUser);
     }
 
     //This is where we handle the clicks for the drawer menu items

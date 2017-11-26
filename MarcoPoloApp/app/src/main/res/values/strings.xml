@@ -72,4 +72,8 @@
     <!--Web Application Client ID for authenticating with Google-->
     <string name="server_client_id">736384937236-g8i7jp2e64icddv79grql1haosjkbhd0.apps.googleusercontent.com</string>
 
+    <!--Error Handling-->
+    <string name="duplicate_marco">You already have a public Marco!\nCreating a new public Marco will overwrite it.</string>
+    <string name="empty_friends_list">Your friends list is empty.\nTry sending a public marco!</string>
+
 </resources>

@@ -1,6 +1,7 @@
 package com.polo.marco.marcopoloapp.api.database.tasks;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapperConfig;
 import com.polo.marco.marcopoloapp.api.database.Database;
@@ -31,9 +32,11 @@ public class LoadBatchUsersTask extends AsyncTask<String, Void, List<User>> {
         Map<String, List<Object>> batchResults = Database.mapper.batchLoad(usersToGet, DynamoDBMapperConfig.DEFAULT);
         ArrayList<User> returnedUsers = new ArrayList<>();
         Object[] returned = batchResults.values().toArray();
-        LinkedList list = (LinkedList)returned[0];
-        for(int i = 0; i < list.size(); i++){
-            returnedUsers.add((User)list.get(i));
+        if (returned.length > 0){
+            LinkedList list = (LinkedList) returned[0];
+            for (int i = 0; i < list.size(); i++) {
+                returnedUsers.add((User) list.get(i));
+            }
         }
 
         return returnedUsers;
