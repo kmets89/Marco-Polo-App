@@ -154,12 +154,12 @@ public class LoginActivity extends AppCompatActivity implements
 
     }
 
-    public GoogleApiClient getGoogleApiClient(){
+    public GoogleApiClient getGoogleApiClient() {
         return mGoogleApiClient;
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
 
         //  Try to silently sign into Google. If the user is already logged into the app, then the Maps Activity
@@ -187,7 +187,10 @@ public class LoginActivity extends AppCompatActivity implements
     //  Login with Facebook Token
     private void updateWithToken(AccessToken currentAccessToken) {
         if (currentAccessToken != null) {
-            handleFacebookSignInResult(currentAccessToken.getUserId(), "");
+            currentUser = Database.getUser(currentAccessToken.getUserId());
+            Log.d(TAG, "waht");
+
+            updateUI(true, "");
         }
     }
 
@@ -227,10 +230,11 @@ public class LoginActivity extends AppCompatActivity implements
         Log.d(TAG, "User with ID Token:" + name + " logged in.");
         Log.d(TAG, "User is in database: " + isInDatabase);
         if (!isInDatabase) {
-            User new_user = new User(id, name, "Facebook", null,0,0, "");
+            Log.d(TAG, "???: " + name);
+            User new_user = new User(id, name, "Facebook", null, 0, 0, "http://graph.facebook.com/" + id + "/picture?type=square");
             currentUser = new_user;
             Database.updateUser(new_user);
-        }else {
+        } else {
             //Set the current user from the Databases information
             User user = Database.getUser(id);
             currentUser = user;
@@ -243,7 +247,7 @@ public class LoginActivity extends AppCompatActivity implements
 
     private void handleGoogleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleGoogleSignInResult:" + result.isSuccess());
-        if(result.isSuccess()) {
+        if (result.isSuccess()) {
 //            Verify ID Token
 //            Code still in progress to verify ID Token via HTTPS on the Google servers
 
@@ -298,7 +302,7 @@ public class LoginActivity extends AppCompatActivity implements
                 User new_user = new User(id, name, "Google", null, 0, 0, imgUrl);
                 currentUser = new_user;
                 Database.updateUser(new_user);
-            }else{
+            } else {
                 //Set the current user from the Databases information
                 User user = Database.getUser(id);
                 currentUser = user;
@@ -320,21 +324,24 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     private void updateUI(boolean signedIn, String name) {
-        if (signedIn && name.length() > 0) {
+        if (signedIn) {
             // Place user info into shared preferences
-            SharedPreferences sharedPref = this.getSharedPreferences("com.polo.marco.app", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putString("Current_User_Name", name).apply();
+
+            if (name.length() > 0) {
+                SharedPreferences sharedPref = this.getSharedPreferences("com.polo.marco.app", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("Current_User_Name", name).apply();
+            }
 
             Intent intent = new Intent(this, SplashActivity.class);
             intent.putExtra("loggingIn", true);
             startActivity(intent);
             this.finish();
 
-            Toast welcomeToast = Toast.makeText(getApplicationContext(), "Welcome " + name + "!", Toast.LENGTH_LONG);
-
-//            welcomeToast.setGravity(Gravity.CENTER, 0, 0);
-            welcomeToast.show();
+            if (name.length() > 0) {
+                Toast welcomeToast = Toast.makeText(getApplicationContext(), "Welcome " + name + "!", Toast.LENGTH_LONG);
+                welcomeToast.show();
+            }
         }
         // Else, keep the UI the same
     }
