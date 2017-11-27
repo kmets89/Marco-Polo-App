@@ -49,14 +49,7 @@ public class User {
         this.email = email;
     }
 
-    public List<User> getFriendsUserList() {
-        return friendsUserList;
-    }
-
-    public void setFriendsUserList(List<User> friendsUserList) {
-        this.friendsUserList = friendsUserList;
-    }
-
+    @DynamoDBAttribute(attributeName = "email")
     public String getEmail() {
         return email;
     }
