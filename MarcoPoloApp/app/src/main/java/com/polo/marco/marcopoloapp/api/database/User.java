@@ -58,7 +58,7 @@ public class User {
         this.email = email;
     }
 
-    public User(String userId, String name) {
+    public User(String userId, String name, String imgUrl) {
         this.userId = userId;
         this.name = name;
         this.loginApiType = "";
@@ -67,7 +67,7 @@ public class User {
         }
         this.latitude = 0;
         this.longitude = 0;
-        this.imgUrl = "";
+        this.imgUrl = imgUrl;
     }
 
     public double getLatitude() {

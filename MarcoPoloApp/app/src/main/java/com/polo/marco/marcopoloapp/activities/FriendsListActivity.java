@@ -56,6 +56,7 @@ public class FriendsListActivity extends AppCompatActivity {
 
             TextView nameTextView = (TextView) itemView.findViewById(R.id.friendslist_user_name);
             ImageView profilePicView = (ImageView) itemView.findViewById(R.id.friendslist_profile_image);
+            Log.d("FriendListActivity", "img: " + currentFriend.getImgUrl());
             Picasso.with(FriendsListActivity.this).load(currentFriend.getImgUrl()).into(profilePicView);
             nameTextView.setText(currentFriend.getName());
 
