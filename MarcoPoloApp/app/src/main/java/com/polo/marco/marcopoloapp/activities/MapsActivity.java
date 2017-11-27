@@ -2,12 +2,15 @@ package com.polo.marco.marcopoloapp.activities;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.location.Location;
 import android.os.Build;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -25,6 +28,10 @@ import android.view.View;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ScanRequest;
+import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.facebook.login.Login;
 import com.polo.marco.marcopoloapp.api.database.Database;
 import com.polo.marco.marcopoloapp.api.database.User;
@@ -46,6 +53,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -59,7 +68,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationRequest locationRequest;
     private Location lastLocation = null;
     private Marker currentLocationMarker = null;
-    public static final int REQUEST_LOCATION_CODE = 99;
+    //public static final int REQUEST_LOCATION_CODE = 99;
+    //public static final int REQUEST_READ_CONTACTS = 98;
+    final private int PERMISSIONS_REQUEST_CODE = 124;
 
     //Hamburger menu stuff
     private NavigationView mDrawer;
@@ -91,6 +102,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        syncContacts();
     }
 
     //Function that's called when the marco button is clicked
@@ -147,7 +160,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case REQUEST_LOCATION_CODE:
+            case PERMISSIONS_REQUEST_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //permission is granted
                     if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -156,12 +169,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                         mMap.setMyLocationEnabled(true);
                     }
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED)
+                        syncContacts();
                 }
                 //permission is denied
                 else {
                     Toast.makeText(this, "Permission was Denied!", Toast.LENGTH_LONG).show();
                 }
-                return;
+                break;
         }
     }
 
@@ -218,8 +233,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    public boolean checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+    public void checkLocationPermission() {
+        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_CODE);
             } else {
@@ -228,7 +243,29 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return false;
         } else {
             return true;
+        }*/
+
+        List<String> permissionsNeeded = new ArrayList<String>();
+        final List<String> permissionsList = new ArrayList<String>();
+        if (!addPermission(permissionsList, Manifest.permission.ACCESS_FINE_LOCATION))
+            permissionsNeeded.add("android.permission.ACCESS_FINE_LOCATION");
+        if (!addPermission(permissionsList, Manifest.permission.READ_CONTACTS))
+            permissionsNeeded.add("android.permission.READ_CONTACTS");
+
+        if (permissionsNeeded.size() > 0)
+            ActivityCompat.requestPermissions(this,
+                    permissionsList.toArray(new String[permissionsList.size()]),
+                    PERMISSIONS_REQUEST_CODE);
+    }
+
+    private boolean addPermission(List<String> permissionsList, String permission) {
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            permissionsList.add(permission);
+            // Check for Rationale Option
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(this, permission))
+                return false;
         }
+        return true;
     }
 
     @Override
@@ -308,4 +345,41 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         return false;
     }
-}
+
+    public void syncContacts() {
+        User currentUser = LoginActivity.currentUser;
+
+        ContentResolver contentResolver = getContentResolver();
+        Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI,
+                null, null, null, null);
+        if (cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                String id = cursor.getString(
+                        cursor.getColumnIndex(ContactsContract.Contacts._ID));
+                String name = cursor.getString(
+                        cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                //Log.d("LOOK HERE", id + ": " + name);
+
+                Cursor emailCursor = contentResolver.query(
+                        ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                        null,
+                        ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
+                        new String[]{id}, null);
+                while (emailCursor.moveToNext()) {
+                    // This would allow you get several email addresses
+                    // if the email addresses were stored in an array
+                    String email = emailCursor.getString(
+                            emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+                    String emailType = emailCursor.getString(
+                            emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
+                    //Log.d("LOOK HERE", id + ": " + name + " " + email);
+                }
+                emailCursor.close();
+
+                }
+            }
+            cursor.close();
+        //do stuff
+        }
+    }
+

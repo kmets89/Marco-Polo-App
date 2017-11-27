@@ -1,6 +1,9 @@
 package com.polo.marco.marcopoloapp.activities;
 
+import android.content.ContentResolver;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -67,5 +70,22 @@ public class FriendsListActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp(){
         finish();
         return true;
+    }
+
+    public void syncContacts() {
+        ContentResolver contentResolver = getContentResolver();
+        Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI,
+                null, null, null, null);
+        if (cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                String id = cursor.getString(
+                        cursor.getColumnIndex(ContactsContract.Contacts._ID));
+                String name = cursor.getString(
+                        cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                Log.d("LOOK HERE", id + ": " + name);
+                //if (Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.com.polo.marco.marcopoloapp.activities.Contacts.HAS_PHONE_NUMBER))) > 0) {
+                //Query phone here.  Covered next
+            }
+        }
     }
 }

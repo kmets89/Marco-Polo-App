@@ -75,5 +75,6 @@
     <!--Error Handling-->
     <string name="duplicate_marco">You already have a public Marco!\nCreating a new public Marco will overwrite it.</string>
     <string name="empty_friends_list">Your friends list is empty.\nTry sending a public marco!</string>
+    <string name="empty_message">You have to enter a message!</string>
 
 </resources>
