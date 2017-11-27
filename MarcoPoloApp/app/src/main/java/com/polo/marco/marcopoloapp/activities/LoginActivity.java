@@ -264,7 +264,7 @@ public class LoginActivity extends AppCompatActivity implements
         Log.d(TAG, "User is in database: " + isInDatabase);
         if (!isInDatabase) {
             Log.d(TAG, "???: " + name);
-            User new_user = new User(id, name, "Facebook", new ArrayList<String>(), 0, 0, "http://graph.facebook.com/" + id + "/picture?type=square");
+            User new_user = new User(id, name, "Facebook", new ArrayList<String>(), 0, 0, "http://graph.facebook.com/" + id + "/picture?type=square", "");
             currentUser = new_user;
             Database.updateUser(new_user);
         } else {
@@ -332,7 +332,7 @@ public class LoginActivity extends AppCompatActivity implements
             Log.d(TAG, "User with ID Token:" + name + " logged in.");
             Log.d(TAG, "User is in database: " + isInDatabase);
             if (!isInDatabase) {
-                User new_user = new User(id, name, "Google", new ArrayList<String>(), 0, 0, imgUrl);
+                User new_user = new User(id, name, "Google", new ArrayList<String>(), 0, 0, imgUrl, "");
                 currentUser = new_user;
                 Database.updateUser(new_user);
             } else {
