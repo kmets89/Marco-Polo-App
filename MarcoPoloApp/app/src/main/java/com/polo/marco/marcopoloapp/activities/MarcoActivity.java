@@ -56,9 +56,9 @@ public class MarcoActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        friendsList = new String[LoginActivity.currentUser.friendsUserList.size()];
+        friendsList = new String[LoginActivity.currentUser.getFriendsList().size()];
         for(int i = 0; i < friendsList.length; i++){
-            friendsList[i] = LoginActivity.currentUser.friendsUserList.get(i).getName();
+            friendsList[i] = LoginActivity.currentUser.getFriendsList().get(i);
         }
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -149,10 +149,16 @@ public class MarcoActivity extends AppCompatActivity {
         String userId = LoginActivity.currentUser.getUserId();
 
         String message = ((EditText)findViewById(R.id.marcoText)).getText().toString();
+        if (message.equals("")){
+            showAlert(getResources().getString(R.string.empty_message));
+            return;
+        }
 
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
         Date date = new Date();
         String currentDate = dateFormat.format(date);
+        //expiration time set for 12 hours from current time, measured in seconds from Epoch
+        long expireTime = (System.currentTimeMillis() / 1000L) + 43200;
 
         if (publicSwitch.isChecked()){
             isPublic = false;
@@ -161,12 +167,14 @@ public class MarcoActivity extends AppCompatActivity {
                 if (((CheckBox)findViewById(i)).isChecked())
                     recv.add(((CheckBox)findViewById(i)).getText().toString());
             }
-            Marco privateMarco = new Marco(userId, message, currentDate, lat, lng, isPublic, recv);
+            Marco privateMarco = new Marco(
+                    userId, message, currentDate, expireTime, lat, lng, isPublic, recv);
             updateMarco(privateMarco);
         }
         else{
             isPublic = true;
-            Marco publicMarco = new Marco(userId, message, currentDate, lat, lng, isPublic);
+            Marco publicMarco = new Marco(
+                    userId, message, currentDate, expireTime, lat, lng, isPublic);
             updateMarco(publicMarco);
         }
         finish();

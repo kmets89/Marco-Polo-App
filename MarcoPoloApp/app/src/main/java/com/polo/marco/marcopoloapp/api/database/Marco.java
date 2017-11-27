@@ -15,6 +15,7 @@ public class Marco {
     private String userId;
     private String message;
     private String timestamp;
+    private long expires;
     private double latitude;
     private double longitude;
     private boolean isPublic;
@@ -31,6 +32,10 @@ public class Marco {
     @DynamoDBAttribute(attributeName = "timestamp")
     public String getTimestamp() {return timestamp;}
     public void setTimestamp(String t) {this.timestamp = t;}
+
+    @DynamoDBAttribute(attributeName = "expires")
+    public long getExpires() {return expires;}
+    public void setExpires(long e) {this.expires = e;}
 
     @DynamoDBAttribute(attributeName = "latitude")
     public double getLatitude() {return latitude;}
@@ -56,10 +61,11 @@ public class Marco {
     }
 
     //constructor for a public Marco
-    public Marco(String id, String m, String t, double lat, double lon, boolean p){
+    public Marco(String id, String m, String t, long e, double lat, double lon, boolean p){
         this.userId = id;
         this.message = m;
         this.timestamp = t;
+        this.expires = e;
         this.latitude = lat;
         this.longitude = lon;
         this.isPublic = p;
@@ -67,10 +73,11 @@ public class Marco {
     }
 
     //constructor for a private Marco
-    public Marco(String id, String m, String t, double lat, double lon, boolean p, List<String>recv){
+    public Marco(String id, String m, String t, long e, double lat, double lon, boolean p, List<String>recv){
         this.userId = id;
         this.message = m;
         this.timestamp = t;
+        this.expires = e;
         this.latitude = lat;
         this.longitude = lon;
         this.isPublic = p;
