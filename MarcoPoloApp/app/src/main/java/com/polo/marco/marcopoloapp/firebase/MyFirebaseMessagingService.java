@@ -34,12 +34,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.drawable.ic_launcher);
         builder.setContentTitle("You have received a Marco!");
-        builder.setContentText(payload.get("sender"));
+        builder.setContentText(payload.get("sender"))
+        .setAutoCancel(true);
+
+        String lat = payload.get("latitude");
+        String lng = payload.get("longitude");
 
         Intent resultIntent = new Intent(this, MapsActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putDouble("latitude", Double.parseDouble(payload.get("latitude")));
-        bundle.putDouble("longitude", Double.parseDouble(payload.get("longitude")));
+        bundle.putDouble("latitude", Double.parseDouble(lat));
+        bundle.putDouble("longitude", Double.parseDouble(lng));
         resultIntent.putExtras(bundle);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 

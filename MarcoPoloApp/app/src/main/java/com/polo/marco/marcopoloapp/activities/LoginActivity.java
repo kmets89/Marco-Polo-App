@@ -29,22 +29,15 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.polo.marco.marcopoloapp.R;
-import com.polo.marco.marcopoloapp.api.database.Database;
 import com.polo.marco.marcopoloapp.firebase.models.User;
 import com.polo.marco.marcopoloapp.firebase.tasks.LoadUserFromDbEvent;
-//import com.polo.marco.marcopoloapp.api.database.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /*
