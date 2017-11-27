@@ -95,6 +95,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //Function that's called when the marco button is clicked
     public void onClickBtnMarco(View view) {
+        if (LoginActivity.currentUser.friendsUserList == null || LoginActivity.currentUser.friendsUserList.size() <= 0) {
+            Toast.makeText(this, "You do not have any friends who use this app!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         Intent intent = new Intent(this, MarcoActivity.class);
         startActivity(intent);
     }
@@ -197,8 +202,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         getCurrentLocation();
-        LatLng latLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        if (lastLocation != null) {
+            LatLng latLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        }
 
         locationRequest = new LocationRequest();
 
@@ -210,11 +217,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LocationServices.FusedLocationApi.requestLocationUpdates(client, locationRequest, this);
         }
     }
+
     //Getting current location
     private void getCurrentLocation() {
         //Creating a location object
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-             lastLocation = LocationServices.FusedLocationApi.getLastLocation(client);
+            lastLocation = LocationServices.FusedLocationApi.getLastLocation(client);
         }
     }
 
@@ -300,7 +308,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             startActivity(intent);
             return true;
         }
-        if(menuItem.getItemId() == R.id.nav_settings){
+        if (menuItem.getItemId() == R.id.nav_settings) {
             intent = new Intent(this, SettingsActivity.class);
             mDrawerLayout.closeDrawer(GravityCompat.START);
             startActivity(intent);

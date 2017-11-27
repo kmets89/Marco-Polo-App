@@ -18,6 +18,8 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
@@ -33,9 +35,11 @@ import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.api.database.Database;
 import com.polo.marco.marcopoloapp.api.database.User;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /*
@@ -188,9 +192,38 @@ public class LoginActivity extends AppCompatActivity implements
     private void updateWithToken(AccessToken currentAccessToken) {
         if (currentAccessToken != null) {
             currentUser = Database.getUser(currentAccessToken.getUserId());
-            Log.d(TAG, "waht");
 
-            updateUI(true, "");
+            if (currentUser != null) {
+                new GraphRequest(AccessToken.getCurrentAccessToken(), "me/friends/", null, HttpMethod.GET,
+                        new GraphRequest.Callback() {
+                            public void onCompleted(GraphResponse response) {
+                                if (response != null && response.getJSONObject() != null) {
+                                    try {
+                                        JSONArray data = (JSONArray) response.getJSONObject().get("data");
+                                        currentUser.friendsUserList = new ArrayList<User>();
+                                        currentUser.setFriendsList(new ArrayList<String>());
+
+
+                                        for (int i = 0; i < data.length(); i++) {
+                                            currentUser.friendsUserList.add(new User(((JSONObject) data.get(i)).getString("id"), ((JSONObject) data.get(i)).getString("name")));
+                                            currentUser.getFriendsList().add(((JSONObject) data.get(i)).getString("id"));
+
+                                            Log.d(TAG, "Friend" + i + ": " + currentUser.friendsUserList.get(i).getName());
+                                        }
+
+                                        Database.updateUser(currentUser);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+                ).executeAsync();
+
+                updateUI(true, "");
+            } else {
+                LoginManager.getInstance().logOut();
+            }
         }
     }
 
@@ -231,7 +264,7 @@ public class LoginActivity extends AppCompatActivity implements
         Log.d(TAG, "User is in database: " + isInDatabase);
         if (!isInDatabase) {
             Log.d(TAG, "???: " + name);
-            User new_user = new User(id, name, "Facebook", null, 0, 0, "http://graph.facebook.com/" + id + "/picture?type=square");
+            User new_user = new User(id, name, "Facebook", new ArrayList<String>(), 0, 0, "http://graph.facebook.com/" + id + "/picture?type=square");
             currentUser = new_user;
             Database.updateUser(new_user);
         } else {
@@ -299,7 +332,7 @@ public class LoginActivity extends AppCompatActivity implements
             Log.d(TAG, "User with ID Token:" + name + " logged in.");
             Log.d(TAG, "User is in database: " + isInDatabase);
             if (!isInDatabase) {
-                User new_user = new User(id, name, "Google", null, 0, 0, imgUrl);
+                User new_user = new User(id, name, "Google", new ArrayList<String>(), 0, 0, imgUrl);
                 currentUser = new_user;
                 Database.updateUser(new_user);
             } else {
