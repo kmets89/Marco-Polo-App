@@ -57,7 +57,7 @@ public class SettingsActivity extends AppCompatActivity {
         Picasso.with(SettingsActivity.this).load(service).into(serviceLoggedInAs);
 
         TextView emailTextView = (TextView) findViewById(R.id.settings_user_email);
-        emailTextView.setText("");
+        emailTextView.setText(user.getEmail());
 
         //Have sign in initialization again to be able to disconnect and properly sign out
         // There might be a better way to do this

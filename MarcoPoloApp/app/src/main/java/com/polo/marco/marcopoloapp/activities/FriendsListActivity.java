@@ -32,20 +32,21 @@ public class FriendsListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_friends_list);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        listView = (ListView)findViewById(R.id.friendsListView);
+        listView = (ListView) findViewById(R.id.friendsListView);
         friends = LoginActivity.currentUser.friendsUserList;
-        if(friends == null || friends.size() == 0){
+        if (friends == null || friends.size() == 0) {
             Toast.makeText(this, "You don't seem to have any friends!", Toast.LENGTH_LONG).show();
-        }else{
+        } else {
             friends = LoginActivity.currentUser.friendsUserList;
             ArrayAdapter<User> adaptor = new MyListAdaptor();
             listView.setAdapter(adaptor);
         }
     }
 
-    private class MyListAdaptor extends ArrayAdapter<User>
-    {
-        public MyListAdaptor() { super(FriendsListActivity.this, R.layout.friends_list_layout, friends);}
+    private class MyListAdaptor extends ArrayAdapter<User> {
+        public MyListAdaptor() {
+            super(FriendsListActivity.this, R.layout.friends_list_layout, friends);
+        }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -67,11 +68,12 @@ public class FriendsListActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onSupportNavigateUp(){
+    public boolean onSupportNavigateUp() {
         finish();
         return true;
     }
 
+/**
     public void syncContacts() {
         ContentResolver contentResolver = getContentResolver();
         Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI,
@@ -88,4 +90,4 @@ public class FriendsListActivity extends AppCompatActivity {
             }
         }
     }
-}
+*/}

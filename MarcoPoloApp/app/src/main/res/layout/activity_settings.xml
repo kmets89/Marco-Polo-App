@@ -54,6 +54,7 @@
         android:layout_below="@+id/settings_logged_in_as"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="37dp"
-        android:text="TextView" />
+        android:text="TextView"
+        android:textSize="14sp" />
 
 </RelativeLayout>
