@@ -67,8 +67,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    User currentUser = LoginActivity.currentUser;
-
     //test
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -266,10 +264,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
         }
 
+        User currentUser = LoginActivity.currentUser;
         //update User in DB
-//        currentUser.setLatitude(location.getLatitude());
-//        currentUser.setLongitude(location.getLongitude());
-//        Database.updateUser(currentUser);
+        if(currentUser != null){
+            currentUser.setLatitude(location.getLatitude());
+            currentUser.setLongitude(location.getLongitude());
+        }
+        //Database.updateUser(currentUser);
     }
 
     //This is where we handle the clicks for the drawer menu items

@@ -29,6 +29,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,6 +38,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.api.database.Database;
 import com.polo.marco.marcopoloapp.firebase.models.User;
+import com.polo.marco.marcopoloapp.firebase.tasks.LoadUserFromDbEvent;
 //import com.polo.marco.marcopoloapp.api.database.User;
 
 import org.json.JSONException;
@@ -261,30 +263,52 @@ public class LoginActivity extends AppCompatActivity implements
             final String name = acct.getDisplayName();
             final String imgUrl = acct.getPhotoUrl().toString();
 
-            databaseUsers.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    User retrievedUser = dataSnapshot.getValue(User.class);
-                    if(retrievedUser != null){
-                        currentUser = retrievedUser;
-                        //If the firebasetoken is not null, it means it has been updated.
-                        //So we must update the users' token in the database.
-                        if(firebaseToken != null){
-                            currentUser.setFirebaseToken(firebaseToken);
-                            databaseUsers.child(id).setValue(currentUser);
-                        }
-                    }else{
-                        currentUser = new User(id, name, "Google", imgUrl, firebaseToken, new ArrayList<String>());
-                        databaseUsers.child(id).setValue(currentUser);
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.d(TAG, databaseError.getDetails());
-                    Log.d(TAG, databaseError.getMessage());
-                }
-            });
+            databaseUsers.child(id).addListenerForSingleValueEvent(
+                    new LoadUserFromDbEvent(databaseUsers, id, name, "Google", imgUrl)
+            );
+//            databaseUsers.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//                    User retrievedUser = dataSnapshot.getValue(User.class);
+//                    if(retrievedUser != null){
+//                        currentUser = retrievedUser;
+//                        currentUser.friendsList = new ArrayList<User>();
+//                        //If the firebasetoken is not null, it means it has been updated.
+//                        //So we must update the users' token in the database.
+//                        if(firebaseToken != null){
+//                            currentUser.setFirebaseToken(firebaseToken);
+//                            databaseUsers.child(id).setValue(currentUser);
+//                        }
+//                        if(currentUser.getFriendsListIds() != null){
+//                           for(int i = 0; i < currentUser.getFriendsListIds().size(); i++){
+//                               databaseUsers.child(currentUser.getFriendsListIds().get(i))
+//                                       .addListenerForSingleValueEvent(new ValueEventListener() {
+//                                           @Override
+//                                           public void onDataChange(DataSnapshot dataSnapshot) {
+//                                               User friend = dataSnapshot.getValue(User.class);
+//                                               currentUser.friendsList.add(friend);
+//                                           }
+//
+//                                           @Override
+//                                           public void onCancelled(DatabaseError databaseError) {
+//                                               Log.d(TAG, databaseError.getDetails());
+//                                               Log.d(TAG, databaseError.getMessage());
+//                                           }
+//                                       });
+//                           }
+//                        }
+//                    }else{
+//                        currentUser = new User(id, name, "Google", imgUrl, firebaseToken, new ArrayList<String>());
+//                        databaseUsers.child(id).setValue(currentUser);
+//                    }
+//                }
+//
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//                    Log.d(TAG, databaseError.getDetails());
+//                    Log.d(TAG, databaseError.getMessage());
+//                }
+//            });
 
 //            boolean isInDatabase = isInDatabase(id);
 //            Log.d(TAG, "User with ID Token:" + name + " logged in.");
