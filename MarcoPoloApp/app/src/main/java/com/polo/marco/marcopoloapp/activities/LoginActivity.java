@@ -18,6 +18,8 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
@@ -29,15 +31,20 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.firebase.models.User;
 import com.polo.marco.marcopoloapp.firebase.tasks.LoadUserFromDbEvent;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /*
@@ -73,7 +80,7 @@ public class LoginActivity extends AppCompatActivity implements
         findViewById(R.id.facebook_login_button).setOnClickListener(this);
 
         LoginButton facebookLoginButton = (LoginButton) findViewById(R.id.facebook_login_button);
-        facebookLoginButton.setReadPermissions(Arrays.asList("public_profile", "user_friends"));
+        facebookLoginButton.setReadPermissions(Arrays.asList("public_profile", "user_friends", "email"));
 
         databaseUsers = FirebaseDatabase.getInstance().getReference("users");
 
@@ -143,7 +150,7 @@ public class LoginActivity extends AppCompatActivity implements
                         });
 
                 Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,first_name,last_name");
+                parameters.putString("fields", "id,first_name,last_name,email");
                 request.setParameters(parameters);
                 request.executeAsync();
             }
@@ -161,12 +168,12 @@ public class LoginActivity extends AppCompatActivity implements
 
     }
 
-    public GoogleApiClient getGoogleApiClient(){
+    public GoogleApiClient getGoogleApiClient() {
         return mGoogleApiClient;
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
 
         //  Try to silently sign into Google. If the user is already logged into the app, then the Maps Activity
@@ -194,9 +201,67 @@ public class LoginActivity extends AppCompatActivity implements
     //  Login with Facebook Token
     private void updateWithToken(AccessToken currentAccessToken) {
         if (currentAccessToken != null) {
-            handleFacebookSignInResult(currentAccessToken.getUserId(), "");
+            //currentUser = Database.getUser(currentAccessToken.getUserId());
+            databaseUsers.child(currentAccessToken.getUserId())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            User retrievedUser = dataSnapshot.getValue(User.class);
+                            currentUser = retrievedUser;
+
+                            if (currentUser != null) {
+                                new GraphRequest(AccessToken.getCurrentAccessToken(), "me/friends/", null, HttpMethod.GET,
+                                        new GraphRequest.Callback() {
+                                            public void onCompleted(GraphResponse response) {
+                                                if (response != null && response.getJSONObject() != null) {
+                                                    try {
+                                                        JSONArray data = (JSONArray) response.getJSONObject().get("data");
+                                                        currentUser.setFriendsList(new ArrayList<User>());
+                                                        currentUser.setFriendsListIds(new ArrayList<String>());
+
+                                                        for (int i = 0; i < data.length(); i++) {
+                                                            String id = ((JSONObject) data.get(i)).getString("id");
+                                                            databaseUsers.child(id)
+                                                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                        @Override
+                                                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                                                            User retrievedUser = dataSnapshot.getValue(User.class);
+                                                                            if (retrievedUser != null) {
+                                                                                currentUser.friendsList.add(retrievedUser);
+                                                                                currentUser.friendsListIds.add(retrievedUser.getUserId());
+                                                                                Log.d(TAG, retrievedUser.getName());
+                                                                                databaseUsers.child(currentUser.getUserId()).setValue(currentUser);
+                                                                            }
+                                                                        }
+
+                                                                        @Override
+                                                                        public void onCancelled(DatabaseError databaseError) {
+
+                                                                        }
+                                                                    });
+                                                        }
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            }
+                                        }
+                                ).executeAsync();
+
+                                updateUI(true, "");
+
+                            }/* else {
+                                handleFacebookSignInResult();
+                            }*/
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
         }
     }
+
 
     @Override
     public void onClick(View v) {
@@ -230,93 +295,24 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     private void handleFacebookSignInResult(String id, String name) {
-//        boolean isInDatabase = isInDatabase(id);
-//        Log.d(TAG, "User with ID Token:" + name + " logged in.");
-//        Log.d(TAG, "User is in database: " + isInDatabase);
-//        if (!isInDatabase) {
-//            User new_user = new User(id, name, "Facebook", null,0,0, "");
-//            currentUser = new_user;
-//            Database.updateUser(new_user);
-//        }else {
-//            //Set the current user from the Databases information
-//            User user = Database.getUser(id);
-//            currentUser = user;
-//            //Load all of the current users' friends information.
-//            currentUser.friendsUserList = Database.getListOfFriends(user.getFriendsList());
-//        }
-
+        databaseUsers.child(id).addListenerForSingleValueEvent(
+                new LoadUserFromDbEvent(databaseUsers, id, name, "facebook", "https://graph.facebook.com/" + id + "/picture?type=square", "place@holder.com")
+        );
         updateUI(true, name);
     }
 
     private void handleGoogleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleGoogleSignInResult:" + result.isSuccess());
-        if(result.isSuccess()) {
+        if (result.isSuccess()) {
             GoogleSignInAccount acct = result.getSignInAccount();
             final String id = acct.getId();
             final String name = acct.getDisplayName();
             final String imgUrl = acct.getPhotoUrl().toString();
+            final String email = acct.getEmail();
 
             databaseUsers.child(id).addListenerForSingleValueEvent(
-                    new LoadUserFromDbEvent(databaseUsers, id, name, "Google", imgUrl)
+                    new LoadUserFromDbEvent(databaseUsers, id, name, "Google", imgUrl, email)
             );
-//            databaseUsers.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(DataSnapshot dataSnapshot) {
-//                    User retrievedUser = dataSnapshot.getValue(User.class);
-//                    if(retrievedUser != null){
-//                        currentUser = retrievedUser;
-//                        currentUser.friendsList = new ArrayList<User>();
-//                        //If the firebasetoken is not null, it means it has been updated.
-//                        //So we must update the users' token in the database.
-//                        if(firebaseToken != null){
-//                            currentUser.setFirebaseToken(firebaseToken);
-//                            databaseUsers.child(id).setValue(currentUser);
-//                        }
-//                        if(currentUser.getFriendsListIds() != null){
-//                           for(int i = 0; i < currentUser.getFriendsListIds().size(); i++){
-//                               databaseUsers.child(currentUser.getFriendsListIds().get(i))
-//                                       .addListenerForSingleValueEvent(new ValueEventListener() {
-//                                           @Override
-//                                           public void onDataChange(DataSnapshot dataSnapshot) {
-//                                               User friend = dataSnapshot.getValue(User.class);
-//                                               currentUser.friendsList.add(friend);
-//                                           }
-//
-//                                           @Override
-//                                           public void onCancelled(DatabaseError databaseError) {
-//                                               Log.d(TAG, databaseError.getDetails());
-//                                               Log.d(TAG, databaseError.getMessage());
-//                                           }
-//                                       });
-//                           }
-//                        }
-//                    }else{
-//                        currentUser = new User(id, name, "Google", imgUrl, firebaseToken, new ArrayList<String>());
-//                        databaseUsers.child(id).setValue(currentUser);
-//                    }
-//                }
-//
-//                @Override
-//                public void onCancelled(DatabaseError databaseError) {
-//                    Log.d(TAG, databaseError.getDetails());
-//                    Log.d(TAG, databaseError.getMessage());
-//                }
-//            });
-
-//            boolean isInDatabase = isInDatabase(id);
-//            Log.d(TAG, "User with ID Token:" + name + " logged in.");
-//            Log.d(TAG, "User is in database: " + isInDatabase);
-//            if (!isInDatabase) {
-//                User new_user = new User(id, name, "Google", null, 0, 0, imgUrl);
-//                currentUser = new_user;
-//                Database.updateUser(new_user);
-//            }else{
-//                //Set the current user from the Databases information
-//                User user = Database.getUser(id);
-//                currentUser = user;
-//                //Load all of the current users' friends information.
-//                currentUser.friendsUserList = Database.getListOfFriends(user.getFriendsList());
-//            }
 
             updateUI(true, name);
         } else {
@@ -331,34 +327,27 @@ public class LoginActivity extends AppCompatActivity implements
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 
+
     private void updateUI(boolean signedIn, String name) {
-        if (signedIn && name.length() > 0) {
+        if (signedIn) {
             // Place user info into shared preferences
-            SharedPreferences sharedPref = this.getSharedPreferences("com.polo.marco.app", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putString("Current_User_Name", name).apply();
+
+            if (name.length() > 0) {
+                SharedPreferences sharedPref = this.getSharedPreferences("com.polo.marco.app", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("Current_User_Name", name).apply();
+            }
 
             Intent intent = new Intent(this, SplashActivity.class);
             intent.putExtra("loggingIn", true);
             startActivity(intent);
             this.finish();
 
-            Toast welcomeToast = Toast.makeText(getApplicationContext(), "Welcome " + name + "!", Toast.LENGTH_LONG);
-
-//            welcomeToast.setGravity(Gravity.CENTER, 0, 0);
-            welcomeToast.show();
+            if (name.length() > 0) {
+                Toast welcomeToast = Toast.makeText(getApplicationContext(), "Welcome " + name + "!", Toast.LENGTH_LONG);
+                welcomeToast.show();
+            }
         }
         // Else, keep the UI the same
     }
-
-    private boolean isInDatabase(String id) {
-//        User user = Database.getUser(id);
-//
-//        if (user == null)
-//            return false;
-//        else
-//            return true;
-        return true;
-    }
-
 }

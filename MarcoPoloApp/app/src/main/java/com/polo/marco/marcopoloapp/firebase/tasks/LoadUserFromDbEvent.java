@@ -22,16 +22,18 @@ public class LoadUserFromDbEvent implements ValueEventListener {
     private String id;
     private String loginApiType;
     private String imgUrl;
+    private String email;
     private DatabaseReference databaseUsers;
 
     private final String TAG = "lOAD_USER_FROM_FIREBASE";
 
-    public LoadUserFromDbEvent(DatabaseReference databaseUsers, String id, String name, String loginApiType, String imgUrl) {
+    public LoadUserFromDbEvent(DatabaseReference databaseUsers, String id, String name, String loginApiType, String imgUrl, String email) {
         this.name = name;
         this.id = id;
         this.loginApiType = loginApiType;
         this.imgUrl = imgUrl;
         this.databaseUsers = databaseUsers;
+        this.email = email;
     }
 
     @Override
@@ -65,7 +67,9 @@ public class LoadUserFromDbEvent implements ValueEventListener {
                 }
             }
         }else{
-            currentUser = new User(id, name, "Google", imgUrl, firebaseToken, new ArrayList<String>());
+            //     public User(String userId, String name, String loginApiType, List<User> friendsList, double latitude, double longitude, String imgUrl, String email, String firebaseToken) {
+
+            currentUser = new User(id, name, loginApiType, new ArrayList<String>(), imgUrl, email, firebaseToken);
             databaseUsers.child(id).setValue(currentUser);
         }
     }

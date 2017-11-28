@@ -3,6 +3,7 @@ package com.polo.marco.marcopoloapp.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,7 +16,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.polo.marco.marcopoloapp.R;
+import com.polo.marco.marcopoloapp.firebase.MyFirebaseInstanceIdService;
+
+import java.io.IOException;
 
 public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = "SettingsActivity";
@@ -60,6 +65,30 @@ public class SettingsActivity extends AppCompatActivity {
                 });
             }
         }
+        new AsyncTask<Void,Void,Void>()
+        {
+            @Override
+            protected Void doInBackground(Void... params)
+            {
+                {
+                    try
+                    {
+                        FirebaseInstanceId.getInstance().deleteInstanceId();
+                        MyFirebaseInstanceIdService thing = new MyFirebaseInstanceIdService();
+                        thing.onTokenRefresh();
+                    } catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+                return null;
+            }
+            @Override
+            protected void onPostExecute(Void result)
+            {
+                //call your activity where you want to land after log out
+            }
+        }.execute();
     }
 
     private void updateUI() {

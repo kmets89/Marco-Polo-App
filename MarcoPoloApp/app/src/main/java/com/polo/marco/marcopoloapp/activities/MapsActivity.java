@@ -55,7 +55,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         NavigationView.OnNavigationItemSelectedListener {
 
     //Google maps stuff
-    private GoogleMap mMap;
+    private static GoogleMap mMap;
     private GoogleApiClient client;
     private LocationRequest locationRequest;
     private Location lastLocation = null;
@@ -67,11 +67,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
+    //
+    public static boolean mIsInForegroundMode=false;
     //test
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        mIsInForegroundMode = true;
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawer = (NavigationView) findViewById(R.id.main_drawer);
@@ -90,6 +93,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mIsInForegroundMode = false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mIsInForegroundMode = true;
     }
 
     //Function that's called when the marco button is clicked
@@ -208,6 +224,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(client, locationRequest, this);
         }
+        Intent intent = this.getIntent();
+        Bundle extras = intent.getExtras();
+        if(!extras.isEmpty()){
+            boolean hasMarkerLocations = extras.containsKey("latitude");
+            if(hasMarkerLocations){
+                LatLng extraLatlng = new LatLng(extras.getDouble("latitude"), extras.getDouble("longitude"));
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(extraLatlng);
+                mMap.addMarker(markerOptions);
+            }
+        }
     }
     //Getting current location
     private void getCurrentLocation() {
@@ -309,5 +336,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return true;
         }
         return false;
+    }
+
+    public static void addMarcoMarker(double lat, double lng){
+        LatLng extraLatlng = new LatLng(lat, lng);
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(extraLatlng);
+        mMap.addMarker(markerOptions);
     }
 }
