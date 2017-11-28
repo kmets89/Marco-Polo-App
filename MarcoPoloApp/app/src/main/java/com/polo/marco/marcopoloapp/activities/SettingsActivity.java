@@ -1,13 +1,19 @@
 package com.polo.marco.marcopoloapp.activities;
 
+import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
@@ -16,11 +22,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.firebase.MyFirebaseInstanceIdService;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = "SettingsActivity";
@@ -28,6 +41,9 @@ public class SettingsActivity extends AppCompatActivity {
     private GoogleApiClient mGoogleApiClient;
 
     private String currentUser;
+
+    private DatabaseReference databaseUsers = FirebaseDatabase.getInstance().getReference("users");
+    private DatabaseReference databaseEmails = FirebaseDatabase.getInstance().getReference("emails");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +132,25 @@ public class SettingsActivity extends AppCompatActivity {
         showSyncDialog();
     }
 
+    public void testRead(String id){
+        databaseUsers.child(id).child("email").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (!snapshot.exists())
+                    Log.d("TESTING", "it doesnt exist!");
+                else
+                    Log.d("TESTING", "it does exist!" + snapshot.getValue());
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    Log.d("TESTING", child.toString());
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public void showSyncDialog(){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
@@ -124,7 +159,13 @@ public class SettingsActivity extends AppCompatActivity {
         alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
-                new syncContacts().execute();
+                //new syncContacts().execute();
+                testRead(LoginActivity.currentUser.getUserId());
+                //testRead("123");
+
+                //databaseUsers.child(LoginActivity.currentUser.getUserId()).child("friendsListIds").setValue("Jimbob");
+                databaseEmails.child(LoginActivity.currentUser.getEmail()).setValue("12345");
+
                 arg0.cancel();
             }
         });

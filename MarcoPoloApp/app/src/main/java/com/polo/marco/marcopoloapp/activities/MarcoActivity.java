@@ -3,12 +3,10 @@ package com.polo.marco.marcopoloapp.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -17,25 +15,18 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.polo.marco.marcopoloapp.R;
-import com.polo.marco.marcopoloapp.api.database.Database;
-import com.polo.marco.marcopoloapp.api.database.Marco;
-import com.polo.marco.marcopoloapp.api.database.User;
+import com.polo.marco.marcopoloapp.firebase.models.Marco;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static com.polo.marco.marcopoloapp.api.database.Database.getMarco;
-import static com.polo.marco.marcopoloapp.api.database.Database.updateMarco;
 
 public class MarcoActivity extends AppCompatActivity {
 
@@ -175,13 +166,11 @@ public class MarcoActivity extends AppCompatActivity {
             }
             Marco privateMarco = new Marco(userId, message, currentDate, lat, lng, isPublic, recv);
             databaseMarcos.child(userId).setValue(privateMarco);
-            //updateMarco(privateMarco);
         }
         else{
             isPublic = true;
             Marco publicMarco = new Marco(userId, message, currentDate, lat, lng, isPublic);
             databaseMarcos.child(userId).setValue(publicMarco);
-            //updateMarco(publicMarco);
         }
         finish();
     }

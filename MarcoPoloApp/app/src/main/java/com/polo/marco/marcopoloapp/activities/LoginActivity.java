@@ -46,6 +46,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /*
     Implemented by Joseph (Google) & Chase (Facebook)
@@ -350,14 +351,4 @@ public class LoginActivity extends AppCompatActivity implements
         }
         // Else, keep the UI the same
     }
-
-    private boolean isInDatabase(String id) {
-        User user = Database.getUser(id);
-
-        if (user == null)
-            return false;
-        else
-            return true;
-    }
-
 }

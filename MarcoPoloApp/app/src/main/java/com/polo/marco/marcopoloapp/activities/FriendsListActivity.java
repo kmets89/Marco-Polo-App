@@ -71,21 +71,4 @@ public class FriendsListActivity extends AppCompatActivity {
         finish();
         return true;
     }
-
-    public void syncContacts() {
-        ContentResolver contentResolver = getContentResolver();
-        Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI,
-                null, null, null, null);
-        if (cursor.getCount() > 0) {
-            while (cursor.moveToNext()) {
-                String id = cursor.getString(
-                        cursor.getColumnIndex(ContactsContract.Contacts._ID));
-                String name = cursor.getString(
-                        cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                Log.d("LOOK HERE", id + ": " + name);
-                //if (Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.com.polo.marco.marcopoloapp.activities.Contacts.HAS_PHONE_NUMBER))) > 0) {
-                //Query phone here.  Covered next
-            }
-        }
-    }
 }

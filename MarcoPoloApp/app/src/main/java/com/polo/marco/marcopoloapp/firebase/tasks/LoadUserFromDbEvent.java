@@ -10,6 +10,7 @@ import com.polo.marco.marcopoloapp.activities.LoginActivity;
 import com.polo.marco.marcopoloapp.firebase.models.User;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.polo.marco.marcopoloapp.activities.LoginActivity.firebaseToken;
 import static com.polo.marco.marcopoloapp.activities.LoginActivity.currentUser;
@@ -24,6 +25,8 @@ public class LoadUserFromDbEvent implements ValueEventListener {
     private String imgUrl;
     private String email;
     private DatabaseReference databaseUsers;
+    //changes
+    private List<String> friendslistIds;
 
     private final String TAG = "lOAD_USER_FROM_FIREBASE";
 
