@@ -4,6 +4,7 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBAttribut
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBIndexRangeKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBVersionAttribute;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,7 +18,7 @@ import java.util.List;
     * User object. We will be using this to store relevant data about the user.
     * Feel free to add new fields: these correlate to columns in DynamoDB.
     * */
-@DynamoDBTable(tableName = Database.DEFAULT_TABLE_NAME)
+@DynamoDBTable(tableName = "datastore")
 public class User {
     private String userId;
     private String name;
@@ -27,23 +28,45 @@ public class User {
     private double longitude;
     private String imgUrl;
     public List<User> friendsUserList;
+    public String email;
 
     public User() {
 
     }
 
-    public User(String userId, String name, String loginApiType, List<String> friendsList, double latitude, double longitude, String imgUrl) {
+    public User(String userId, String name, String loginApiType, List<String> friendsList, double latitude, double longitude, String imgUrl, String email) {
         this.userId = userId;
         this.name = name;
         this.loginApiType = loginApiType;
-        if(friendsList == null)
-        {
+        if (friendsList == null) {
             this.friendsList = new ArrayList<String>();
-        }else{
+        } else {
             this.friendsList = friendsList;
         }
         this.latitude = latitude;
         this.longitude = longitude;
+        this.imgUrl = imgUrl;
+        this.email = email;
+    }
+
+    @DynamoDBAttribute(attributeName = "email")
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public User(String userId, String name, String imgUrl) {
+        this.userId = userId;
+        this.name = name;
+        this.loginApiType = "";
+        if (friendsList == null) {
+            this.friendsList = new ArrayList<String>();
+        }
+        this.latitude = 0;
+        this.longitude = 0;
         this.imgUrl = imgUrl;
     }
 
@@ -77,7 +100,9 @@ public class User {
         return imgUrl;
     }
 
-    public void setImgUrl(String url) { this.imgUrl = url; }
+    public void setImgUrl(String url) {
+        this.imgUrl = url;
+    }
 
     @DynamoDBAttribute(attributeName = "friendsList")
     public List<String> getFriendsList() {
@@ -98,8 +123,7 @@ public class User {
         this.userId = userId;
     }
 
-    public boolean usingFacebook()
-    {
+    public boolean usingFacebook() {
         return loginApiType.equalsIgnoreCase("facebook");
     }
 

@@ -3,8 +3,8 @@
     <color name="white">#ffffff</color>
     <color name="seaBlue">#a0d3d3</color>
     <color name="grassGreen">#afca89</color>
-    <color name="colorAccent">#afca89</color>
-    <color name="streetGray">#e5e3df</color>
+    <color name="colorAccent">#FFCD5F</color>
+    <color name="streetGray">#eeebe2</color>
     <color name="MarcoBlue">#3d8f9e</color>
     <color name="colorPrimary">#3d8f9e</color>
     <color name="colorPrimaryDark">#2c6873</color>

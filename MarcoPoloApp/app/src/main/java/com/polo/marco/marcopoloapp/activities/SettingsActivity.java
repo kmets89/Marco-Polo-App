@@ -29,6 +29,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_settings);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //Have sign in initialization again to be able to disconnect and properly sign out
         // There might be a better way to do this
@@ -74,5 +75,11 @@ public class SettingsActivity extends AppCompatActivity {
         startActivity(intent);
 
         Toast.makeText(getApplicationContext(), "Goodbye " + currentUser + "!", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
     }
 }

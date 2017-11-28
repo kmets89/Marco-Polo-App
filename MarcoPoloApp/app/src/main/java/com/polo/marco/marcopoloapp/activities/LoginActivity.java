@@ -4,9 +4,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -18,6 +22,8 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
@@ -33,9 +39,13 @@ import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.api.database.Database;
 import com.polo.marco.marcopoloapp.api.database.User;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /*
@@ -154,12 +164,12 @@ public class LoginActivity extends AppCompatActivity implements
 
     }
 
-    public GoogleApiClient getGoogleApiClient(){
+    public GoogleApiClient getGoogleApiClient() {
         return mGoogleApiClient;
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
 
         //  Try to silently sign into Google. If the user is already logged into the app, then the Maps Activity
@@ -187,7 +197,43 @@ public class LoginActivity extends AppCompatActivity implements
     //  Login with Facebook Token
     private void updateWithToken(AccessToken currentAccessToken) {
         if (currentAccessToken != null) {
-            handleFacebookSignInResult(currentAccessToken.getUserId(), "");
+            currentUser = Database.getUser(currentAccessToken.getUserId());
+
+            if (currentUser != null) {
+                new GraphRequest(AccessToken.getCurrentAccessToken(), "me/friends/", null, HttpMethod.GET,
+                        new GraphRequest.Callback() {
+                            public void onCompleted(GraphResponse response) {
+                                if (response != null && response.getJSONObject() != null) {
+                                    try {
+                                        JSONArray data = (JSONArray) response.getJSONObject().get("data");
+                                        currentUser.friendsUserList = new ArrayList<User>();
+                                        currentUser.setFriendsList(new ArrayList<String>());
+
+
+                                        for (int i = 0; i < data.length(); i++) {
+                                            User friend = Database.getUser(((JSONObject) data.get(i)).getString("id"));
+                                            if (friend == null)
+                                                continue;
+
+                                            currentUser.friendsUserList.add(friend);
+                                            currentUser.getFriendsList().add(friend.getUserId());
+
+                                            Log.d(TAG, "Friend" + i + ": " + currentUser.friendsUserList.get(i).getName());
+                                        }
+
+                                        Database.updateUser(currentUser);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+                ).executeAsync();
+
+                updateUI(true, "");
+            } else {
+                LoginManager.getInstance().logOut();
+            }
         }
     }
 
@@ -227,10 +273,11 @@ public class LoginActivity extends AppCompatActivity implements
         Log.d(TAG, "User with ID Token:" + name + " logged in.");
         Log.d(TAG, "User is in database: " + isInDatabase);
         if (!isInDatabase) {
-            User new_user = new User(id, name, "Facebook", null,0,0, "");
+            Log.d(TAG, "???: " + name);
+            User new_user = new User(id, name, "Facebook", new ArrayList<String>(), 0, 0, "https://graph.facebook.com/" + id + "/picture?type=square", "");
             currentUser = new_user;
             Database.updateUser(new_user);
-        }else {
+        } else {
             //Set the current user from the Databases information
             User user = Database.getUser(id);
             currentUser = user;
@@ -243,7 +290,7 @@ public class LoginActivity extends AppCompatActivity implements
 
     private void handleGoogleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleGoogleSignInResult:" + result.isSuccess());
-        if(result.isSuccess()) {
+        if (result.isSuccess()) {
 //            Verify ID Token
 //            Code still in progress to verify ID Token via HTTPS on the Google servers
 
@@ -295,10 +342,10 @@ public class LoginActivity extends AppCompatActivity implements
             Log.d(TAG, "User with ID Token:" + name + " logged in.");
             Log.d(TAG, "User is in database: " + isInDatabase);
             if (!isInDatabase) {
-                User new_user = new User(id, name, "Google", null, 0, 0, imgUrl);
+                User new_user = new User(id, name, "Google", new ArrayList<String>(), 0, 0, imgUrl, "");
                 currentUser = new_user;
                 Database.updateUser(new_user);
-            }else{
+            } else {
                 //Set the current user from the Databases information
                 User user = Database.getUser(id);
                 currentUser = user;
@@ -320,21 +367,24 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     private void updateUI(boolean signedIn, String name) {
-        if (signedIn && name.length() > 0) {
+        if (signedIn) {
             // Place user info into shared preferences
-            SharedPreferences sharedPref = this.getSharedPreferences("com.polo.marco.app", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putString("Current_User_Name", name).apply();
+
+            if (name.length() > 0) {
+                SharedPreferences sharedPref = this.getSharedPreferences("com.polo.marco.app", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("Current_User_Name", name).apply();
+            }
 
             Intent intent = new Intent(this, SplashActivity.class);
             intent.putExtra("loggingIn", true);
             startActivity(intent);
             this.finish();
 
-            Toast welcomeToast = Toast.makeText(getApplicationContext(), "Welcome " + name + "!", Toast.LENGTH_LONG);
-
-//            welcomeToast.setGravity(Gravity.CENTER, 0, 0);
-            welcomeToast.show();
+            if (name.length() > 0) {
+                Toast welcomeToast = Toast.makeText(getApplicationContext(), "Welcome " + name + "!", Toast.LENGTH_LONG);
+                welcomeToast.show();
+            }
         }
         // Else, keep the UI the same
     }
