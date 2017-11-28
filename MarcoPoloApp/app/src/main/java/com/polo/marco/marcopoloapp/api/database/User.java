@@ -70,7 +70,6 @@ public class User {
     }
 
     @DynamoDBAttribute(attributeName = "email")
-    @DynamoDBIndexRangeKey(attributeName = "email")
     public String getEmail() {
         return email;
     }
@@ -125,7 +124,7 @@ public class User {
         return "[" + userId + "] " + name + ": LoginAPIType~" + loginApiType + ":friendsList~" + Arrays.toString(getFriendsList().toArray(new String[friendsList.size()]));
     }
 
-    /*public String queryIdByEmail(String email){
+    public String queryIdByEmail(String email){
         Map<String, String> attributeNames = new HashMap<String, String>();
         attributeNames.put("#email", "email");
 
@@ -141,5 +140,5 @@ public class User {
         for (int i = 0; i < users.size(); i++)
             Log.d("QUERY RESULT", users.get(i).getUserId());
         return "stuff";
-    }*/
+    }
 }

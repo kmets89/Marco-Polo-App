@@ -1,12 +1,19 @@
 package com.polo.marco.marcopoloapp.activities;
 
+import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
@@ -16,6 +23,12 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.polo.marco.marcopoloapp.R;
+import com.polo.marco.marcopoloapp.api.database.Database;
+import com.polo.marco.marcopoloapp.api.database.Email;
+import com.polo.marco.marcopoloapp.api.database.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = "SettingsActivity";
@@ -67,7 +80,7 @@ public class SettingsActivity extends AppCompatActivity {
         SharedPreferences sharedPref = this.getSharedPreferences("com.polo.marco.app", Context.MODE_PRIVATE);
         currentUser = sharedPref.getString("Current_User_Name", "");
 
-        Log.d(TAG, "Logging Out: " + currentUser);
+        Log.d(TAG, "Logging Out: " + LoginActivity.currentUser);
         Intent intent = new Intent(this, SplashActivity.class);
         //  finishAffinity() finishes all previous activities so that when the user is directed to the login screen
         //      after logging out, there are no previous intents that are still active
@@ -81,5 +94,104 @@ public class SettingsActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp(){
         finish();
         return true;
+    }
+
+    public void onClickSyncContacts(View view){
+        showSyncDialog();
+    }
+
+    public void showSyncDialog(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        alertDialogBuilder.setMessage(getResources().getString(R.string.sync_prompt));
+
+        alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                new syncContacts().execute();
+                arg0.cancel();
+            }
+        });
+
+        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //do nothing here
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    private class syncContacts extends AsyncTask<Void, Void, List<String>> {
+        //prompt the user to search for contacts from their phone
+
+        private ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected List<String> doInBackground(Void... params){
+            List<String> foundEmails = new ArrayList<String>();
+            //pull emails from each contact and see if that email exists in our DB
+            //Toast.makeText(SettingsActivity.this, "Syncing...", Toast.LENGTH_LONG).show();
+            ContentResolver contentResolver = getContentResolver();
+            Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI,
+                    null, null, null, null);
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    String id = cursor.getString(
+                            cursor.getColumnIndex(ContactsContract.Contacts._ID));
+                    String name = cursor.getString(
+                            cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+
+                    Cursor emailCursor = contentResolver.query(
+                            ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                            null,
+                            ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
+                            new String[]{id}, null);
+                    while (emailCursor.moveToNext()) {
+                        String email = emailCursor.getString(
+                                emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+                        String emailType = emailCursor.getString(
+                                emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
+                        Log.d("PARSING CONTACTS", id + " " + name + " " + email);
+                        foundEmails.add(email);
+                    }
+                    emailCursor.close();
+                }
+            }
+            cursor.close();
+            return foundEmails;
+        }
+
+        @Override
+        protected void onPostExecute(List<String> result) {
+            super.onPostExecute(result);
+            progressBar.setVisibility(View.GONE);
+
+            //List<String> friendsList = LoginActivity.currentUser.getFriendsList();
+
+            for (int i = 0; i < result.size(); i++)
+                Log.d("Results", result.get(i));
+                /*if (Database.getUserEmail(result.get(i)) != null)
+                    Log.d("CHECKING EMAILS INSIDE", "match on " + result.get(i));
+                    Email temp = Database.getUserEmail(result.get(i));
+                    Log.d("FOUND2", temp.getAssociatedId());
+                    Log.d("FOUND", temp.getEmail());
+                    String new_friend_id = Database.getUser(temp.getAssociatedId()).getUserId();
+                    friendsList.add(new_friend_id);
+                    Log.d("MATCHED USER", new_friend_id);
+            }
+            LoginActivity.currentUser.setFriendsList(friendsList);
+            for (int i = 0; i < friendsList.size(); i++)
+                Log.d("FRIENDS", friendsList.get(i));
+            Database.updateUser(LoginActivity.currentUser);*/
+        }
     }
 }

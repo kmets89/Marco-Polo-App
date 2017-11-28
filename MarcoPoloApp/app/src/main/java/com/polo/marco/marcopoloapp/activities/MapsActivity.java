@@ -34,6 +34,7 @@ import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.facebook.login.Login;
 import com.polo.marco.marcopoloapp.api.database.Database;
+import com.polo.marco.marcopoloapp.api.database.Email;
 import com.polo.marco.marcopoloapp.api.database.User;
 import com.polo.marco.marcopoloapp.api.notifications.Notifications;
 import com.polo.marco.marcopoloapp.R;
@@ -102,8 +103,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        syncContacts();
     }
 
     //Function that's called when the marco button is clicked
@@ -169,8 +168,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                         mMap.setMyLocationEnabled(true);
                     }
-                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED)
-                        syncContacts();
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+                        //SettingsActivity settingsActivity = new SettingsActivity();
+                        //settingsActivity.showSyncDialog();
+                    }
                 }
                 //permission is denied
                 else {
@@ -225,11 +226,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LocationServices.FusedLocationApi.requestLocationUpdates(client, locationRequest, this);
         }
     }
+
     //Getting current location
     private void getCurrentLocation() {
         //Creating a location object
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-             lastLocation = LocationServices.FusedLocationApi.getLastLocation(client);
+            lastLocation = LocationServices.FusedLocationApi.getLastLocation(client);
         }
     }
 
@@ -303,9 +305,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         //update User in DB
-        currentUser.setLatitude(location.getLatitude());
-        currentUser.setLongitude(location.getLongitude());
-        Database.updateUser(currentUser);
+        if (currentUser != null) {
+            currentUser.setLatitude(location.getLatitude());
+            currentUser.setLongitude(location.getLongitude());
+            Database.updateUser(currentUser);
+        }
     }
 
     //This is where we handle the clicks for the drawer menu items
@@ -337,7 +341,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             startActivity(intent);
             return true;
         }
-        if(menuItem.getItemId() == R.id.nav_settings){
+        if (menuItem.getItemId() == R.id.nav_settings) {
             intent = new Intent(this, SettingsActivity.class);
             mDrawerLayout.closeDrawer(GravityCompat.START);
             startActivity(intent);
@@ -345,41 +349,4 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         return false;
     }
-
-    public void syncContacts() {
-        User currentUser = LoginActivity.currentUser;
-
-        ContentResolver contentResolver = getContentResolver();
-        Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI,
-                null, null, null, null);
-        if (cursor.getCount() > 0) {
-            while (cursor.moveToNext()) {
-                String id = cursor.getString(
-                        cursor.getColumnIndex(ContactsContract.Contacts._ID));
-                String name = cursor.getString(
-                        cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                //Log.d("LOOK HERE", id + ": " + name);
-
-                Cursor emailCursor = contentResolver.query(
-                        ContactsContract.CommonDataKinds.Email.CONTENT_URI,
-                        null,
-                        ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
-                        new String[]{id}, null);
-                while (emailCursor.moveToNext()) {
-                    // This would allow you get several email addresses
-                    // if the email addresses were stored in an array
-                    String email = emailCursor.getString(
-                            emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
-                    String emailType = emailCursor.getString(
-                            emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
-                    //Log.d("LOOK HERE", id + ": " + name + " " + email);
-                }
-                emailCursor.close();
-
-                }
-            }
-            cursor.close();
-        //do stuff
-        }
-    }
-
+}

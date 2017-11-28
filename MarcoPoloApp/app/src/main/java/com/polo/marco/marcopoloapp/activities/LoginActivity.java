@@ -31,6 +31,7 @@ import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.api.database.Database;
+import com.polo.marco.marcopoloapp.api.database.Email;
 import com.polo.marco.marcopoloapp.api.database.User;
 
 import org.json.JSONException;
@@ -302,10 +303,14 @@ public class LoginActivity extends AppCompatActivity implements
                 User new_user = new User(id, name, email, "Google", temp, 0, 0, imgUrl);
                 currentUser = new_user;
                 Database.updateUser(new_user);
+                Email new_email = new Email(email, id);
+                Database.updateEmail(new_email);
             }else{
                 //Set the current user from the Databases information
                 User user = Database.getUser(id);
                 currentUser = user;
+                Email new_email = new Email(currentUser.getEmail(), currentUser.getUserId());
+                Database.updateEmail(new_email);
                 //Load all of the current users' friends information.
                 //currentUser.friendsUserList = Database.getListOfFriends(user.getFriendsList());
             }
@@ -351,5 +356,7 @@ public class LoginActivity extends AppCompatActivity implements
         else
             return true;
     }
+
+
 
 }
