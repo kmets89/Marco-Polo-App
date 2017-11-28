@@ -15,8 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.polo.marco.marcopoloapp.*;
-import com.polo.marco.marcopoloapp.api.database.Database;
-import com.polo.marco.marcopoloapp.api.database.User;
+import com.polo.marco.marcopoloapp.firebase.models.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -33,15 +32,15 @@ public class FriendsListActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         listView = (ListView)findViewById(R.id.friendsListView);
-        friends = LoginActivity.currentUser.friendsUserList;
+        friends = LoginActivity.currentUser.friendsList;
         if(friends == null || friends.size() == 0){
             Toast.makeText(this, "You don't seem to have any friends who use this app!", Toast.LENGTH_LONG).show();
         }else{
-            friends = LoginActivity.currentUser.friendsUserList;
+            friends = LoginActivity.currentUser.friendsList;
             ArrayAdapter<User> adaptor = new MyListAdaptor();
             listView.setAdapter(adaptor);
         }
-    }
+  }
 
     private class MyListAdaptor extends ArrayAdapter<User>
     {

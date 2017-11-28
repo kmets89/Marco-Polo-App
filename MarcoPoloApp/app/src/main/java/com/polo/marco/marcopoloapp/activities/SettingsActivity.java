@@ -1,19 +1,13 @@
 package com.polo.marco.marcopoloapp.activities;
 
-import android.app.AlertDialog;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
@@ -22,13 +16,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.polo.marco.marcopoloapp.R;
-import com.polo.marco.marcopoloapp.api.database.Database;
-import com.polo.marco.marcopoloapp.api.database.Email;
-import com.polo.marco.marcopoloapp.api.database.User;
+import com.polo.marco.marcopoloapp.firebase.MyFirebaseInstanceIdService;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 
 public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = "SettingsActivity";
@@ -73,6 +65,30 @@ public class SettingsActivity extends AppCompatActivity {
                 });
             }
         }
+        new AsyncTask<Void,Void,Void>()
+        {
+            @Override
+            protected Void doInBackground(Void... params)
+            {
+                {
+                    try
+                    {
+                        FirebaseInstanceId.getInstance().deleteInstanceId();
+                        MyFirebaseInstanceIdService thing = new MyFirebaseInstanceIdService();
+                        thing.onTokenRefresh();
+                    } catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+                return null;
+            }
+            @Override
+            protected void onPostExecute(Void result)
+            {
+                //call your activity where you want to land after log out
+            }
+        }.execute();
     }
 
     private void updateUI() {
@@ -80,7 +96,7 @@ public class SettingsActivity extends AppCompatActivity {
         SharedPreferences sharedPref = this.getSharedPreferences("com.polo.marco.app", Context.MODE_PRIVATE);
         currentUser = sharedPref.getString("Current_User_Name", "");
 
-        Log.d(TAG, "Logging Out: " + LoginActivity.currentUser);
+        Log.d(TAG, "Logging Out: " + currentUser);
         Intent intent = new Intent(this, SplashActivity.class);
         //  finishAffinity() finishes all previous activities so that when the user is directed to the login screen
         //      after logging out, there are no previous intents that are still active

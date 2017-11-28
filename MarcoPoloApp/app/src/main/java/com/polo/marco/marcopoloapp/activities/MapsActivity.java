@@ -2,15 +2,12 @@ package com.polo.marco.marcopoloapp.activities;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.location.Location;
 import android.os.Build;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -28,14 +25,9 @@ import android.view.View;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.ScanRequest;
-import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.facebook.login.Login;
 import com.polo.marco.marcopoloapp.api.database.Database;
-import com.polo.marco.marcopoloapp.api.database.Email;
-import com.polo.marco.marcopoloapp.api.database.User;
+//import com.polo.marco.marcopoloapp.api.database.User;
 import com.polo.marco.marcopoloapp.api.notifications.Notifications;
 import com.polo.marco.marcopoloapp.R;
 
@@ -52,10 +44,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.polo.marco.marcopoloapp.firebase.models.User;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -64,7 +55,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         NavigationView.OnNavigationItemSelectedListener {
 
     //Google maps stuff
-    private GoogleMap mMap;
+    private static GoogleMap mMap;
     private GoogleApiClient client;
     private LocationRequest locationRequest;
     private Location lastLocation = null;
@@ -78,13 +69,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    User currentUser = LoginActivity.currentUser;
-
+    //
+    public static boolean mIsInForegroundMode=false;
     //test
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        mIsInForegroundMode = true;
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawer = (NavigationView) findViewById(R.id.main_drawer);
@@ -105,13 +97,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
     }
 
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mIsInForegroundMode = false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mIsInForegroundMode = true;
+    }
+
     //Function that's called when the marco button is clicked
     public void onClickBtnMarco(View view) {
-        if (LoginActivity.currentUser.friendsUserList == null || LoginActivity.currentUser.friendsUserList.size() <= 0) {
-            Toast.makeText(this, "You do not have any friends who use this app!", Toast.LENGTH_LONG).show();
-            return;
-        }
-
         Intent intent = new Intent(this, MarcoActivity.class);
         startActivity(intent);
     }
@@ -232,8 +232,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(client, locationRequest, this);
         }
+        Intent intent = this.getIntent();
+        Bundle extras = intent.getExtras();
+        if(!extras.isEmpty()){
+            boolean hasMarkerLocations = extras.containsKey("latitude");
+            if(hasMarkerLocations){
+                LatLng extraLatlng = new LatLng(extras.getDouble("latitude"), extras.getDouble("longitude"));
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(extraLatlng);
+                mMap.addMarker(markerOptions);
+            }
+        }
     }
-
     //Getting current location
     private void getCurrentLocation() {
         //Creating a location object
@@ -311,12 +321,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
         }
 
+        User currentUser = LoginActivity.currentUser;
         //update User in DB
-        if (currentUser != null) {
-            currentUser.setLatitude(location.getLatitude());
-            currentUser.setLongitude(location.getLongitude());
-            Database.updateUser(currentUser);
-        }
+        currentUser.setLatitude(location.getLatitude());
+        currentUser.setLongitude(location.getLongitude());
+        Database.updateUser(currentUser);
     }
 
     //This is where we handle the clicks for the drawer menu items
@@ -355,5 +364,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return true;
         }
         return false;
+    }
+
+    public static void addMarcoMarker(double lat, double lng){
+        LatLng extraLatlng = new LatLng(lat, lng);
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(extraLatlng);
+        mMap.addMarker(markerOptions);
     }
 }

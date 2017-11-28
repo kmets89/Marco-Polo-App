@@ -21,6 +21,8 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.api.database.Database;
 import com.polo.marco.marcopoloapp.api.database.Marco;
@@ -40,7 +42,7 @@ public class MarcoActivity extends AppCompatActivity {
     private Switch publicSwitch;
     private final double winWidth = 0.8;
     private final double privateHeight = 0.8;
-    private final double publicHeight = 0.5;
+    private final double publicHeight = 0.4;
     private String[] friendsList;
     CheckBox checkBox;
     LinearLayout checkView;
@@ -49,6 +51,8 @@ public class MarcoActivity extends AppCompatActivity {
     double lat = LoginActivity.currentUser.getLatitude();
     double lng = LoginActivity.currentUser.getLongitude();
 
+    private DatabaseReference databaseMarcos;
+
     @Override
     //Opens a popup window for entering and storing Marco information.
     //Popup covers only a percentage of the screen with the previous view displayed underneath
@@ -56,9 +60,11 @@ public class MarcoActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        friendsList = new String[LoginActivity.currentUser.getFriendsList().size()];
+        databaseMarcos = FirebaseDatabase.getInstance().getReference("marcos");
+
+        friendsList = new String[LoginActivity.currentUser.friendsList.size()];
         for(int i = 0; i < friendsList.length; i++){
-            friendsList[i] = LoginActivity.currentUser.getFriendsList().get(i);
+            friendsList[i] = LoginActivity.currentUser.friendsList.get(i).getName();
         }
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -109,10 +115,10 @@ public class MarcoActivity extends AppCompatActivity {
             }
         });
 
-        Marco test = getMarco(LoginActivity.currentUser.getUserId());
-                    findViewById(R.id.textView1).setVisibility(View.GONE);
-        if (test != null)
-            showAlert(getResources().getString(R.string.duplicate_marco));
+//        Marco test = getMarco(LoginActivity.currentUser.getUserId());
+//                    findViewById(R.id.textView1).setVisibility(View.GONE);
+//        if (test != null)
+//            showAlert(getResources().getString(R.string.duplicate_marco));
     }
 
     //Resize the activity window as a fraction of the default size
@@ -165,17 +171,17 @@ public class MarcoActivity extends AppCompatActivity {
             List<String> recv = new ArrayList<String>();
             for (int i = 0; i < friendsList.length; i++){
                 if (((CheckBox)findViewById(i)).isChecked())
-                    recv.add(((CheckBox)findViewById(i)).getText().toString());
+                    recv.add(LoginActivity.currentUser.friendsList.get(i).getFirebaseToken());
             }
-            Marco privateMarco = new Marco(
-                    userId, message, currentDate, expireTime, lat, lng, isPublic, recv);
-            updateMarco(privateMarco);
+            Marco privateMarco = new Marco(userId, message, currentDate, lat, lng, isPublic, recv);
+            databaseMarcos.child(userId).setValue(privateMarco);
+            //updateMarco(privateMarco);
         }
         else{
             isPublic = true;
-            Marco publicMarco = new Marco(
-                    userId, message, currentDate, expireTime, lat, lng, isPublic);
-            updateMarco(publicMarco);
+            Marco publicMarco = new Marco(userId, message, currentDate, lat, lng, isPublic);
+            databaseMarcos.child(userId).setValue(publicMarco);
+            //updateMarco(publicMarco);
         }
         finish();
     }
