@@ -1,19 +1,13 @@
 package com.polo.marco.marcopoloapp.api.database;
 
-import android.util.Log;
-
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBAttribute;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBIndexRangeKey;
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Chase on 10/30/2017.
@@ -39,7 +33,7 @@ public class User {
 
     }
 
-    public User(String userId, String name, String email, String loginApiType, List<String> friendsList, double latitude, double longitude, String imgUrl) {
+    public User(String userId, String name, String loginApiType, List<String> friendsList, double latitude, double longitude, String imgUrl) {
         this.userId = userId;
         this.name = name;
         this.email = email;
@@ -58,6 +52,7 @@ public class User {
     public double getLatitude() {
         return latitude;
     }
+
     public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
@@ -65,6 +60,7 @@ public class User {
     public double getLongitude() {
         return longitude;
     }
+
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
@@ -107,8 +103,7 @@ public class User {
         this.userId = userId;
     }
 
-    public boolean usingFacebook()
-    {
+    public boolean usingFacebook() {
         return loginApiType.equalsIgnoreCase("facebook");
     }
 
@@ -116,29 +111,12 @@ public class User {
     public String getLoginApiType() {
         return loginApiType;
     }
+
     public void setLoginApiType(String loginApiType) {
         this.loginApiType = loginApiType;
     }
 
     public String toString() {
         return "[" + userId + "] " + name + ": LoginAPIType~" + loginApiType + ":friendsList~" + Arrays.toString(getFriendsList().toArray(new String[friendsList.size()]));
-    }
-
-    public String queryIdByEmail(String email){
-        Map<String, String> attributeNames = new HashMap<String, String>();
-        attributeNames.put("#email", "email");
-
-        Map<String, AttributeValue> attributeValues = new HashMap<String, AttributeValue>();
-        attributeValues.put(":is", new AttributeValue().withS(email));
-
-        DynamoDBScanExpression dynamoDBScanExpression = new DynamoDBScanExpression()
-                .withFilterExpression("#email = :is")
-                .withExpressionAttributeNames(attributeNames)
-                .withExpressionAttributeValues(attributeValues);
-
-        List<User> users = Database.getDynamoDBMapper().scan(User.class, dynamoDBScanExpression);
-        for (int i = 0; i < users.size(); i++)
-            Log.d("QUERY RESULT", users.get(i).getUserId());
-        return "stuff";
     }
 }

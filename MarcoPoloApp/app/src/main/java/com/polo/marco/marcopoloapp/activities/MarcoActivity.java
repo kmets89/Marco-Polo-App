@@ -40,7 +40,7 @@ public class MarcoActivity extends AppCompatActivity {
     private Switch publicSwitch;
     private final double winWidth = 0.8;
     private final double privateHeight = 0.8;
-    private final double publicHeight = 0.4;
+    private final double publicHeight = 0.5;
     private String[] friendsList;
     CheckBox checkBox;
     LinearLayout checkView;

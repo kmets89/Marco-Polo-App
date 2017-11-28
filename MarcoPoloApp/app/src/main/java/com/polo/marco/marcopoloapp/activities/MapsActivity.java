@@ -107,6 +107,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //Function that's called when the marco button is clicked
     public void onClickBtnMarco(View view) {
+        if (LoginActivity.currentUser.friendsUserList == null || LoginActivity.currentUser.friendsUserList.size() <= 0) {
+            Toast.makeText(this, "You do not have any friends who use this app!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         Intent intent = new Intent(this, MarcoActivity.class);
         startActivity(intent);
     }
@@ -213,8 +218,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         getCurrentLocation();
-        LatLng latLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        if (lastLocation != null) {
+            LatLng latLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        }
 
         locationRequest = new LocationRequest();
 

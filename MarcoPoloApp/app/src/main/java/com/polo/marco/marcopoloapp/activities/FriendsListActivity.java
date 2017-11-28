@@ -35,7 +35,7 @@ public class FriendsListActivity extends AppCompatActivity {
         listView = (ListView)findViewById(R.id.friendsListView);
         friends = LoginActivity.currentUser.friendsUserList;
         if(friends == null || friends.size() == 0){
-            Toast.makeText(this, "You dont seem to have any friends!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "You don't seem to have any friends who use this app!", Toast.LENGTH_LONG).show();
         }else{
             friends = LoginActivity.currentUser.friendsUserList;
             ArrayAdapter<User> adaptor = new MyListAdaptor();
@@ -59,6 +59,7 @@ public class FriendsListActivity extends AppCompatActivity {
 
             TextView nameTextView = (TextView) itemView.findViewById(R.id.friendslist_user_name);
             ImageView profilePicView = (ImageView) itemView.findViewById(R.id.friendslist_profile_image);
+            Log.d("FriendListActivity", "img: " + currentFriend.getImgUrl());
             Picasso.with(FriendsListActivity.this).load(currentFriend.getImgUrl()).into(profilePicView);
             nameTextView.setText(currentFriend.getName());
 
