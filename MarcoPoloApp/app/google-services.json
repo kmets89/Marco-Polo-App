@@ -1,9 +1,7 @@
 {
   "project_info": {
     "project_number": "736384937236",
-    "firebase_url": "https://marco-polo-app.firebaseio.com",
-    "project_id": "marco-polo-app",
-    "storage_bucket": "marco-polo-app.appspot.com"
+    "project_id": "marco-polo-app"
   },
   "client": [
     {
@@ -14,58 +12,6 @@
         }
       },
       "oauth_client": [
-        {
-          "client_id": "736384937236-qmoma523d7odptehf3116cg69v663idj.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.polo.marco.marcopoloapp",
-            "certificate_hash": "fc1c70c84628cb458e868448362b1d53603dca16"
-          }
-        },
-        {
-          "client_id": "736384937236-050u6thjceooelmlggv49lca7piri444.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.polo.marco.marcopoloapp",
-            "certificate_hash": "fab34cff2a3fdb094d315e4ecad4b144b68536e0"
-          }
-        },
-        {
-          "client_id": "736384937236-1da7led2rcqle9qb495lmpjefsno7luk.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.polo.marco.marcopoloapp",
-            "certificate_hash": "48d0e0c2c5d2073a3c5703a1974444ac29a3dc62"
-          }
-        },
-        {
-          "client_id": "736384937236-9542o6itn074creh1o93as4jat9sl4pi.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.polo.marco.marcopoloapp",
-            "certificate_hash": "66fe9c90e2d6930f9b9167e17f45f7c09e68be15"
-          }
-        },
-        {
-          "client_id": "736384937236-g47km7rm15j04lhuq0j6524na6b9ch9s.apps.googleusercontent.com",
-          "client_type": 3
-        },
-        {
-          "client_id": "736384937236-dm5e87o5krbtnpqn94q6gd043im24pi9.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.polo.marco.marcopoloapp",
-            "certificate_hash": "f152e7983aa889dc2ac4833997fad6890b5c06ea"
-          }
-        },
-        {
-          "client_id": "736384937236-95rjvtk5k1npbckl5g0d8qf30eq8uval.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.polo.marco.marcopoloapp",
-            "certificate_hash": "b1d5e771135f09a8caac489bc4b7e196bd5dc193"
-          }
-        },
         {
           "client_id": "736384937236-p30nh992t8dtdiqfgal972blqbjgk0nk.apps.googleusercontent.com",
           "client_type": 3
@@ -93,16 +39,11 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "736384937236-g47km7rm15j04lhuq0j6524na6b9ch9s.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
-          "status": 2
+          "status": 1
         }
       }
     }
