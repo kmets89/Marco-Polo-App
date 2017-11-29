@@ -25,8 +25,6 @@ public class LoadUserFromDbEvent implements ValueEventListener {
     private String imgUrl;
     private String email;
     private DatabaseReference databaseUsers;
-    //changes
-    private List<String> friendslistIds;
 
     private final String TAG = "lOAD_USER_FROM_FIREBASE";
 

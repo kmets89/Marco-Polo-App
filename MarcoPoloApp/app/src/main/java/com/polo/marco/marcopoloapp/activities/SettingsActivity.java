@@ -30,9 +30,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.firebase.MyFirebaseInstanceIdService;
+import com.polo.marco.marcopoloapp.firebase.models.User;
+import com.polo.marco.marcopoloapp.firebase.tasks.LoadUserFromDbEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -132,16 +135,23 @@ public class SettingsActivity extends AppCompatActivity {
         showSyncDialog();
     }
 
-    public void testRead(String id){
-        databaseUsers.child(id).child("email").addListenerForSingleValueEvent(new ValueEventListener() {
+    public void emailInDB (String email){
+        String emailKey = email.replace('.', ',');
+        databaseEmails.child(emailKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                if (!snapshot.exists())
+                if (!snapshot.exists()) {
                     Log.d("TESTING", "it doesnt exist!");
-                else
+                }
+                else {
                     Log.d("TESTING", "it does exist!" + snapshot.getValue());
-                for (DataSnapshot child : snapshot.getChildren()) {
-                    Log.d("TESTING", child.toString());
+                    Log.d("CHECKING FRIENDS LIST", LoginActivity.currentUser.friendsListIds.toString());
+                    if(!LoginActivity.currentUser.friendsListIds.contains(snapshot.getValue().toString())){
+                            LoginActivity.currentUser.friendsListIds.add(snapshot.getValue().toString());
+                            //databaseUsers.child(LoginActivity.currentUser.getUserId()).setValue(currentUser);
+                            //databaseUsers.child(LoginActivity.currentUser.getUserId()).child("friendsList").setValue(LoginActivity.currentUser.friendsList);
+                            databaseUsers.child(LoginActivity.currentUser.getUserId()).child("friendsListIds").setValue(LoginActivity.currentUser.friendsListIds);
+                        }
                 }
             }
             @Override
@@ -159,13 +169,7 @@ public class SettingsActivity extends AppCompatActivity {
         alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
-                //new syncContacts().execute();
-                testRead(LoginActivity.currentUser.getUserId());
-                //testRead("123");
-
-                //databaseUsers.child(LoginActivity.currentUser.getUserId()).child("friendsListIds").setValue("Jimbob");
-                databaseEmails.child(LoginActivity.currentUser.getEmail()).setValue("12345");
-
+                new syncContacts().execute();
                 arg0.cancel();
             }
         });
@@ -230,25 +234,12 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<String> result) {
             super.onPostExecute(result);
-            progressBar.setVisibility(View.GONE);
 
-            //List<String> friendsList = LoginActivity.currentUser.getFriendsList();
-
-            for (int i = 0; i < result.size(); i++)
+            for (int i = 0; i < result.size(); i++){
                 Log.d("Results", result.get(i));
-                /*if (Database.getUserEmail(result.get(i)) != null)
-                    Log.d("CHECKING EMAILS INSIDE", "match on " + result.get(i));
-                    Email temp = Database.getUserEmail(result.get(i));
-                    Log.d("FOUND2", temp.getAssociatedId());
-                    Log.d("FOUND", temp.getEmail());
-                    String new_friend_id = Database.getUser(temp.getAssociatedId()).getUserId();
-                    friendsList.add(new_friend_id);
-                    Log.d("MATCHED USER", new_friend_id);
+                emailInDB(result.get(i));
             }
-            LoginActivity.currentUser.setFriendsList(friendsList);
-            for (int i = 0; i < friendsList.size(); i++)
-                Log.d("FRIENDS", friendsList.get(i));
-            Database.updateUser(LoginActivity.currentUser);*/
+            progressBar.setVisibility(View.GONE);
         }
     }
 }

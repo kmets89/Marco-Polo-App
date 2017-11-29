@@ -14,29 +14,38 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.polo.marco.marcopoloapp.*;
 import com.polo.marco.marcopoloapp.firebase.models.User;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FriendsListActivity extends AppCompatActivity {
 
+    private DatabaseReference databaseUsers = FirebaseDatabase.getInstance().getReference("users");
     private ListView listView;
-    private List<User> friends;
+    private List<User> friends = new ArrayList<User>();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_list);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        listView = (ListView)findViewById(R.id.friendsListView);
         friends = LoginActivity.currentUser.friendsList;
+        Log.d("Friends list activity: ", Integer.toString(LoginActivity.currentUser.friendsList.size()));
+
+        listView = (ListView)findViewById(R.id.friendsListView);
         if(friends == null || friends.size() == 0){
             Toast.makeText(this, "You don't seem to have any friends who use this app!", Toast.LENGTH_LONG).show();
         }else{
-            friends = LoginActivity.currentUser.friendsList;
+            //friends = LoginActivity.currentUser.friendsList;
             ArrayAdapter<User> adaptor = new MyListAdaptor();
             listView.setAdapter(adaptor);
         }
@@ -70,5 +79,26 @@ public class FriendsListActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp(){
         finish();
         return true;
+    }
+
+    public void pullUser (int n, String id){
+        final int i = n;
+        databaseUsers.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                    Log.d("TESTING", "it doesnt exist!");
+                }
+                else {
+                    Log.d("TESTING", "it does exist!" + snapshot.getValue());
+                    User retrievedUser = snapshot.getValue(User.class);
+                    Log.d("TESTING", "added friend! " + retrievedUser.getName());
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

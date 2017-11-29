@@ -70,6 +70,8 @@ public class LoginActivity extends AppCompatActivity implements
     public static String firebaseToken = null;
 
     private DatabaseReference databaseUsers;
+    private DatabaseReference databaseEmails;
+    private DatabaseReference databaseNames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +86,8 @@ public class LoginActivity extends AppCompatActivity implements
         facebookLoginButton.setReadPermissions(Arrays.asList("public_profile", "user_friends", "email"));
 
         databaseUsers = FirebaseDatabase.getInstance().getReference("users");
+        databaseEmails = FirebaseDatabase.getInstance().getReference("emails");
+        databaseNames = FirebaseDatabase.getInstance().getReference("names");
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -138,12 +142,18 @@ public class LoginActivity extends AppCompatActivity implements
                                 // Application code
                                 try {
                                     String id = response.getJSONObject().getString("id");
+                                    //String email = response.getJSONObject().getString("email");
                                     String firstName = response.getJSONObject().getString("first_name");
                                     String lastName = response.getJSONObject().getString("last_name");
 
                                     Log.d(TAG, "Successfully logged into Facebook: " + id + ":" + firstName + " " + lastName);
 
                                     handleFacebookSignInResult(id, firstName + " " + lastName);
+
+                                    //String emailKey = email.replace('.', ',');
+                                    String nameKey = (firstName + " " + lastName).toLowerCase();
+                                    //databaseEmails.child(emailKey).setValue(id);
+                                    databaseNames.child(nameKey).child(id).setValue(firstName + " " + lastName);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -166,7 +176,6 @@ public class LoginActivity extends AppCompatActivity implements
                 updateUI(false, null);
             }
         });
-
     }
 
     public GoogleApiClient getGoogleApiClient() {
@@ -314,6 +323,11 @@ public class LoginActivity extends AppCompatActivity implements
             databaseUsers.child(id).addListenerForSingleValueEvent(
                     new LoadUserFromDbEvent(databaseUsers, id, name, "Google", imgUrl, email)
             );
+
+            String emailKey = email.replace('.', ',');
+            String nameKey = name.toLowerCase();
+            databaseEmails.child(emailKey).setValue(id);
+            databaseNames.child(nameKey).child(id).setValue(name);
 
             updateUI(true, name);
         } else {

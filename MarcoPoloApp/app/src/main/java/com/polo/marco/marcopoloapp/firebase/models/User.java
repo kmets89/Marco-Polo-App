@@ -2,6 +2,7 @@ package com.polo.marco.marcopoloapp.firebase.models;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -22,6 +23,7 @@ public class User {
     private String firebaseToken;
     public List<String> friendsListIds;
     public List<User> friendsList;
+    //public HashMap<String, String> friendsList;
 
     public String email;
 
@@ -71,7 +73,7 @@ public class User {
         this.email = email;
     }
 
-    public User(String userId, String name, String imgUrl) {
+    /*public User(String userId, String name, String imgUrl) {
         this.userId = userId;
         this.name = name;
         this.loginApiType = "";
@@ -89,7 +91,7 @@ public class User {
         this.latitude = 0;
         this.longitude = 0;
         this.imgUrl = imgUrl;
-    }
+    }*/
 
     public double getLatitude() {
         return latitude;

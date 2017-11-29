@@ -26,6 +26,11 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.facebook.login.Login;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.polo.marco.marcopoloapp.api.notifications.Notifications;
 import com.polo.marco.marcopoloapp.R;
 
@@ -59,14 +64,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationRequest locationRequest;
     private Location lastLocation = null;
     private Marker currentLocationMarker = null;
-    //public static final int REQUEST_LOCATION_CODE = 99;
-    //public static final int REQUEST_READ_CONTACTS = 98;
     final private int PERMISSIONS_REQUEST_CODE = 124;
+    private static boolean friendsRead = false;
 
     //Hamburger menu stuff
     private NavigationView mDrawer;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+
+    private DatabaseReference databaseUsers = FirebaseDatabase.getInstance().getReference("users");
 
     //
     public static boolean mIsInForegroundMode=false;
@@ -111,6 +117,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //Function that's called when the marco button is clicked
     public void onClickBtnMarco(View view) {
+        if (!friendsRead) {
+            testRead();
+            friendsRead = true;
+        }
         Intent intent = new Intent(this, MarcoActivity.class);
         startActivity(intent);
     }
@@ -123,6 +133,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return true;
         }
         if (item.getItemId() == R.id.nav_notifications) {
+            if (!friendsRead) {
+                testRead();
+                friendsRead = true;
+            }
             startActivity(new Intent(MapsActivity.this, Notifications.class));
             return true;
         }
@@ -252,17 +266,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void checkLocationPermission() {
-        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_CODE);
-            } else {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_CODE);
-            }
-            return false;
-        } else {
-            return true;
-        }*/
-
         List<String> permissionsNeeded = new ArrayList<String>();
         final List<String> permissionsList = new ArrayList<String>();
         if (!addPermission(permissionsList, Manifest.permission.ACCESS_FINE_LOCATION))
@@ -320,10 +323,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
         }
 
-        User currentUser = LoginActivity.currentUser;
-        //update User in DB
-        currentUser.setLatitude(location.getLatitude());
-        currentUser.setLongitude(location.getLongitude());
+        if(LoginActivity.currentUser != null) {
+            //update User in DB
+            LoginActivity.currentUser.setLatitude(location.getLatitude());
+            LoginActivity.currentUser.setLongitude(location.getLongitude());
+            databaseUsers.child(LoginActivity.currentUser.getUserId()).child("latitude").setValue(location.getLatitude());
+            databaseUsers.child(LoginActivity.currentUser.getUserId()).child("longitude").setValue(location.getLongitude());
+        }
     }
 
     //This is where we handle the clicks for the drawer menu items
@@ -331,6 +337,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         Intent intent = null;
+        if (!friendsRead) {
+            testRead();
+            friendsRead = true;
+        }
         if (menuItem.getItemId() == R.id.nav_account) {
             intent = new Intent(this, SettingsActivity.class);
             mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -369,5 +379,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(extraLatlng);
         mMap.addMarker(markerOptions);
+    }
+
+    public void testRead(){
+        LoginActivity.currentUser.friendsList.clear();
+        Log.d("TESTING", "starting read: "+Integer.toString(LoginActivity.currentUser.friendsList.size()));
+        List<User> testFriends = new ArrayList<User>();
+        for (int i = 0; i < LoginActivity.currentUser.getFriendsListIds().size(); i++){
+            databaseUsers.child(LoginActivity.currentUser.friendsListIds.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (!snapshot.exists()) {
+                    }
+                    else {
+                        User retrievedUser = snapshot.getValue(User.class);
+                        LoginActivity.currentUser.friendsList.add(retrievedUser);
+                        Log.d("TESTING", "added friend! " + retrievedUser.getName());
+                    }
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+        Log.d("TESTING", "ending read: "+Integer.toString(LoginActivity.currentUser.friendsList.size()));
     }
 }
