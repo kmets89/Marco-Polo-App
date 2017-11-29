@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/friends_list_layout">
 
     <ImageView
         android:id="@+id/friendslist_profile_image"
@@ -33,7 +34,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="David Rodriguez" />
 
-    <TextView
+    <!--<TextView
         android:id="@+id/friendslist_last_login"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
@@ -44,12 +45,12 @@
         android:text="Last Marco: 10/09"
         android:textSize="14sp"
         app:layout_constraintLeft_toRightOf="@+id/friendslist_profile_image"
-        app:layout_constraintTop_toBottomOf="@+id/friendslist_user_name" />
+        app:layout_constraintTop_toBottomOf="@+id/friendslist_user_name" />-->
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="95dp"
-        android:layout_height="66dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
@@ -58,7 +59,6 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textColor="@color/white"
         android:textSize="26sp"
-        app:layout_constraintBottom_toBottomOf="@+id/friendslist_last_login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

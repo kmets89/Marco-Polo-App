@@ -117,10 +117,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //Function that's called when the marco button is clicked
     public void onClickBtnMarco(View view) {
-        if (!friendsRead) {
-            testRead();
-            friendsRead = true;
-        }
+//        if (!friendsRead) {
+//            //testRead();
+//            friendsRead = true;
+//        }
         Intent intent = new Intent(this, MarcoActivity.class);
         startActivity(intent);
     }
@@ -133,10 +133,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return true;
         }
         if (item.getItemId() == R.id.nav_notifications) {
-            if (!friendsRead) {
-                testRead();
-                friendsRead = true;
-            }
+//            if (!friendsRead) {
+//                //testRead();
+//                friendsRead = true;
+//            }
             startActivity(new Intent(MapsActivity.this, Notifications.class));
             return true;
         }
@@ -337,10 +337,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         Intent intent = null;
-        if (!friendsRead) {
-            testRead();
-            friendsRead = true;
-        }
+        //if (!friendsRead) {
+            //testRead();
+            //friendsRead = true;
+        //}
         if (menuItem.getItemId() == R.id.nav_account) {
             intent = new Intent(this, SettingsActivity.class);
             mDrawerLayout.closeDrawer(GravityCompat.START);

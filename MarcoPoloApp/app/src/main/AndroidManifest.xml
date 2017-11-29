@@ -79,6 +79,12 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
+        <activity
+            android:name=".activities.CustomDialogActivity"
+            android:theme="@style/AppTheme.ScreenBelow">
+
+        </activity>
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -100,7 +106,12 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activities.FriendsListActivity"></activity>
+        <activity android:name=".activities.FriendsListActivity"
+            android:label="My Friends"></activity>
+        <activity
+            android:name=".activities.SearchResultsActivity"
+            android:label="User Search">
+        </activity>
 
         <service
             android:name=".firebase.MyFirebaseInstanceIdService">

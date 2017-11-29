@@ -151,8 +151,9 @@ public class LoginActivity extends AppCompatActivity implements
                                     handleFacebookSignInResult(id, firstName + " " + lastName);
 
                                     //String emailKey = email.replace('.', ',');
+                                    //emailKey = emailKey.toLowerCase();
                                     String nameKey = (firstName + " " + lastName).toLowerCase();
-                                    //databaseEmails.child(emailKey).setValue(id);
+                                    //databaseEmails.child(emailKey).child(id).setValue(email);
                                     databaseNames.child(nameKey).child(id).setValue(firstName + " " + lastName);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -259,7 +260,7 @@ public class LoginActivity extends AppCompatActivity implements
                                 ).executeAsync();
 
                                 updateUI(true, "");
-
+                                testRead();
                             }/* else {
                                 handleFacebookSignInResult();
                             }*/
@@ -325,8 +326,9 @@ public class LoginActivity extends AppCompatActivity implements
             );
 
             String emailKey = email.replace('.', ',');
+            emailKey = emailKey.toLowerCase();
             String nameKey = name.toLowerCase();
-            databaseEmails.child(emailKey).setValue(id);
+            databaseEmails.child(emailKey).child(id).setValue(email);
             databaseNames.child(nameKey).child(id).setValue(name);
 
             updateUI(true, name);
@@ -364,5 +366,30 @@ public class LoginActivity extends AppCompatActivity implements
             }
         }
         // Else, keep the UI the same
+    }
+
+    public void testRead(){
+        LoginActivity.currentUser.friendsList.clear();
+        Log.d("TESTING", "starting read: "+Integer.toString(LoginActivity.currentUser.friendsList.size()));
+        //List<User> testFriends = new ArrayList<User>();
+        for (int i = 0; i < LoginActivity.currentUser.getFriendsListIds().size(); i++){
+            databaseUsers.child(LoginActivity.currentUser.friendsListIds.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (!snapshot.exists()) {
+                    }
+                    else {
+                        User retrievedUser = snapshot.getValue(User.class);
+                        LoginActivity.currentUser.friendsList.add(retrievedUser);
+                        Log.d("TESTING", "added friend! " + retrievedUser.getName());
+                    }
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+        Log.d("TESTING", "ending read: "+Integer.toString(LoginActivity.currentUser.friendsList.size()));
     }
 }
