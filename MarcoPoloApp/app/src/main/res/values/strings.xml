@@ -84,7 +84,7 @@
     <string name="empty_friends_list">Your friends list is empty.\nTry sending a public marco!</string>
 
 
-
+    <string name="current_meetup">Active Meetups</string>
     <string name="DummyUser">User</string>
     <string name="NoUser">No Profile</string>
     <string name="Username">Username:</string>

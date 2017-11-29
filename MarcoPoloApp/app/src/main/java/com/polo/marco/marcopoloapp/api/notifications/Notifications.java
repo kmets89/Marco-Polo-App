@@ -47,61 +47,11 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
            DetailInfo detailInfo = headerInfo.getChildList().get(childPosition);
            Toast.makeText(getBaseContext(), "Clicked on detail " + headerInfo.getName() + "/" + detailInfo.getName(), Toast.LENGTH_LONG).show();
 
-          //*************************************************************
 
-           AlertDialog.Builder altdial = new AlertDialog.Builder(Notifications.this);
-
-           Integer sizeOfFriends = Notifications.hm.get("Friends").size();
-           ArrayList<String> Friends = Notifications.hm.get("Friends");
-           String MakeList = "<ul compact>Others invited:";
-           for (int x = 0; x < sizeOfFriends; x++){
-               MakeList += "<p>"+ Friends.get(x) +"</p>";
+           if ((headerInfo.getName()).equals(getResources().getString(R.string.current_meetup))){
+               meetupNotif(v, detailInfo.getName());
            }
-           MakeList +="</ul>";
-           Toast.makeText(getApplicationContext(), MakeList, Toast.LENGTH_SHORT).show();
-           Spanned html = null;
-           if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-               html = fromHtml(MakeList, Html.FROM_HTML_MODE_LEGACY);
-           }
-           altdial.setMessage(html).setCancelable(false);
-           altdial.setPositiveButton("Polo", new DialogInterface.OnClickListener() {
-               public void onClick(DialogInterface dialog, int which) {
-                   dialog.cancel();
-                   Toast.makeText(getApplicationContext(), "hello", Toast.LENGTH_SHORT).show();
-                   //MainActivity.textV.setText("MarcoState");
-                   Notifications.meetupState = true;
-
-
-               }
-           });
-
-
-           altdial.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-               @Override
-               public void onClick(DialogInterface dialogInterface, int i) {
-                   Toast.makeText(getApplicationContext(), "Maybe next time", Toast.LENGTH_SHORT).show();
-
-               }
-           });
-
-
-           AlertDialog alert = altdial.create();
-           alert.setTitle(Notifications.hm.get("Initiator").get(0) + " has 'Marco'ed some friends and you!");
-           alert.show();
-
-
-
-
-
-
-
-
-
-
-
-
-
-         //********************************************************************
+           else{ poloNotif(v);}
            return false;
        }
    };
@@ -168,9 +118,8 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
 
    //dummy data for testing.  This is where our database query stuff will go
    private void addData(){
-       addDatum("Vegetable", "Potato");
-       addDatum("Vegetable","Cabbage");
-       addDatum("Vegetable","Onion");
+       addDatum(getResources().getString(R.string.current_meetup), "Let's run!");
+       addDatum("Fruits","Onion");
 
        addDatum("Fruits","Apple");
        addDatum("Fruits","Orange");
@@ -208,6 +157,92 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
        groupPosition = sectionList.indexOf(headerInfo);
        return groupPosition;
    }
+
+
+   public void poloNotif(View v){
+       AlertDialog.Builder altdial = new AlertDialog.Builder(Notifications.this);
+
+       Integer sizeOfFriends = Notifications.hm.get("Friends").size();
+       ArrayList<String> Friends = Notifications.hm.get("Friends");
+       String MakeList = "<ul compact>Others invited:";
+       for (int x = 0; x < sizeOfFriends; x++){
+           MakeList += "<p>"+ Friends.get(x) +"</p>";
+       }
+       MakeList +="</ul>";
+       Toast.makeText(getApplicationContext(), MakeList, Toast.LENGTH_SHORT).show();
+       Spanned html = null;
+       if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+           html = fromHtml(MakeList, Html.FROM_HTML_MODE_LEGACY);
+       }
+       altdial.setMessage(html).setCancelable(false);
+       altdial.setPositiveButton("Polo", new DialogInterface.OnClickListener() {
+           public void onClick(DialogInterface dialog, int which) {
+               dialog.cancel();
+               Toast.makeText(getApplicationContext(), "hello", Toast.LENGTH_SHORT).show();
+               //MainActivity.textV.setText("MarcoState");
+               Notifications.meetupState = true;
+
+           }
+       });
+
+
+       altdial.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+           @Override
+           public void onClick(DialogInterface dialogInterface, int i) {
+               Toast.makeText(getApplicationContext(), "Maybe next time", Toast.LENGTH_SHORT).show();
+
+           }
+       });
+
+
+       AlertDialog alert = altdial.create();
+       alert.setTitle(Notifications.hm.get("Initiator").get(0) + " has 'Marco'ed some friends and you!");
+       alert.show();
+   }
+
+    public void meetupNotif(View v, String titleOfMeetup){
+        AlertDialog.Builder altdial = new AlertDialog.Builder(Notifications.this);
+
+        Integer sizeOfFriends = Notifications.hm.get("Friends").size();
+        ArrayList<String> Friends = Notifications.hm.get("Friends");
+        String MakeList = "<ul compact>Others invited:";
+        for (int x = 0; x < sizeOfFriends; x++){
+            MakeList += "<p>"+ Friends.get(x) +"</p>";
+        }
+        MakeList +="</ul>";
+        Toast.makeText(getApplicationContext(), MakeList, Toast.LENGTH_SHORT).show();
+        Spanned html = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            html = fromHtml(MakeList, Html.FROM_HTML_MODE_LEGACY);
+        }
+        altdial.setMessage(html).setCancelable(false);
+        altdial.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                Toast.makeText(getApplicationContext(), "hello", Toast.LENGTH_SHORT).show();
+                //MainActivity.textV.setText("MarcoState");
+                Notifications.meetupState = true;
+
+
+            }
+        });
+
+
+        altdial.setNegativeButton("Cancel Polo", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Toast.makeText(getApplicationContext(), "Maybe next time", Toast.LENGTH_SHORT).show();
+                //Need polotable workhere
+
+            }
+        });
+
+
+        AlertDialog alert = altdial.create();
+        alert.setTitle("You are participating in" + titleOfMeetup );
+        alert.show();
+    }
+
 
    //stub for handling button clicks in the expandable list view.  Since we have no buttons, this
     //is only here to satisfy implementing the abstract class
