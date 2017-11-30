@@ -144,14 +144,12 @@ public class SettingsActivity extends AppCompatActivity {
                     Log.d("TESTING", "it doesnt exist!");
                 }
                 else {
-                    Log.d("TESTING", "it does exist!" + snapshot.getValue());
-                    Log.d("CHECKING FRIENDS LIST", LoginActivity.currentUser.friendsListIds.toString());
-                    if(!LoginActivity.currentUser.friendsListIds.contains(snapshot.getValue().toString())){
-                            LoginActivity.currentUser.friendsListIds.add(snapshot.getValue().toString());
-                            //databaseUsers.child(LoginActivity.currentUser.getUserId()).setValue(currentUser);
-                            //databaseUsers.child(LoginActivity.currentUser.getUserId()).child("friendsList").setValue(LoginActivity.currentUser.friendsList);
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        if(!LoginActivity.currentUser.friendsListIds.contains(child.getKey().toString())){
+                            LoginActivity.currentUser.friendsListIds.add(child.getKey().toString());
                             databaseUsers.child(LoginActivity.currentUser.getUserId()).child("friendsListIds").setValue(LoginActivity.currentUser.friendsListIds);
                         }
+                    }
                 }
             }
             @Override

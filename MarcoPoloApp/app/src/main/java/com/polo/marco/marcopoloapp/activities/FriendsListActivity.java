@@ -41,8 +41,6 @@ public class FriendsListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_friends_list);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Log.d("Friends list activity: ", Integer.toString(LoginActivity.currentUser.friendsList.size()));
-
         if(LoginActivity.currentUser.friendsListIds.size() == 0){
             Toast.makeText(this, "You don't seem to have any friends who use this app!", Toast.LENGTH_LONG).show();
         }else{
@@ -75,8 +73,6 @@ public class FriendsListActivity extends AppCompatActivity {
     }
 
     public void pullFriends(){
-        Log.d("TESTING", "starting read: "+Integer.toString(LoginActivity.currentUser.friendsList.size()));
-        //List<User> testFriends = new ArrayList<User>();
         for (int i = 0; i < LoginActivity.currentUser.getFriendsListIds().size(); i++){
             databaseUsers.child(LoginActivity.currentUser.friendsListIds.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override

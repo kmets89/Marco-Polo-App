@@ -80,9 +80,14 @@
     <string name="server_client_id">736384937236-g8i7jp2e64icddv79grql1haosjkbhd0.apps.googleusercontent.com</string>
 
     <!--Error Handling-->
-    <string name="duplicate_marco">You already have a public Marco!\nCreating a new public Marco will overwrite it.</string>
+    <string name="duplicate_marco">You already have a Marco!\nCreating a new Marco will overwrite the current one.</string>
     <string name="empty_friends_list">Your friends list is empty.\nTry sending a public marco!</string>
     <string name="empty_message">You have to enter a message!</string>
+    <string name="add_self">You can\'t add yourself as a friend!</string>
+    <string name="add_already_exists">"This person is already your friend!</string>
+    <string name="block_self">You can\'t block yourself!</string>
+    <string name="block_already_exists">"This person is already blocked!</string>
+    <string name="add_blocked">"You have blocked this user!\nUnblock them first to add as a friend.</string>
 
     <!-- Syncing phone contacts to friends list -->
     <string name="sync_prompt">Syncing your contacts to your account will add any existing users\nwho

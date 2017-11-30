@@ -22,8 +22,7 @@ public class User {
     private String imgUrl;
     private String firebaseToken;
     public List<String> friendsListIds;
-    public List<User> friendsList;
-    //public HashMap<String, String> friendsList;
+    public List<String> blockList;
 
     public String email;
 
@@ -34,14 +33,14 @@ public class User {
             this.friendsListIds = friendsListIds;
         }
 
-        if (friendsList == null) {
-            this.friendsList = new ArrayList<User>();
+        if (blockList == null) {
+            this.blockList = new ArrayList<String>();
         } else {
-            this.friendsList = friendsList;
+            this.blockList = blockList;
         }
     }
     //User(id, name, loginApiType, imgUrl, firebaseToken, new ArrayList<String>());
-    public User(String userId, String name, String loginApiType, List<String> friendsListIds, String imgUrl, String email, String firebaseToken) {
+    public User(String userId, String name, String loginApiType, List<String> friendsListIds, List<String> blockList, String imgUrl, String email, String firebaseToken) {
         this.userId = userId;
         this.name = name;
         this.loginApiType = loginApiType;
@@ -52,10 +51,10 @@ public class User {
             this.friendsListIds = friendsListIds;
         }
 
-        if (friendsList == null) {
-            this.friendsList = new ArrayList<User>();
+        if (blockList == null) {
+            this.blockList = new ArrayList<String>();
         } else {
-            this.friendsList = friendsList;
+            this.blockList = blockList;
         }
 
         this.latitude = latitude;
@@ -68,35 +67,13 @@ public class User {
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
 
-    /*public User(String userId, String name, String imgUrl) {
-        this.userId = userId;
-        this.name = name;
-        this.loginApiType = "";
-        if (friendsListIds == null) {
-            this.friendsListIds = new ArrayList<String>();
-        } else {
-            this.friendsListIds = friendsListIds;
-        }
-
-        if (friendsList == null) {
-            this.friendsList = new ArrayList<User>();
-        } else {
-            this.friendsList = friendsList;
-        }
-        this.latitude = 0;
-        this.longitude = 0;
-        this.imgUrl = imgUrl;
-    }*/
-
     public double getLatitude() {
         return latitude;
     }
-
     public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
@@ -104,7 +81,6 @@ public class User {
     public double getLongitude() {
         return longitude;
     }
-
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
@@ -112,7 +88,6 @@ public class User {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -120,23 +95,13 @@ public class User {
     public String getImgUrl() {
         return imgUrl;
     }
-
     public void setImgUrl(String url) {
         this.imgUrl = url;
-    }
-
-    public List<User> getFriendsList() {
-        return friendsList;
-    }
-
-    public void setFriendsList(List<User> friendsList) {
-        this.friendsList = friendsList;
     }
 
     public String getFirebaseToken() {
         return firebaseToken;
     }
-
     public void setFirebaseToken(String firebaseToken) {
         this.firebaseToken = firebaseToken;
     }
@@ -144,15 +109,16 @@ public class User {
     public List<String> getFriendsListIds() {
         return friendsListIds;
     }
-
     public void setFriendsListIds(List<String> friendsListIds) {
         this.friendsListIds = friendsListIds;
     }
 
+    public List<String> getBlockList() {return this.blockList;}
+    public void setBlockList(List<String> blockList) {this.blockList = blockList;}
+
     public String getUserId() {
         return userId;
     }
-
     public void setUserId(String userId) {
         this.userId = userId;
     }
@@ -164,12 +130,11 @@ public class User {
     public String getLoginApiType() {
         return loginApiType;
     }
-
     public void setLoginApiType(String loginApiType) {
         this.loginApiType = loginApiType;
     }
 
     public String toString() {
-        return "[" + userId + "] " + name + ": LoginAPIType~" + loginApiType + ":friendsList~" + Arrays.toString(getFriendsList().toArray(new String[friendsList.size()]));
+        return "[" + userId + "] " + name + ": LoginAPIType~" + loginApiType + ":friendsList~" + Arrays.toString(getFriendsListIds().toArray(new String[friendsListIds.size()]));
     }
 }

@@ -212,7 +212,6 @@ public class LoginActivity extends AppCompatActivity implements
     //  Login with Facebook Token
     private void updateWithToken(AccessToken currentAccessToken) {
         if (currentAccessToken != null) {
-            //currentUser = Database.getUser(currentAccessToken.getUserId());
             databaseUsers.child(currentAccessToken.getUserId())
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -227,7 +226,7 @@ public class LoginActivity extends AppCompatActivity implements
                                                 if (response != null && response.getJSONObject() != null) {
                                                     try {
                                                         JSONArray data = (JSONArray) response.getJSONObject().get("data");
-                                                        currentUser.setFriendsList(new ArrayList<User>());
+                                                        //currentUser.setFriendsList(new ArrayList<User>());
                                                         currentUser.setFriendsListIds(new ArrayList<String>());
 
                                                         for (int i = 0; i < data.length(); i++) {
@@ -238,7 +237,7 @@ public class LoginActivity extends AppCompatActivity implements
                                                                         public void onDataChange(DataSnapshot dataSnapshot) {
                                                                             User retrievedUser = dataSnapshot.getValue(User.class);
                                                                             if (retrievedUser != null) {
-                                                                                currentUser.friendsList.add(retrievedUser);
+                                                                                //currentUser.friendsList.add(retrievedUser);
                                                                                 currentUser.friendsListIds.add(retrievedUser.getUserId());
                                                                                 Log.d(TAG, retrievedUser.getName());
                                                                                 databaseUsers.child(currentUser.getUserId()).setValue(currentUser);
@@ -260,7 +259,6 @@ public class LoginActivity extends AppCompatActivity implements
                                 ).executeAsync();
 
                                 updateUI(true, "");
-                                testRead();
                             }/* else {
                                 handleFacebookSignInResult();
                             }*/
@@ -366,30 +364,5 @@ public class LoginActivity extends AppCompatActivity implements
             }
         }
         // Else, keep the UI the same
-    }
-
-    public void testRead(){
-        LoginActivity.currentUser.friendsList.clear();
-        Log.d("TESTING", "starting read: "+Integer.toString(LoginActivity.currentUser.friendsList.size()));
-        //List<User> testFriends = new ArrayList<User>();
-        for (int i = 0; i < LoginActivity.currentUser.getFriendsListIds().size(); i++){
-            databaseUsers.child(LoginActivity.currentUser.friendsListIds.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    if (!snapshot.exists()) {
-                    }
-                    else {
-                        User retrievedUser = snapshot.getValue(User.class);
-                        LoginActivity.currentUser.friendsList.add(retrievedUser);
-                        Log.d("TESTING", "added friend! " + retrievedUser.getName());
-                    }
-                }
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
-        Log.d("TESTING", "ending read: "+Integer.toString(LoginActivity.currentUser.friendsList.size()));
     }
 }

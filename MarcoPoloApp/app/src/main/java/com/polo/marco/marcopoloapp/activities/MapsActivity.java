@@ -380,29 +380,4 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         markerOptions.position(extraLatlng);
         mMap.addMarker(markerOptions);
     }
-
-    public void testRead(){
-        LoginActivity.currentUser.friendsList.clear();
-        Log.d("TESTING", "starting read: "+Integer.toString(LoginActivity.currentUser.friendsList.size()));
-        List<User> testFriends = new ArrayList<User>();
-        for (int i = 0; i < LoginActivity.currentUser.getFriendsListIds().size(); i++){
-            databaseUsers.child(LoginActivity.currentUser.friendsListIds.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    if (!snapshot.exists()) {
-                    }
-                    else {
-                        User retrievedUser = snapshot.getValue(User.class);
-                        LoginActivity.currentUser.friendsList.add(retrievedUser);
-                        Log.d("TESTING", "added friend! " + retrievedUser.getName());
-                    }
-                }
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
-        Log.d("TESTING", "ending read: "+Integer.toString(LoginActivity.currentUser.friendsList.size()));
-    }
 }
