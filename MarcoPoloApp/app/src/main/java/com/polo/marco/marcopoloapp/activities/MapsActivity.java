@@ -1,11 +1,10 @@
 package com.polo.marco.marcopoloapp.activities;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -22,12 +21,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Switch;
 import android.widget.Toast;
 
-import com.facebook.login.Login;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.polo.marco.marcopoloapp.api.database.Database;
 import com.polo.marco.marcopoloapp.api.database.User;
+import com.polo.marco.marcopoloapp.api.directions.Route;
+import com.polo.marco.marcopoloapp.api.directions.RouteFinder;
+import com.polo.marco.marcopoloapp.api.directions.RouteFinderListener;
 import com.polo.marco.marcopoloapp.api.notifications.Notifications;
 import com.polo.marco.marcopoloapp.R;
 
@@ -45,20 +46,24 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
-        NavigationView.OnNavigationItemSelectedListener {
+        NavigationView.OnNavigationItemSelectedListener, GoogleMap.OnMapLongClickListener, RouteFinderListener, GoogleMap.OnMarkerClickListener {
 
     //Google maps stuff
     private GoogleMap mMap;
     private GoogleApiClient client;
     private LocationRequest locationRequest;
     private Location lastLocation = null;
+    private LatLng destinationCoordinates;
     private Marker currentLocationMarker = null;
+    private Marker destinationMarker = null;
     public static final int REQUEST_LOCATION_CODE = 99;
 
     //Hamburger menu stuff
@@ -92,6 +97,66 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
+
+
+    public  void onMapLongClick (LatLng destination) {
+        //create a destination marker from a long click on the map
+        //double latitude = destination.latitude;
+        //double longitude = destination.longitude;
+
+        destinationCoordinates = new LatLng(destination.latitude, destination.longitude);
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.draggable(true);
+        markerOptions.title("destination");
+
+        if(destinationMarker != null){
+            destinationMarker.remove();
+        }
+        destinationMarker = mMap.addMarker(markerOptions.position(destination));
+        destinationMarker.showInfoWindow();
+        LatLng lastLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+        /*
+        mMap.addPolyline(new PolylineOptions().add(
+                destination,
+                lastLatLng
+        ));
+        */
+
+    }
+
+    public void getRoute(List<Route> routes) {
+        ArrayList polylinePaths = new ArrayList<>();
+        ArrayList originMarkers = new ArrayList<>();
+        ArrayList destinationMarkers = new ArrayList<>();
+
+        for (Route route : routes) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 16));
+            //((TextView) findViewById(R.id.tvDuration)).setText(route.duration.text);
+            //((TextView) findViewById(R.id.tvDistance)).setText(route.distance.text);
+            /*
+            originMarkers.add(mMap.addMarker(new MarkerOptions()
+                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue))
+                    .title(route.startAddress)
+                    .position(route.startLocation)));
+            destinationMarkers.add(mMap.addMarker(new MarkerOptions()
+                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
+                    .title(route.endAddress)
+                    .position(route.endLocation)));
+            */
+            polylinePaths.remove(mMap);
+            PolylineOptions polylineOptions = new PolylineOptions().
+                    geodesic(true).
+                    color(Color.BLUE).
+                    width(10);
+
+            for (int i = 0; i < route.points.size(); i++)
+                polylineOptions.add(route.points.get(i));
+
+            polylinePaths.add(mMap.addPolyline(polylineOptions));
+        }
+
+    }
+
 
     //Function that's called when the marco button is clicked
     public void onClickBtnMarco(View view) {
@@ -182,6 +247,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
         }
+
+        getCurrentLocation();
+        mMap.setOnMapLongClickListener(this);
+        mMap.setOnMarkerClickListener(this);
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -305,6 +374,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             mDrawerLayout.closeDrawer(GravityCompat.START);
             startActivity(intent);
             return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        if(destinationMarker != null && destinationMarker.getPosition() != marker.getPosition()){
+            String currentLatitude = String.valueOf(lastLocation.getLatitude());
+            String currentLongitude = String.valueOf(lastLocation.getLongitude());
+            String destinationLatitude = String.valueOf(destinationCoordinates.latitude);
+            String destinationLongitude = String.valueOf(destinationCoordinates.longitude);
+
+            Log.w("current latitude", currentLatitude);
+            Log.w("current longitude", currentLongitude);
+            Log.w("destination latitude", destinationLatitude);
+            Log.w("destination longitude", destinationLongitude);
+
+            try {
+                new RouteFinder(this, currentLatitude + "," + currentLongitude, destinationLatitude + "," + destinationLongitude).execute();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
         return false;
     }
