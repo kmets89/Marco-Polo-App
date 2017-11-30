@@ -49,7 +49,28 @@ public class LoadUserFromDbEvent implements ValueEventListener {
                 currentUser.setFirebaseToken(firebaseToken);
                 databaseUsers.child(id).setValue(currentUser);
             }
-            currentUser = new User(id, name, loginApiType, currentUser.friendsListIds, currentUser.blockList, imgUrl, email, firebaseToken);
+            if(currentUser.getFriendsListIds() != null){
+                for(int i = 0; i < currentUser.getFriendsListIds().size(); i++){
+                    databaseUsers.child(currentUser.getFriendsListIds().get(i))
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    User friend = dataSnapshot.getValue(User.class);
+                                    currentUser.friendsList.add(friend);
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    Log.d(TAG, databaseError.getDetails());
+                                    Log.d(TAG, databaseError.getMessage());
+                                }
+                            });
+                }
+            }
+        }else{
+            //     public User(String userId, String name, String loginApiType, List<User> friendsList, double latitude, double longitude, String imgUrl, String email, String firebaseToken) {
+
+            currentUser = new User(id, name, loginApiType, new ArrayList<String>(), new ArrayList<String>(), imgUrl, email, firebaseToken);
             databaseUsers.child(id).setValue(currentUser);
         }
     }

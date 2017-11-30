@@ -22,6 +22,7 @@ public class User {
     private String imgUrl;
     private String firebaseToken;
     public List<String> friendsListIds;
+    public List<User> friendsList;
     public List<String> blockList;
 
     public String email;
@@ -40,7 +41,7 @@ public class User {
         }
     }
     //User(id, name, loginApiType, imgUrl, firebaseToken, new ArrayList<String>());
-    public User(String userId, String name, String loginApiType, List<String> friendsListIds, List<String> blockList, String imgUrl, String email, String firebaseToken) {
+    public User(String userId, String name, String loginApiType, List<String> friendsListIds, List<String> blocklist, String imgUrl, String email, String firebaseToken) {
         this.userId = userId;
         this.name = name;
         this.loginApiType = loginApiType;
