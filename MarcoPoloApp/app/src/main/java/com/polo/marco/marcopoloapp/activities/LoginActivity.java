@@ -46,6 +46,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /*
     Implemented by Joseph (Google) & Chase (Facebook)
@@ -69,6 +70,8 @@ public class LoginActivity extends AppCompatActivity implements
     public static String firebaseToken = null;
 
     private DatabaseReference databaseUsers;
+    private DatabaseReference databaseEmails;
+    private DatabaseReference databaseNames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +86,8 @@ public class LoginActivity extends AppCompatActivity implements
         facebookLoginButton.setReadPermissions(Arrays.asList("public_profile", "user_friends", "email"));
 
         databaseUsers = FirebaseDatabase.getInstance().getReference("users");
+        databaseEmails = FirebaseDatabase.getInstance().getReference("emails");
+        databaseNames = FirebaseDatabase.getInstance().getReference("names");
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -137,12 +142,19 @@ public class LoginActivity extends AppCompatActivity implements
                                 // Application code
                                 try {
                                     String id = response.getJSONObject().getString("id");
+                                    //String email = response.getJSONObject().getString("email");
                                     String firstName = response.getJSONObject().getString("first_name");
                                     String lastName = response.getJSONObject().getString("last_name");
 
                                     Log.d(TAG, "Successfully logged into Facebook: " + id + ":" + firstName + " " + lastName);
 
                                     handleFacebookSignInResult(id, firstName + " " + lastName);
+
+                                    //String emailKey = email.replace('.', ',');
+                                    //emailKey = emailKey.toLowerCase();
+                                    String nameKey = (firstName + " " + lastName).toLowerCase();
+                                    //databaseEmails.child(emailKey).child(id).setValue(email);
+                                    databaseNames.child(nameKey).child(id).setValue(firstName + " " + lastName);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -165,7 +177,6 @@ public class LoginActivity extends AppCompatActivity implements
                 updateUI(false, null);
             }
         });
-
     }
 
     public GoogleApiClient getGoogleApiClient() {
@@ -201,7 +212,6 @@ public class LoginActivity extends AppCompatActivity implements
     //  Login with Facebook Token
     private void updateWithToken(AccessToken currentAccessToken) {
         if (currentAccessToken != null) {
-            //currentUser = Database.getUser(currentAccessToken.getUserId());
             databaseUsers.child(currentAccessToken.getUserId())
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -216,7 +226,7 @@ public class LoginActivity extends AppCompatActivity implements
                                                 if (response != null && response.getJSONObject() != null) {
                                                     try {
                                                         JSONArray data = (JSONArray) response.getJSONObject().get("data");
-                                                        currentUser.setFriendsList(new ArrayList<User>());
+                                                        //currentUser.setFriendsList(new ArrayList<User>());
                                                         currentUser.setFriendsListIds(new ArrayList<String>());
 
                                                         for (int i = 0; i < data.length(); i++) {
@@ -227,7 +237,7 @@ public class LoginActivity extends AppCompatActivity implements
                                                                         public void onDataChange(DataSnapshot dataSnapshot) {
                                                                             User retrievedUser = dataSnapshot.getValue(User.class);
                                                                             if (retrievedUser != null) {
-                                                                                currentUser.friendsList.add(retrievedUser);
+                                                                                //currentUser.friendsList.add(retrievedUser);
                                                                                 currentUser.friendsListIds.add(retrievedUser.getUserId());
                                                                                 Log.d(TAG, retrievedUser.getName());
                                                                                 databaseUsers.child(currentUser.getUserId()).setValue(currentUser);
@@ -249,7 +259,6 @@ public class LoginActivity extends AppCompatActivity implements
                                 ).executeAsync();
 
                                 updateUI(true, "");
-
                             }/* else {
                                 handleFacebookSignInResult();
                             }*/
@@ -313,6 +322,12 @@ public class LoginActivity extends AppCompatActivity implements
             databaseUsers.child(id).addListenerForSingleValueEvent(
                     new LoadUserFromDbEvent(databaseUsers, id, name, "Google", imgUrl, email)
             );
+
+            String emailKey = email.replace('.', ',');
+            emailKey = emailKey.toLowerCase();
+            String nameKey = name.toLowerCase();
+            databaseEmails.child(emailKey).child(id).setValue(email);
+            databaseNames.child(nameKey).child(id).setValue(name);
 
             updateUI(true, name);
         } else {

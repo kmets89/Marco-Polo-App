@@ -21,6 +21,7 @@ import java.util.List;
 public class User {
     private String userId;
     private String name;
+    private String email;
     private String loginApiType;
     private List<String> friendsList;
     private double latitude;
@@ -35,6 +36,7 @@ public class User {
     public User(String userId, String name, String loginApiType, List<String> friendsList, double latitude, double longitude, String imgUrl) {
         this.userId = userId;
         this.name = name;
+        this.email = email;
         this.loginApiType = loginApiType;
         if(friendsList == null)
         {
@@ -63,20 +65,24 @@ public class User {
         this.longitude = longitude;
     }
 
+    @DynamoDBAttribute(attributeName = "email")
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @DynamoDBAttribute(attributeName = "name")
     public String getName() {
         return name;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    public void setName(String name) {this.name = name;}
 
     @DynamoDBAttribute(attributeName = "imgUrl")
     public String getImgUrl() {
         return imgUrl;
     }
-
     public void setImgUrl(String url) { this.imgUrl = url; }
 
     @DynamoDBAttribute(attributeName = "friendsList")
@@ -93,13 +99,11 @@ public class User {
     public String getUserId() {
         return userId;
     }
-
     public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public boolean usingFacebook()
-    {
+    public boolean usingFacebook() {
         return loginApiType.equalsIgnoreCase("facebook");
     }
 

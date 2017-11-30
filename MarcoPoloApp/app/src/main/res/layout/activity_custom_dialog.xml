@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grassGreen">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_found"
+        android:text="Add Friend"
+        android:layout_marginLeft="40dp"
+        android:onClick="onClickAddFound"
+        android:gravity="center_horizontal"
+        android:layout_alignParentLeft="true"
+        android:visibility="gone"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/block_found"
+        android:text="Block"
+        android:onClick="onClickBlockFound"
+        android:gravity="center_horizontal"
+        android:layout_alignParentRight="true"
+        android:visibility="gone"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/unblock_found"
+        android:text="Unblock"
+        android:onClick="onClickUnblockFound"
+        android:gravity="center_horizontal"
+        android:layout_alignParentRight="true"
+        android:visibility="gone"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/unfriend_found"
+        android:text="Unfriend"
+        android:onClick="onClickUnfriendFound"
+        android:gravity="center_horizontal"
+        android:layout_alignParentLeft="true"
+        android:visibility="gone"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cancel_found"
+        android:text="Cancel"
+        android:onClick="onClickCancelFound"
+        android:layout_centerVertical="true"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

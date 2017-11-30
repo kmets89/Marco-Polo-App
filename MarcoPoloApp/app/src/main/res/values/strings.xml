@@ -68,12 +68,30 @@
     <string name="account_email">Linked Google Email:</string>
 
     <string name="current_user"></string>
+    <string name="send">Send</string>
+    <string name="cancel">Cancel</string>
+    <string name="marco_title">Send a Marco</string>
+    <string name="marco_switch_public">Public</string>
+    <string name="marco_switch_private">Private</string>
+    <string name="marco_message_hint">What would you like to say?</string>
+    <string name="marco_friends_list">Choose the friends to Marco:</string>
 
     <!--Web Application Client ID for authenticating with Google-->
     <string name="server_client_id">736384937236-g8i7jp2e64icddv79grql1haosjkbhd0.apps.googleusercontent.com</string>
 
     <!--Error Handling-->
-    <string name="duplicate_marco">You already have a public Marco!\nCreating a new public Marco will overwrite it.</string>
+    <string name="duplicate_marco">You already have a Marco!\nCreating a new Marco will overwrite the current one.</string>
     <string name="empty_friends_list">Your friends list is empty.\nTry sending a public marco!</string>
+    <string name="empty_message">You have to enter a message!</string>
+    <string name="add_self">You can\'t add yourself as a friend!</string>
+    <string name="add_already_exists">"This person is already your friend!</string>
+    <string name="block_self">You can\'t block yourself!</string>
+    <string name="block_already_exists">"This person is already blocked!</string>
+    <string name="add_blocked">"You have blocked this user!\nUnblock them first to add as a friend.</string>
+
+    <!-- Syncing phone contacts to friends list -->
+    <string name="sync_prompt">Syncing your contacts to your account will add any existing users\nwho
+        currently have an account here to your friends list.\n
+        Do you want to sync your phone contacts to your friends list?</string>
 
 </resources>

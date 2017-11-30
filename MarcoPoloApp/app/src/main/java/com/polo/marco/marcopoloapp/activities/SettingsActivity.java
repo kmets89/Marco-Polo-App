@@ -1,13 +1,19 @@
 package com.polo.marco.marcopoloapp.activities;
 
+import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
@@ -16,11 +22,21 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.firebase.MyFirebaseInstanceIdService;
+import com.polo.marco.marcopoloapp.firebase.models.User;
+import com.polo.marco.marcopoloapp.firebase.tasks.LoadUserFromDbEvent;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = "SettingsActivity";
@@ -28,6 +44,9 @@ public class SettingsActivity extends AppCompatActivity {
     private GoogleApiClient mGoogleApiClient;
 
     private String currentUser;
+
+    private DatabaseReference databaseUsers = FirebaseDatabase.getInstance().getReference("users");
+    private DatabaseReference databaseEmails = FirebaseDatabase.getInstance().getReference("emails");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,5 +129,115 @@ public class SettingsActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp(){
         finish();
         return true;
+    }
+
+    public void onClickSyncContacts(View view){
+        showSyncDialog();
+    }
+
+    public void emailInDB (String email){
+        String emailKey = email.replace('.', ',');
+        databaseEmails.child(emailKey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                    Log.d("TESTING", "it doesnt exist!");
+                }
+                else {
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        if(!LoginActivity.currentUser.friendsListIds.contains(child.getKey().toString())){
+                            LoginActivity.currentUser.friendsListIds.add(child.getKey().toString());
+                            databaseUsers.child(LoginActivity.currentUser.getUserId()).child("friendsListIds").setValue(LoginActivity.currentUser.friendsListIds);
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void showSyncDialog(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        alertDialogBuilder.setMessage(getResources().getString(R.string.sync_prompt));
+
+        alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                new syncContacts().execute();
+                arg0.cancel();
+            }
+        });
+
+        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //do nothing here
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    private class syncContacts extends AsyncTask<Void, Void, List<String>> {
+        //prompt the user to search for contacts from their phone
+
+        private ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected List<String> doInBackground(Void... params){
+            List<String> foundEmails = new ArrayList<String>();
+            //pull emails from each contact and see if that email exists in our DB
+            //Toast.makeText(SettingsActivity.this, "Syncing...", Toast.LENGTH_LONG).show();
+            ContentResolver contentResolver = getContentResolver();
+            Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI,
+                    null, null, null, null);
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    String id = cursor.getString(
+                            cursor.getColumnIndex(ContactsContract.Contacts._ID));
+                    String name = cursor.getString(
+                            cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+
+                    Cursor emailCursor = contentResolver.query(
+                            ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                            null,
+                            ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
+                            new String[]{id}, null);
+                    while (emailCursor.moveToNext()) {
+                        String email = emailCursor.getString(
+                                emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+                        String emailType = emailCursor.getString(
+                                emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
+                        Log.d("PARSING CONTACTS", id + " " + name + " " + email);
+                        foundEmails.add(email);
+                    }
+                    emailCursor.close();
+                }
+            }
+            cursor.close();
+            return foundEmails;
+        }
+
+        @Override
+        protected void onPostExecute(List<String> result) {
+            super.onPostExecute(result);
+
+            for (int i = 0; i < result.size(); i++){
+                Log.d("Results", result.get(i));
+                emailInDB(result.get(i));
+            }
+            progressBar.setVisibility(View.GONE);
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.polo.marco.marcopoloapp.api.database.tasks;
+package com.polo.marco.marcopoloapp.api.database.tasks.MarcoTasks;
 
 import android.os.AsyncTask;
 

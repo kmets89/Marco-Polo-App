@@ -10,6 +10,7 @@ import com.polo.marco.marcopoloapp.activities.LoginActivity;
 import com.polo.marco.marcopoloapp.firebase.models.User;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.polo.marco.marcopoloapp.activities.LoginActivity.firebaseToken;
 import static com.polo.marco.marcopoloapp.activities.LoginActivity.currentUser;
@@ -41,35 +42,14 @@ public class LoadUserFromDbEvent implements ValueEventListener {
         User retrievedUser = dataSnapshot.getValue(User.class);
         if(retrievedUser != null){
             currentUser = retrievedUser;
-            currentUser.friendsList = new ArrayList<User>();
+            currentUser.friendsListIds = retrievedUser.friendsListIds;
             //If the firebasetoken is not null, it means it has been updated.
             //So we must update the users' token in the database.
             if(firebaseToken != null){
                 currentUser.setFirebaseToken(firebaseToken);
                 databaseUsers.child(id).setValue(currentUser);
             }
-            if(currentUser.getFriendsListIds() != null){
-                for(int i = 0; i < currentUser.getFriendsListIds().size(); i++){
-                    databaseUsers.child(currentUser.getFriendsListIds().get(i))
-                            .addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    User friend = dataSnapshot.getValue(User.class);
-                                    currentUser.friendsList.add(friend);
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    Log.d(TAG, databaseError.getDetails());
-                                    Log.d(TAG, databaseError.getMessage());
-                                }
-                            });
-                }
-            }
-        }else{
-            //     public User(String userId, String name, String loginApiType, List<User> friendsList, double latitude, double longitude, String imgUrl, String email, String firebaseToken) {
-
-            currentUser = new User(id, name, loginApiType, new ArrayList<String>(), imgUrl, email, firebaseToken);
+            currentUser = new User(id, name, loginApiType, currentUser.friendsListIds, currentUser.blockList, imgUrl, email, firebaseToken);
             databaseUsers.child(id).setValue(currentUser);
         }
     }

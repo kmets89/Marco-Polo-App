@@ -26,8 +26,11 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.facebook.login.Login;
-import com.polo.marco.marcopoloapp.api.database.Database;
-//import com.polo.marco.marcopoloapp.api.database.User;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.polo.marco.marcopoloapp.api.notifications.Notifications;
 import com.polo.marco.marcopoloapp.R;
 
@@ -47,6 +50,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.polo.marco.marcopoloapp.firebase.models.User;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -60,12 +64,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationRequest locationRequest;
     private Location lastLocation = null;
     private Marker currentLocationMarker = null;
-    public static final int REQUEST_LOCATION_CODE = 99;
+    final private int PERMISSIONS_REQUEST_CODE = 124;
+    private static boolean friendsRead = false;
 
     //Hamburger menu stuff
     private NavigationView mDrawer;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+
+    private DatabaseReference databaseUsers = FirebaseDatabase.getInstance().getReference("users");
 
     //
     public static boolean mIsInForegroundMode=false;
@@ -110,6 +117,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //Function that's called when the marco button is clicked
     public void onClickBtnMarco(View view) {
+//        if (!friendsRead) {
+//            //testRead();
+//            friendsRead = true;
+//        }
         Intent intent = new Intent(this, MarcoActivity.class);
         startActivity(intent);
     }
@@ -122,6 +133,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return true;
         }
         if (item.getItemId() == R.id.nav_notifications) {
+//            if (!friendsRead) {
+//                //testRead();
+//                friendsRead = true;
+//            }
             startActivity(new Intent(MapsActivity.this, Notifications.class));
             return true;
         }
@@ -162,7 +177,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case REQUEST_LOCATION_CODE:
+            case PERMISSIONS_REQUEST_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //permission is granted
                     if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -171,12 +186,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                         mMap.setMyLocationEnabled(true);
                     }
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+                        //SettingsActivity settingsActivity = new SettingsActivity();
+                        //settingsActivity.showSyncDialog();
+                    }
                 }
                 //permission is denied
                 else {
                     Toast.makeText(this, "Permission was Denied!", Toast.LENGTH_LONG).show();
                 }
-                return;
+                break;
         }
     }
 
@@ -212,8 +231,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         getCurrentLocation();
-        LatLng latLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        if (lastLocation != null) {
+            LatLng latLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        }
 
         locationRequest = new LocationRequest();
 
@@ -240,21 +261,32 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void getCurrentLocation() {
         //Creating a location object
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-             lastLocation = LocationServices.FusedLocationApi.getLastLocation(client);
+            lastLocation = LocationServices.FusedLocationApi.getLastLocation(client);
         }
     }
 
-    public boolean checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_CODE);
-            } else {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_CODE);
-            }
-            return false;
-        } else {
-            return true;
+    public void checkLocationPermission() {
+        List<String> permissionsNeeded = new ArrayList<String>();
+        final List<String> permissionsList = new ArrayList<String>();
+        if (!addPermission(permissionsList, Manifest.permission.ACCESS_FINE_LOCATION))
+            permissionsNeeded.add("android.permission.ACCESS_FINE_LOCATION");
+        if (!addPermission(permissionsList, Manifest.permission.READ_CONTACTS))
+            permissionsNeeded.add("android.permission.READ_CONTACTS");
+
+        if (permissionsNeeded.size() > 0)
+            ActivityCompat.requestPermissions(this,
+                    permissionsList.toArray(new String[permissionsList.size()]),
+                    PERMISSIONS_REQUEST_CODE);
+    }
+
+    private boolean addPermission(List<String> permissionsList, String permission) {
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            permissionsList.add(permission);
+            // Check for Rationale Option
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(this, permission))
+                return false;
         }
+        return true;
     }
 
     @Override
@@ -291,13 +323,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
         }
 
-        User currentUser = LoginActivity.currentUser;
-        //update User in DB
-        if(currentUser != null){
-            currentUser.setLatitude(location.getLatitude());
-            currentUser.setLongitude(location.getLongitude());
+        if(LoginActivity.currentUser != null) {
+            //update User in DB
+            LoginActivity.currentUser.setLatitude(location.getLatitude());
+            LoginActivity.currentUser.setLongitude(location.getLongitude());
+            databaseUsers.child(LoginActivity.currentUser.getUserId()).child("latitude").setValue(location.getLatitude());
+            databaseUsers.child(LoginActivity.currentUser.getUserId()).child("longitude").setValue(location.getLongitude());
         }
-        //Database.updateUser(currentUser);
     }
 
     //This is where we handle the clicks for the drawer menu items
@@ -305,6 +337,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         Intent intent = null;
+        //if (!friendsRead) {
+            //testRead();
+            //friendsRead = true;
+        //}
         if (menuItem.getItemId() == R.id.nav_account) {
             intent = new Intent(this, SettingsActivity.class);
             mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -329,7 +365,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             startActivity(intent);
             return true;
         }
-        if(menuItem.getItemId() == R.id.nav_settings){
+        if (menuItem.getItemId() == R.id.nav_settings) {
             intent = new Intent(this, SettingsActivity.class);
             mDrawerLayout.closeDrawer(GravityCompat.START);
             startActivity(intent);
