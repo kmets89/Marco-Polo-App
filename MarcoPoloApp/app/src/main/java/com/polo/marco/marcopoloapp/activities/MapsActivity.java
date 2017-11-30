@@ -104,17 +104,29 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //double latitude = destination.latitude;
         //double longitude = destination.longitude;
 
+        Location currentLocationHolder;
+
+        currentLocationHolder = lastLocation;
+        mMap.clear();
+        lastLocation = currentLocationHolder;
+
+
         destinationCoordinates = new LatLng(destination.latitude, destination.longitude);
+        LatLng currentLocation = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.draggable(true);
         markerOptions.title("destination");
 
+        /*
         if(destinationMarker != null){
             destinationMarker.remove();
         }
-        destinationMarker = mMap.addMarker(markerOptions.position(destination));
+        */
+
+        currentLocationMarker = mMap.addMarker(markerOptions.position(currentLocation).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+        destinationMarker = mMap.addMarker(markerOptions.position(destination).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
         destinationMarker.showInfoWindow();
-        LatLng lastLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+        //LatLng lastLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
         /*
         mMap.addPolyline(new PolylineOptions().add(
                 destination,
@@ -126,24 +138,27 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void getRoute(List<Route> routes) {
         ArrayList polylinePaths = new ArrayList<>();
-        ArrayList originMarkers = new ArrayList<>();
-        ArrayList destinationMarkers = new ArrayList<>();
+        //ArrayList originMarkers = new ArrayList<>();
+        //ArrayList destinationMarkers = new ArrayList<>();
+
+
+        mMap.clear();
 
         for (Route route : routes) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 16));
+            //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 16));
             //((TextView) findViewById(R.id.tvDuration)).setText(route.duration.text);
             //((TextView) findViewById(R.id.tvDistance)).setText(route.distance.text);
-            /*
-            originMarkers.add(mMap.addMarker(new MarkerOptions()
-                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue))
+
+            currentLocationMarker = mMap.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
                     .title(route.startAddress)
-                    .position(route.startLocation)));
-            destinationMarkers.add(mMap.addMarker(new MarkerOptions()
+                    .position(route.startLocation));
+            destinationMarker = mMap.addMarker(new MarkerOptions()
                     //.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
                     .title(route.endAddress)
-                    .position(route.endLocation)));
-            */
-            polylinePaths.remove(mMap);
+                    .position(route.endLocation));
+
+
             PolylineOptions polylineOptions = new PolylineOptions().
                     geodesic(true).
                     color(Color.BLUE).
@@ -380,7 +395,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        if(destinationMarker != null && destinationMarker.getPosition() != marker.getPosition()){
+        if(destinationMarker != null && destinationMarker.getPosition().latitude == marker.getPosition().latitude && destinationMarker.getPosition().longitude == marker.getPosition().longitude){
             String currentLatitude = String.valueOf(lastLocation.getLatitude());
             String currentLongitude = String.valueOf(lastLocation.getLongitude());
             String destinationLatitude = String.valueOf(destinationCoordinates.latitude);
