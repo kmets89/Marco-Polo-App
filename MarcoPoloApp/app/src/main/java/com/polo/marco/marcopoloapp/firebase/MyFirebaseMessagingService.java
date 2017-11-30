@@ -36,13 +36,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (MapsActivity.mIsInForegroundMode) {
             final String lat = payload.get("latitude");
             final String lng = payload.get("longitude");
+            final String msg = payload.get("message");
+            final String sender = payload.get("sender");
 
             Handler mainHandler = new Handler(this.getBaseContext().getMainLooper());
 
             Runnable r = new Runnable() {
                 @Override
                 public void run() {
-                    MapsActivity.addMarcoMarker(Double.parseDouble(lat), Double.parseDouble(lng));
+                    MapsActivity.addMarcoMarker(Double.parseDouble(lat),
+                            Double.parseDouble(lng), msg, sender);
                 }
             };
 
@@ -61,6 +64,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Bundle bundle = new Bundle();
             bundle.putDouble("latitude", Double.parseDouble(lat));
             bundle.putDouble("longitude", Double.parseDouble(lng));
+            bundle.putString("message", payload.get("message"));
+            bundle.putString("sender", payload.get("sender"));
             resultIntent.putExtras(bundle);
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 

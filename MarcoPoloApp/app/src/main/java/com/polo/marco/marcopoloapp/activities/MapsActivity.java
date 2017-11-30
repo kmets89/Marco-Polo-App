@@ -338,10 +338,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return false;
     }
 
-    public static void addMarcoMarker(double lat, double lng){
+    public static void addMarcoMarker(double lat, double lng, String message, String sender){
         LatLng extraLatlng = new LatLng(lat, lng);
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(extraLatlng);
-        mMap.addMarker(markerOptions);
+        markerOptions.title(sender + ": " + message);
+        mMap.addMarker(markerOptions).showInfoWindow();
     }
 }
