@@ -1,21 +1,31 @@
 package com.polo.marco.marcopoloapp.activities;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.facebook.login.Login;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.firebase.models.User;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by kmets on 11/29/2017.
@@ -23,6 +33,7 @@ import com.polo.marco.marcopoloapp.firebase.models.User;
 
 public class CustomDialogActivity extends AppCompatActivity {
     private String id;
+    private String name;
     private DatabaseReference databaseUsers = FirebaseDatabase.getInstance().getReference("users");
     private User current = LoginActivity.currentUser;
 
@@ -44,6 +55,10 @@ public class CustomDialogActivity extends AppCompatActivity {
 
         Intent extras = getIntent();
         id = (extras.getStringExtra("userId"));
+        name = (extras.getStringExtra("name"));
+
+        TextView title = (TextView) findViewById(R.id.custom_display_name);
+        title.setText(name);
 
         if (!id.equals(current.getUserId())) {
             if (current.getBlockList().contains(id))
@@ -61,6 +76,8 @@ public class CustomDialogActivity extends AppCompatActivity {
     public void onClickAddFound (View view){
         LoginActivity.currentUser.friendsListIds.add(id);
         databaseUsers.child(LoginActivity.currentUser.getUserId()).child("friendsListIds").setValue(LoginActivity.currentUser.friendsListIds);
+        FriendsListActivity.changedFriends = true;
+        addtoFriendsList(id);
         finish();
     }
 
@@ -71,6 +88,9 @@ public class CustomDialogActivity extends AppCompatActivity {
         if (current.friendsListIds.contains(id)) {
             LoginActivity.currentUser.friendsListIds.remove(id);
             databaseUsers.child(LoginActivity.currentUser.getUserId()).child("friendsListIds").setValue(LoginActivity.currentUser.friendsListIds);
+            FriendsListActivity.changedFriends = true;
+            int position = findUser(id);
+            LoginActivity.currentUser.friendsList.remove(position);
         }
         finish();
     }
@@ -84,6 +104,9 @@ public class CustomDialogActivity extends AppCompatActivity {
     public void onClickUnfriendFound (View view){
         LoginActivity.currentUser.friendsListIds.remove(id);
         databaseUsers.child(LoginActivity.currentUser.getUserId()).child("friendsListIds").setValue(LoginActivity.currentUser.friendsListIds);
+        FriendsListActivity.changedFriends = true;
+        int position = findUser(id);
+        LoginActivity.currentUser.friendsList.remove(position);
         finish();
     }
 
@@ -91,24 +114,31 @@ public class CustomDialogActivity extends AppCompatActivity {
         finish();
     }
 
-    public void showAlert(String message) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+    public int findUser(String id){
+        for (int i = 0; i < LoginActivity.currentUser.friendsList.size(); i++)
+            if (LoginActivity.currentUser.friendsList.get(i).getUserId().equals(id))
+                return i;
+        return -1;
+    }
 
-        alertDialogBuilder.setMessage(message);
-
-        alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+    public void addtoFriendsList(String id){
+        databaseUsers.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onClick(DialogInterface arg0, int arg1) {
-                //just continue here
+            public void onDataChange(DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+
+                }
+                else {
+                    User retrieved = snapshot.getValue(User.class);
+                    LoginActivity.currentUser.friendsList.add(retrieved);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-
-        final Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        LinearLayout.LayoutParams positiveButtonLL = (LinearLayout.LayoutParams) positiveButton.getLayoutParams();
-        positiveButtonLL.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        positiveButton.setLayoutParams(positiveButtonLL);
     }
 
 }

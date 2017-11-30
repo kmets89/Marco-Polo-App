@@ -47,19 +47,4 @@
         app:layout_constraintLeft_toRightOf="@+id/friendslist_profile_image"
         app:layout_constraintTop_toBottomOf="@+id/friendslist_user_name" />-->
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/marco_button"
-        android:text="@string/marco"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:textColor="@color/white"
-        android:textSize="26sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
 </android.support.constraint.ConstraintLayout>

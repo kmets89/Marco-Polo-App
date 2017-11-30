@@ -34,6 +34,7 @@ import java.util.List;
 
 public class FriendsListActivity extends AppCompatActivity {
 
+    public static boolean changedFriends = false;
     private DatabaseReference databaseUsers = FirebaseDatabase.getInstance().getReference("users");
 
     @Override protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,14 @@ public class FriendsListActivity extends AppCompatActivity {
 
         EditText searchBar = (EditText) findViewById(R.id.searchBar);
         searchBar.setText("");
+
+        if (changedFriends) {
+            LinearLayout friendsView = (LinearLayout) findViewById(R.id.friends_layout_child);
+            friendsView.removeAllViews();
+            Log.d("RESUMING", "resetting friendslist");
+            pullFriends();
+            changedFriends = false;
+        }
     }
 
     @Override
@@ -80,7 +89,7 @@ public class FriendsListActivity extends AppCompatActivity {
                     if (!snapshot.exists()) {
                     }
                     else {
-                        User retrieved = snapshot.getValue(User.class);
+                        final User retrieved = snapshot.getValue(User.class);
                         //LoginActivity.currentUser.friendsList.add(retrieved);
                         Log.d("TESTING", "added friend! " + retrieved.getName());
                         LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -92,8 +101,18 @@ public class FriendsListActivity extends AppCompatActivity {
                         ImageView profilePicView = (ImageView) newView.findViewById(R.id.friendslist_profile_image);
                         Picasso.with(FriendsListActivity.this).load(retrieved.getImgUrl()).into(profilePicView);
 
-                        LinearLayout friendsView = (LinearLayout) findViewById(R.id.friends_layout);
+                        LinearLayout friendsView = (LinearLayout) findViewById(R.id.friends_layout_child);
                         friendsView.addView(newView);
+
+                        newView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(FriendsListActivity.this, CustomDialogActivity.class);
+                                intent.putExtra("userId", retrieved.getUserId());
+                                intent.putExtra("name", retrieved.getName());
+                                startActivity(intent);
+                            }
+                        });
                     }
                 }
                 @Override

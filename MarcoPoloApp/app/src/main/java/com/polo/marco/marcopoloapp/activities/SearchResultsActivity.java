@@ -22,6 +22,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.api.database.User;
@@ -79,9 +80,11 @@ public class SearchResultsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
+                    Log.d("SEARCHING", "not found!");
                 }
                 else {
                     for (DataSnapshot child : snapshot.getChildren()) {
+                        Log.d("SEARCHING", "found name " + child.toString());
                         String foundName = child.getKey().toString();
                         foundAccounts.add(foundName);
                         Log.d("SEARCHING", "found name " + foundName);
@@ -108,7 +111,9 @@ public class SearchResultsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
-                } else {
+                    Log.d("RESULTS", "not found!");
+                }
+                else {
                     final User retrieved = snapshot.getValue(User.class);
                     foundUsers.add(retrieved);
                     Log.d("RESULTS","found User " + retrieved.getName());
@@ -130,11 +135,12 @@ public class SearchResultsActivity extends AppCompatActivity {
                         public void onClick(View v) {
                             Intent intent = new Intent(SearchResultsActivity.this, CustomDialogActivity.class);
                             intent.putExtra("userId", retrieved.getUserId());
+                            intent.putExtra("name", retrieved.getName());
                             startActivity(intent);
                         }
                     });
 
-                    LinearLayout resultsView = (LinearLayout) findViewById(R.id.results_layout);
+                    LinearLayout resultsView = (LinearLayout) findViewById(R.id.results_layout_child);
                     resultsView.addView(newView);
                 }
             }

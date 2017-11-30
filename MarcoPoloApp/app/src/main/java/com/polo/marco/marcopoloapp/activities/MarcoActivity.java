@@ -86,12 +86,8 @@ public class MarcoActivity extends AppCompatActivity {
                         setWinSize(winWidth, publicHeight);
                     }
                     if (!friendsListExists) {
-                        Log.d("FRIENDS LIST SIZE", Integer.toString(LoginActivity.currentUser.friendsListIds.size()));
-                        for (int i = 0; i < friends.length; i++)
-                            Log.d("IN FRIENDS LIST", LoginActivity.currentUser.friendsListIds.get(i));
-
                         for (int i = 0; i < friends.length; i++) {
-                            pullUserName(i, LoginActivity.currentUser.friendsListIds.get(i));
+                            pullUserNamefromDB(i, LoginActivity.currentUser.friendsListIds.get(i));
                             friendsListExists = true;
                         }
                     }
@@ -177,8 +173,10 @@ public class MarcoActivity extends AppCompatActivity {
                             }
                             else {
                                 User retrievedUser = snapshot.getValue(User.class);
-                                recv.add(retrievedUser.getFirebaseToken());
-                                databaseMarcos.child(LoginActivity.currentUser.getUserId()).child("receiverList").setValue(recv);
+                                if (!retrievedUser.getBlockList().contains(LoginActivity.currentUser.getUserId())) {
+                                    recv.add(retrievedUser.getFirebaseToken());
+                                    databaseMarcos.child(LoginActivity.currentUser.getUserId()).child("receiverList").setValue(recv);
+                                }
                             }
                         }
                         @Override
@@ -216,7 +214,7 @@ public class MarcoActivity extends AppCompatActivity {
         positiveButton.setLayoutParams(positiveButtonLL);
     }
 
-    public void pullUserName(int n, String id){
+    public void pullUserNamefromDB(int n, String id){
         final int i = n;
         databaseUsers.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
