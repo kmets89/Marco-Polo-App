@@ -19,7 +19,7 @@
         android:id="@+id/marcoText"
         android:background="@color/MarcoBlue"
         android:layout_width="match_parent"
-        android:layout_height="160sp"
+        android:layout_height="145sp"
         android:layout_below="@+id/switch_public"
         android:layout_marginTop="10sp"
         android:layout_marginLeft="10sp"

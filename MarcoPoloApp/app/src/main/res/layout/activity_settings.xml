@@ -24,6 +24,29 @@
             android:indeterminate="true"
             android:visibility="invisible" />
 
+        <ScrollView
+            android:id="@+id/my_marco_scroll_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sync_button">
+            <TextView
+                android:id="@+id/my_marco_text_view"
+                android:layout_width="300dp"
+                android:layout_height="150dp"
+                android:visibility="gone"
+                android:layout_centerInParent="true"/>
+        </ScrollView>
+
+        <Button
+            android:id="@+id/delete_marco"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/my_marco_scroll_box"
+            android:text="Delete My Marco"
+            android:onClick="onClickDeleteMarco"
+            android:enabled="false"/>
+
         <Button
             android:id="@+id/button4"
             android:layout_width="200dp"

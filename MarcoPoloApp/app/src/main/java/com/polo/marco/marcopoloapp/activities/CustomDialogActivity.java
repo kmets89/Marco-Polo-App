@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -51,7 +52,7 @@ public class CustomDialogActivity extends AppCompatActivity {
         int width = dispMetrics.widthPixels;
         int height = dispMetrics.heightPixels;
 
-        getWindow().setLayout((int) (width * 0.8), (int) (height * 0.3));
+        getWindow().setLayout((int) (width * 0.7), (int) (height * 0.3));
 
         Intent extras = getIntent();
         id = (extras.getStringExtra("userId"));
@@ -66,8 +67,10 @@ public class CustomDialogActivity extends AppCompatActivity {
             else
                 findViewById(R.id.block_found).setVisibility(View.VISIBLE);
 
-            if (current.getFriendsListIds().contains(id))
+            if (current.getFriendsListIds().contains(id)) {
                 findViewById(R.id.unfriend_found).setVisibility(View.VISIBLE);
+                findViewById(R.id.marco_from_friend).setVisibility((View.VISIBLE));
+            }
             else if (!current.getBlockList().contains(id))
                 findViewById(R.id.add_found).setVisibility(View.VISIBLE);
         }
@@ -119,6 +122,13 @@ public class CustomDialogActivity extends AppCompatActivity {
             if (LoginActivity.currentUser.friendsList.get(i).getUserId().equals(id))
                 return i;
         return -1;
+    }
+
+    public void onClickMarcoFromFriend (View view){
+        Intent intent = new Intent(this, MarcoActivity.class);
+        intent.putExtra("callingActivity", "CustomDialog");
+        intent.putExtra("userId", id);
+        startActivity(intent);
     }
 
     public void addtoFriendsList(String id){

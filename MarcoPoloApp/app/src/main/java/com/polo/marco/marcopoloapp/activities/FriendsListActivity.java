@@ -45,7 +45,10 @@ public class FriendsListActivity extends AppCompatActivity {
         if(LoginActivity.currentUser.friendsListIds.size() == 0){
             Toast.makeText(this, "You don't seem to have any friends who use this app!", Toast.LENGTH_LONG).show();
         }else{
-            pullFriends();
+            if(LoginActivity.currentUser.friendsList.size() != LoginActivity.currentUser.friendsListIds.size())
+                pullFriendsFromDB();
+            else
+                pullLocalFriends();
         }
   }
 
@@ -60,7 +63,11 @@ public class FriendsListActivity extends AppCompatActivity {
             LinearLayout friendsView = (LinearLayout) findViewById(R.id.friends_layout_child);
             friendsView.removeAllViews();
             Log.d("RESUMING", "resetting friendslist");
-            pullFriends();
+
+            if (LoginActivity.currentUser.friendsList.size() != LoginActivity.currentUser.friendsListIds.size())
+                pullFriendsFromDB();
+            else
+                pullLocalFriends();
             changedFriends = false;
         }
     }
@@ -81,7 +88,7 @@ public class FriendsListActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void pullFriends(){
+    public void pullFriendsFromDB(){
         for (int i = 0; i < LoginActivity.currentUser.getFriendsListIds().size(); i++){
             databaseUsers.child(LoginActivity.currentUser.friendsListIds.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -122,4 +129,30 @@ public class FriendsListActivity extends AppCompatActivity {
         }
     }
 
+    public void pullLocalFriends(){
+        for (int i = 0; i < LoginActivity.currentUser.getFriendsListIds().size(); i++) {
+            final User retrieved = LoginActivity.currentUser.friendsList.get(i);
+            LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View newView = layoutInflater.inflate(R.layout.friends_list_layout, null);
+
+            TextView textView1 = (TextView) newView.findViewById(R.id.friendslist_user_name);
+            textView1.setText(retrieved.getName());
+
+            ImageView profilePicView = (ImageView) newView.findViewById(R.id.friendslist_profile_image);
+            Picasso.with(FriendsListActivity.this).load(retrieved.getImgUrl()).into(profilePicView);
+
+            LinearLayout friendsView = (LinearLayout) findViewById(R.id.friends_layout_child);
+            friendsView.addView(newView);
+
+            newView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(FriendsListActivity.this, CustomDialogActivity.class);
+                    intent.putExtra("userId", retrieved.getUserId());
+                    intent.putExtra("name", retrieved.getName());
+                    startActivity(intent);
+                }
+            });
+        }
+    }
 }

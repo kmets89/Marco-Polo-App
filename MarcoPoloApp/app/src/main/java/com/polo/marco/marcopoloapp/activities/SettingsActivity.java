@@ -13,7 +13,9 @@ import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
@@ -30,6 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.firebase.MyFirebaseInstanceIdService;
+import com.polo.marco.marcopoloapp.firebase.models.Marco;
 import com.polo.marco.marcopoloapp.firebase.models.User;
 import com.polo.marco.marcopoloapp.firebase.tasks.LoadUserFromDbEvent;
 
@@ -47,6 +50,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private DatabaseReference databaseUsers = FirebaseDatabase.getInstance().getReference("users");
     private DatabaseReference databaseEmails = FirebaseDatabase.getInstance().getReference("emails");
+    private DatabaseReference databaseMarcos = FirebaseDatabase.getInstance().getReference("marcos");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +69,8 @@ public class SettingsActivity extends AppCompatActivity {
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
         mGoogleApiClient.connect();
+
+        checkCurrentMarco();
     }
 
     public void onClickSignOut(View view) {
@@ -132,7 +138,11 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public void onClickSyncContacts(View view){
-        showSyncDialog();
+        showGoAheadDialog(getResources().getString(R.string.sync_prompt));
+    }
+
+    public void onClickDeleteMarco(View view){
+        showGoAheadDialog(getResources().getString(R.string.delete_marco_prompt));
     }
 
     public void emailInDB (String email){
@@ -159,15 +169,19 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
-    public void showSyncDialog(){
+    public void showGoAheadDialog(String message){
+        final String msg = message;
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
-        alertDialogBuilder.setMessage(getResources().getString(R.string.sync_prompt));
+        alertDialogBuilder.setMessage(message);
 
         alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
-                new syncContacts().execute();
+                if (msg.equals(getResources().getString(R.string.sync_prompt)))
+                    new syncContacts().execute();
+                else if (msg.equals(getResources().getString(R.string.delete_marco_prompt)))
+                    databaseMarcos.child(LoginActivity.currentUser.getUserId()).removeValue();
                 arg0.cancel();
             }
         });
@@ -239,5 +253,27 @@ public class SettingsActivity extends AppCompatActivity {
             }
             progressBar.setVisibility(View.GONE);
         }
+    }
+
+    public void checkCurrentMarco(){
+        databaseMarcos.child(LoginActivity.currentUser.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                }
+                else {
+                    Marco myMarco = snapshot.getValue(Marco.class);
+                    Button button = (Button) findViewById(R.id.delete_marco);
+                    button.setEnabled(true);
+                    TextView textView = (TextView) findViewById(R.id.my_marco_text_view);
+                    textView.setText(myMarco.getMessage() + "\nSent on: " + myMarco.getTimestamp());
+                    textView.setVisibility(View.VISIBLE);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

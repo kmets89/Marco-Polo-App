@@ -157,8 +157,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem item = menu.findItem(R.id.nav_account);
         item.setVisible(false);
-        item = menu.findItem(R.id.nav_settings);
-        item.setVisible(false);
         item = menu.findItem(R.id.nav_privacy_policy);
         item.setVisible(false);
         item = menu.findItem(R.id.nav_friends);
@@ -361,12 +359,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         if (menuItem.getItemId() == R.id.nav_friends) {
             intent = new Intent(this, FriendsListActivity.class);
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-            startActivity(intent);
-            return true;
-        }
-        if (menuItem.getItemId() == R.id.nav_settings) {
-            intent = new Intent(this, SettingsActivity.class);
             mDrawerLayout.closeDrawer(GravityCompat.START);
             startActivity(intent);
             return true;

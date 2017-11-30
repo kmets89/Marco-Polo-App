@@ -2,64 +2,80 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grassGreen">
+    android:background="@color/MarcoBlue">
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:textSize="35sp"
+        android:layout_height="30dp"
+        android:textSize="25sp"
         android:textAlignment="center"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
         android:id="@+id/custom_display_name" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <Button
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/custom_display_name">
+        android:id="@+id/add_found"
+        android:text="Add Friend"
+        android:onClick="onClickAddFound"
+        android:layout_marginLeft="20dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/custom_display_name"
+        android:visibility="gone"/>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/add_found"
-            android:text="Add Friend"
-            android:onClick="onClickAddFound"
-            android:layout_alignParentLeft="true"
-            android:visibility="gone"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/unfriend_found"
+        android:text="Unfriend"
+        android:onClick="onClickUnfriendFound"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/custom_display_name"
+        android:visibility="gone"/>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/block_found"
-            android:text="Block"
-            android:onClick="onClickBlockFound"
-            android:layout_alignParentRight="true"
-            android:visibility="gone"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/block_found"
+        android:text="Block"
+        android:onClick="onClickBlockFound"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:layout_below="@+id/custom_display_name"
+        android:visibility="gone"/>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/unblock_found"
-            android:text="Unblock"
-            android:onClick="onClickUnblockFound"
-            android:layout_alignParentRight="true"
-            android:visibility="gone"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/unblock_found"
+        android:text="Unblock"
+        android:onClick="onClickUnblockFound"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:layout_below="@+id/custom_display_name"
+        android:visibility="gone"/>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/unfriend_found"
-            android:text="Unfriend"
-            android:onClick="onClickUnfriendFound"
-            android:layout_alignParentLeft="true"
-            android:visibility="gone"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/marco_from_friend"
+        android:onClick="onClickMarcoFromFriend"
+        android:text="Marco"
+        android:layout_margin="10dp"
+        android:layout_below="@id/block_found"
+        android:visibility="gone"
+        android:layout_centerInParent="true"/>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/cancel_found"
-            android:text="Cancel"
-            android:onClick="onClickCancelFound"
-            android:layout_alignParentBottom="true"/>
-
-    </LinearLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:id="@+id/cancel_found"
+        android:text="Cancel"
+        android:onClick="onClickCancelFound"
+        android:layout_below="@+id/marco_from_friend"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"/>
 
 </RelativeLayout>

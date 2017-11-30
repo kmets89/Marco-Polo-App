@@ -89,9 +89,10 @@
     <string name="block_already_exists">"This person is already blocked!</string>
     <string name="add_blocked">"You have blocked this user!\nUnblock them first to add as a friend.</string>
 
-    <!-- Syncing phone contacts to friends list -->
+    <!-- Settings Activity Prompts -->
     <string name="sync_prompt">Syncing your contacts to your account will add any existing users\nwho
         currently have an account here to your friends list.\n
         Do you want to sync your phone contacts to your friends list?</string>
+    <string name="delete_marco_prompt">Do you want to delete your current Marco?</string>
 
 </resources>
