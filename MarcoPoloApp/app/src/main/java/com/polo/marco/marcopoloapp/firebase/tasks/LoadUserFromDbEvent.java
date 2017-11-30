@@ -42,7 +42,7 @@ public class LoadUserFromDbEvent implements ValueEventListener {
         User retrievedUser = dataSnapshot.getValue(User.class);
         if(retrievedUser != null){
             currentUser = retrievedUser;
-            currentUser.friendsListIds = retrievedUser.friendsListIds;
+            currentUser.friendsList = new ArrayList<User>();
             //If the firebasetoken is not null, it means it has been updated.
             //So we must update the users' token in the database.
             if(firebaseToken != null){
@@ -68,7 +68,7 @@ public class LoadUserFromDbEvent implements ValueEventListener {
                 }
             }
         }else{
-            //     public User(String userId, String name, String loginApiType, List<User> friendsList, double latitude, double longitude, String imgUrl, String email, String firebaseToken) {
+            //public User(String userId, String name, String loginApiType, List<User> friendsList, double latitude, double longitude, String imgUrl, String email, String firebaseToken) {
 
             currentUser = new User(id, name, loginApiType, new ArrayList<String>(), new ArrayList<String>(), imgUrl, email, firebaseToken);
             databaseUsers.child(id).setValue(currentUser);
