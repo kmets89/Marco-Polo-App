@@ -44,7 +44,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import com.polo.marco.marcopoloapp.api.database.User;
 import com.squareup.picasso.Picasso;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -299,6 +298,8 @@ public class SettingsActivity extends AppCompatActivity {
                     button.setEnabled(true);
                     TextView textView = (TextView) findViewById(R.id.my_marco_text_view);
                     textView.setText(myMarco.getMessage() + "\nSent on: " + myMarco.getTimestamp());
+                    textView.setVisibility(View.VISIBLE);
+                    textView = (TextView) findViewById(R.id.marco_description);
                     textView.setVisibility(View.VISIBLE);
                 }
             }
