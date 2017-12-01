@@ -174,7 +174,7 @@ public class MarcoActivity extends AppCompatActivity {
         //sending a Marco for an individual user, called from FriendsListActivity
         if (extras.getStringExtra("callingActivity") != null && extras.getStringExtra("callingActivity").equals("CustomDialog")) {
             isPublic = false;
-            Marco privateMarco = new Marco(LoginActivity.currentUser.getUserId(), message, currentDate, lat, lng, isPublic, recv);
+            Marco privateMarco = new Marco(LoginActivity.currentUser.getUserId(), LoginActivity.currentUser.getName(), message, currentDate, lat, lng, isPublic, recv);
             databaseMarcos.child(LoginActivity.currentUser.getUserId()).setValue(privateMarco);
             int userPosition = findUser(extras.getStringExtra("userId"));
             User retrievedUser = LoginActivity.currentUser.friendsList.get(userPosition);
@@ -189,7 +189,7 @@ public class MarcoActivity extends AppCompatActivity {
                     sendPrivateMarcoFromDB(message, currentDate);
             } else {
                 isPublic = true;
-                Marco publicMarco = new Marco(userId, message, currentDate, lat, lng, isPublic);
+                Marco publicMarco = new Marco(userId, LoginActivity.currentUser.getName(), message, currentDate, lat, lng, isPublic);
                 databaseMarcos.child(userId).setValue(publicMarco);
             }
         }
@@ -272,7 +272,7 @@ public class MarcoActivity extends AppCompatActivity {
     public void sendPrivateMarcoFromDB (final String message, String currentDate){
         boolean isPublic = false;
         final String cd = currentDate;
-        Marco privateMarco = new Marco(LoginActivity.currentUser.getUserId(), message, currentDate, lat, lng, isPublic, recv);
+        Marco privateMarco = new Marco(LoginActivity.currentUser.getUserId(), LoginActivity.currentUser.getName(), message, currentDate, lat, lng, isPublic, recv);
         databaseMarcos.child(LoginActivity.currentUser.getUserId()).setValue(privateMarco);
         for (int i = 0; i < friends.length; i++){
             if (((CheckBox)findViewById(i)).isChecked()) {

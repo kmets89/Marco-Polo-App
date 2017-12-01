@@ -47,6 +47,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.polo.marco.marcopoloapp.firebase.models.Marco;
 import com.polo.marco.marcopoloapp.firebase.models.User;
 
 import java.util.ArrayList;
@@ -66,7 +67,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Location lastLocation = null;
     private Marker currentLocationMarker = null;
     final private int PERMISSIONS_REQUEST_CODE = 124;
-    private static boolean friendsRead = false;
 
     //Hamburger menu stuff
     private NavigationView mDrawer;
@@ -74,6 +74,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ActionBarDrawerToggle mDrawerToggle;
 
     private DatabaseReference databaseUsers = FirebaseDatabase.getInstance().getReference("users");
+    private DatabaseReference databaseMarcos = FirebaseDatabase.getInstance().getReference("marcos");
 
     //
     public static boolean mIsInForegroundMode=false;
@@ -98,9 +99,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
+        databaseMarcos.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        Marco marco = child.getValue(Marco.class);
+                        if (marco.getStatus() == true)
+                                addMarcoMarker(marco.getLatitude(), marco.getLongitude(), marco.getMessage(), marco.getName());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
     }
 
 
@@ -118,10 +140,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //Function that's called when the marco button is clicked
     public void onClickBtnMarco(View view) {
-//        if (!friendsRead) {
-//            //testRead();
-//            friendsRead = true;
-//        }
         Intent intent = new Intent(this, MarcoActivity.class);
         startActivity(intent);
     }
@@ -134,10 +152,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return true;
         }
         if (item.getItemId() == R.id.nav_notifications) {
-//            if (!friendsRead) {
-//                //testRead();
-//                friendsRead = true;
-//            }
             startActivity(new Intent(MapsActivity.this, Notifications.class));
             return true;
         }
