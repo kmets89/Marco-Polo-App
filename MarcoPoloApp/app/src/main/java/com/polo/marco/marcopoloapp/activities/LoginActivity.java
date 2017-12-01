@@ -96,19 +96,19 @@ public class LoginActivity extends AppCompatActivity implements
         databaseNames = FirebaseDatabase.getInstance().getReference("names");
 
 
-        try {
-            PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                String hashKey = new String(Base64.encode(md.digest(), 0));
-                Log.i(TAG, "printHashKey() Hash Key: " + hashKey);
-            }
-        } catch (NoSuchAlgorithmException e) {
-            Log.e(TAG, "printHashKey()", e);
-        } catch (Exception e) {
-            Log.e(TAG, "printHashKey()", e);
-        }
+//        try {
+//            PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
+//            for (Signature signature : info.signatures) {
+//                MessageDigest md = MessageDigest.getInstance("SHA");
+//                md.update(signature.toByteArray());
+//                String hashKey = new String(Base64.encode(md.digest(), 0));
+//                Log.i(TAG, "printHashKey() Hash Key: " + hashKey);
+//            }
+//        } catch (NoSuchAlgorithmException e) {
+//            Log.e(TAG, "printHashKey()", e);
+//        } catch (Exception e) {
+//            Log.e(TAG, "printHashKey()", e);
+//        }
 
 
         // [START configure_signin]
@@ -168,18 +168,19 @@ public class LoginActivity extends AppCompatActivity implements
                                 // Application code
                                 try {
                                     String id = response.getJSONObject().getString("id");
-                                    //String email = response.getJSONObject().getString("email");
+                                    String email = response.getJSONObject().getString("email");
+                                    Log.d("IN GETTING INFO", email);
                                     String firstName = response.getJSONObject().getString("first_name");
                                     String lastName = response.getJSONObject().getString("last_name");
 
                                     Log.d(TAG, "Successfully logged into Facebook: " + id + ":" + firstName + " " + lastName);
 
-                                    handleFacebookSignInResult(id, firstName + " " + lastName);
+                                    handleFacebookSignInResult(id, firstName + " " + lastName, email);
 
-                                    //String emailKey = email.replace('.', ',');
-                                    //emailKey = emailKey.toLowerCase();
+                                    String emailKey = email.replace('.', ',');
+                                    emailKey = emailKey.toLowerCase();
                                     String nameKey = (firstName + " " + lastName).toLowerCase();
-                                    //databaseEmails.child(emailKey).child(id).setValue(email);
+                                    databaseEmails.child(emailKey).child(id).setValue(email);
                                     databaseNames.child(nameKey).child(id).setValue(firstName + " " + lastName);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -331,9 +332,9 @@ public class LoginActivity extends AppCompatActivity implements
         }
     }
 
-    private void handleFacebookSignInResult(String id, String name) {
+    private void handleFacebookSignInResult(String id, String name, String email) {
         databaseUsers.child(id).addListenerForSingleValueEvent(
-                new LoadUserFromDbEvent(databaseUsers, id, name, "facebook", "https://graph.facebook.com/" + id + "/picture?type=square", "place@holder.com")
+                new LoadUserFromDbEvent(databaseUsers, id, name, "facebook", "https://graph.facebook.com/" + id + "/picture?type=square", email)
         );
         updateUI(true, name);
     }
