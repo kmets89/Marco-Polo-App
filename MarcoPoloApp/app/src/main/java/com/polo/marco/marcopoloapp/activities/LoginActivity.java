@@ -117,10 +117,6 @@ public class LoginActivity extends AppCompatActivity implements
         facebookLoginButton.setScaleY(1.3f);
         // [END customize_button]
 
-        if (LoginManager.getInstance() != null) {
-            LoginManager.getInstance().logOut();
-        }
-
         // BEGIN FACEBOOK LOGIN
         accessTokenTracker = new AccessTokenTracker() {
             @Override
