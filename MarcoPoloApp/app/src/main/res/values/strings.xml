@@ -25,6 +25,7 @@
         <item>Books</item>
         <item>Language</item>
     </string-array>
+    <string name="polo_prompt">Do you want to Polo back?</string>
 
     <!-- Account settings activity strings -->
     <string name="title_activity_account_settings">Account</string>
