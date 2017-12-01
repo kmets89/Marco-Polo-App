@@ -4,9 +4,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -44,6 +48,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -118,7 +124,7 @@ public class LoginActivity extends AppCompatActivity implements
         facebookLoginButton.setScaleY(1.3f);
         // [END customize_button]
 
-        // BEGIN FACEBOOK LOGIN
+/*        // BEGIN FACEBOOK LOGIN
         accessTokenTracker = new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken newAccessToken) {
@@ -126,7 +132,7 @@ public class LoginActivity extends AppCompatActivity implements
             }
         };
 
-        updateWithToken(AccessToken.getCurrentAccessToken());
+        updateWithToken(AccessToken.getCurrentAccessToken());*/
 
         facebookCallbackManager = CallbackManager.Factory.create();
         facebookLoginButton.registerCallback(facebookCallbackManager, new FacebookCallback<LoginResult>() {
@@ -225,6 +231,7 @@ public class LoginActivity extends AppCompatActivity implements
                                             public void onCompleted(GraphResponse response) {
                                                 if (response != null && response.getJSONObject() != null) {
                                                     try {
+
                                                         JSONArray data = (JSONArray) response.getJSONObject().get("data");
                                                         //currentUser.setFriendsList(new ArrayList<User>());
                                                         currentUser.setFriendsListIds(new ArrayList<String>());
@@ -240,7 +247,6 @@ public class LoginActivity extends AppCompatActivity implements
                                                                                 //currentUser.friendsList.add(retrievedUser);
                                                                                 currentUser.friendsListIds.add(retrievedUser.getUserId());
                                                                                 Log.d(TAG, retrievedUser.getName());
-                                                                                databaseUsers.child(currentUser.getUserId()).setValue(currentUser);
                                                                             }
                                                                         }
 
@@ -250,6 +256,7 @@ public class LoginActivity extends AppCompatActivity implements
                                                                         }
                                                                     });
                                                         }
+                                                        databaseUsers.child(currentUser.getUserId()).setValue(currentUser);
                                                     } catch (JSONException e) {
                                                         e.printStackTrace();
                                                     }
@@ -263,6 +270,7 @@ public class LoginActivity extends AppCompatActivity implements
                                 handleFacebookSignInResult();
                             }*/
                         }
+
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
 
