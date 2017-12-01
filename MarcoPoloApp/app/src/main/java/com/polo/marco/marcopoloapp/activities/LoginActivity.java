@@ -140,7 +140,11 @@ public class LoginActivity extends AppCompatActivity implements
         facebookLoginButton.setScaleY(1.3f);
         // [END customize_button]
 
-        // BEGIN FACEBOOK LOGIN
+        if (LoginManager.getInstance() != null) {
+            LoginManager.getInstance().logOut();
+        }
+
+/*        // BEGIN FACEBOOK LOGIN
         accessTokenTracker = new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken newAccessToken) {
@@ -148,7 +152,7 @@ public class LoginActivity extends AppCompatActivity implements
             }
         };
 
-        updateWithToken(AccessToken.getCurrentAccessToken());
+        updateWithToken(AccessToken.getCurrentAccessToken());*/
 
         facebookCallbackManager = CallbackManager.Factory.create();
         facebookLoginButton.registerCallback(facebookCallbackManager, new FacebookCallback<LoginResult>() {
@@ -247,6 +251,7 @@ public class LoginActivity extends AppCompatActivity implements
                                             public void onCompleted(GraphResponse response) {
                                                 if (response != null && response.getJSONObject() != null) {
                                                     try {
+
                                                         JSONArray data = (JSONArray) response.getJSONObject().get("data");
                                                         //currentUser.setFriendsList(new ArrayList<User>());
                                                         currentUser.setFriendsListIds(new ArrayList<String>());
@@ -262,7 +267,6 @@ public class LoginActivity extends AppCompatActivity implements
                                                                                 //currentUser.friendsList.add(retrievedUser);
                                                                                 currentUser.friendsListIds.add(retrievedUser.getUserId());
                                                                                 Log.d(TAG, retrievedUser.getName());
-                                                                                databaseUsers.child(currentUser.getUserId()).setValue(currentUser);
                                                                             }
                                                                         }
 
@@ -272,6 +276,7 @@ public class LoginActivity extends AppCompatActivity implements
                                                                         }
                                                                     });
                                                         }
+                                                        databaseUsers.child(currentUser.getUserId()).setValue(currentUser);
                                                     } catch (JSONException e) {
                                                         e.printStackTrace();
                                                     }
@@ -285,6 +290,7 @@ public class LoginActivity extends AppCompatActivity implements
                                 handleFacebookSignInResult();
                             }*/
                         }
+
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
 
