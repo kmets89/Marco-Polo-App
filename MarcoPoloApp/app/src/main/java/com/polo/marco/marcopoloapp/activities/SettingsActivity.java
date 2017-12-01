@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.view.ViewGroup;
@@ -37,6 +38,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.firebase.MyFirebaseInstanceIdService;
 import com.polo.marco.marcopoloapp.firebase.models.Marco;
+import com.polo.marco.marcopoloapp.firebase.models.Polo;
 import com.polo.marco.marcopoloapp.firebase.models.User;
 import com.polo.marco.marcopoloapp.firebase.tasks.LoadUserFromDbEvent;
 
@@ -211,8 +213,9 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(DialogInterface arg0, int arg1) {
                 if (msg.equals(getResources().getString(R.string.sync_prompt)))
                     new syncContacts().execute();
-                else if (msg.equals(getResources().getString(R.string.delete_marco_prompt)))
+                else if (msg.equals(getResources().getString(R.string.delete_marco_prompt))) {
                     databaseMarcos.child(LoginActivity.currentUser.getUserId()).removeValue();
+                }
                 arg0.cancel();
             }
         });

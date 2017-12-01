@@ -3,16 +3,27 @@ package com.polo.marco.marcopoloapp.api.notifications;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.polo.marco.marcopoloapp.R;
+import com.polo.marco.marcopoloapp.activities.LoginActivity;
+import com.polo.marco.marcopoloapp.activities.MarcoActivity;
+import com.polo.marco.marcopoloapp.firebase.models.Polo;
+import com.polo.marco.marcopoloapp.firebase.models.User;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -26,6 +37,7 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
     private ArrayList<HeaderInfo> sectionList = new ArrayList<>();
     private CustomListAdapter listAdapter;
     private ExpandableListView expandableListView;
+    private DatabaseReference databasePolos = FirebaseDatabase.getInstance().getReference("polos");
 
     @Override
     //Opens a popup window containing user's notifications in an expandable list.
@@ -80,12 +92,33 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
 
    //dummy data for testing.  This is where our database query stuff will go
    private void addData(){
-       addDatum("Vegetable", "Potato");
-       addDatum("Vegetable","Cabbage");
-       addDatum("Vegetable","Onion");
+       databasePolos.child(LoginActivity.currentUser.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
+           @Override
+           public void onDataChange(DataSnapshot snapshot) {
+               if (!snapshot.exists()) {
+                   Log.d("TESTING", "it doesnt exist!");
+               }
+               else {
+                   for (DataSnapshot child : snapshot.getChildren()) {
+                       Polo retrievedPolo = child.getValue(Polo.class);
+                       addDatum("Marco sent from: "+ retrievedPolo.getSenderName(), retrievedPolo.getMessage());
 
-       addDatum("Fruits","Apple");
-       addDatum("Fruits","Orange");
+                       expandableListView = (ExpandableListView) findViewById(R.id.notificationListView);
+                       listAdapter = new CustomListAdapter(Notifications.this, sectionList);
+                       expandableListView.setAdapter(listAdapter);
+
+                       collapseAll();
+
+                       expandableListView.setOnChildClickListener(myListItemClicked);
+                       expandableListView.setOnGroupClickListener(myListGroupClicked);
+                   }
+               }
+           }
+           @Override
+           public void onCancelled(DatabaseError databaseError) {
+
+           }
+       });
    }
 
    //For now clicking on a child only prints out to screen, we can add functionality if needed

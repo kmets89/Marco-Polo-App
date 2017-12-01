@@ -26,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.firebase.models.Marco;
+import com.polo.marco.marcopoloapp.firebase.models.Polo;
 import com.polo.marco.marcopoloapp.firebase.models.User;
 
 import java.text.DateFormat;
@@ -48,9 +49,13 @@ public class MarcoActivity extends AppCompatActivity {
 
     double lat = LoginActivity.currentUser.getLatitude();
     double lng = LoginActivity.currentUser.getLongitude();
+    DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+    Date date = new Date();
+    private String currentDate = dateFormat.format(date);
 
     private DatabaseReference databaseMarcos = FirebaseDatabase.getInstance().getReference("marcos");
     private DatabaseReference databaseUsers = FirebaseDatabase.getInstance().getReference("users");
+    private DatabaseReference databasePolos = FirebaseDatabase.getInstance().getReference("polos");
 
     @Override
     //Opens a popup window for entering and storing Marco information.
@@ -162,9 +167,6 @@ public class MarcoActivity extends AppCompatActivity {
             return;
         }
 
-        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-        Date date = new Date();
-        String currentDate = dateFormat.format(date);
         //expiration time set for 12 hours from current time, measured in seconds from Epoch
         long expireTime = (System.currentTimeMillis() / 1000L) + 43200;
 
@@ -178,13 +180,13 @@ public class MarcoActivity extends AppCompatActivity {
             User retrievedUser = LoginActivity.currentUser.friendsList.get(userPosition);
             recv.add(retrievedUser.getFirebaseToken());
             databaseMarcos.child(LoginActivity.currentUser.getUserId()).child("receiverList").setValue(recv);
+
+            Polo polo = new Polo(retrievedUser.getUserId(), message, LoginActivity.currentUser.getName(), currentDate, lat, lng, false);
+            databasePolos.child(retrievedUser.getUserId()).child(LoginActivity.currentUser.getUserId()).setValue(polo);
         }
         else {
             if (publicSwitch.isChecked()) {
-                if (LoginActivity.currentUser.friendsList.size() != LoginActivity.currentUser.friendsListIds.size())
                     sendPrivateMarcoFromDB(message, currentDate);
-                else
-                    sendLocalPrivateMarco(message, currentDate);
             } else {
                 isPublic = true;
                 Marco publicMarco = new Marco(userId, message, currentDate, lat, lng, isPublic);
@@ -267,8 +269,9 @@ public class MarcoActivity extends AppCompatActivity {
         });
     }
 
-    public void sendPrivateMarcoFromDB (String message, String currentDate){
+    public void sendPrivateMarcoFromDB (final String message, String currentDate){
         boolean isPublic = false;
+        final String cd = currentDate;
         Marco privateMarco = new Marco(LoginActivity.currentUser.getUserId(), message, currentDate, lat, lng, isPublic, recv);
         databaseMarcos.child(LoginActivity.currentUser.getUserId()).setValue(privateMarco);
         for (int i = 0; i < friends.length; i++){
@@ -288,6 +291,9 @@ public class MarcoActivity extends AppCompatActivity {
                             if (!retrievedUser.getBlockList().contains(LoginActivity.currentUser.getUserId())) {
                                 recv.add(retrievedUser.getFirebaseToken());
                                 databaseMarcos.child(LoginActivity.currentUser.getUserId()).child("receiverList").setValue(recv);
+
+                                Polo polo = new Polo(retrievedUser.getUserId(), message, LoginActivity.currentUser.getName(), cd, lat, lng, false);
+                                databasePolos.child(retrievedUser.getUserId()).child(LoginActivity.currentUser.getUserId()).setValue(polo);
                             }
                         }
                     }
@@ -295,19 +301,6 @@ public class MarcoActivity extends AppCompatActivity {
                     public void onCancelled(DatabaseError databaseError) {
                     }
                 });
-            }
-        }
-    }
-
-    public void sendLocalPrivateMarco(String message, String currentDate){
-        boolean isPublic = false;
-        Marco privateMarco = new Marco(LoginActivity.currentUser.getUserId(), message, currentDate, lat, lng, isPublic, recv);
-        databaseMarcos.child(LoginActivity.currentUser.getUserId()).setValue(privateMarco);
-        for (int i = 0; i < friends.length; i++) {
-            if (((CheckBox) findViewById(i)).isChecked()) {
-                User retrievedUser = LoginActivity.currentUser.friendsList.get(i);
-                recv.add(retrievedUser.getFirebaseToken());
-                databaseMarcos.child(LoginActivity.currentUser.getUserId()).child("receiverList").setValue(recv);
             }
         }
     }

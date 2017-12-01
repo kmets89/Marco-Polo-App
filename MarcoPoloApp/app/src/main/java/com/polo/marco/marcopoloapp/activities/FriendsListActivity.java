@@ -63,11 +63,7 @@ public class FriendsListActivity extends AppCompatActivity {
             LinearLayout friendsView = (LinearLayout) findViewById(R.id.friends_layout_child);
             friendsView.removeAllViews();
             Log.d("RESUMING", "resetting friendslist");
-
-            if (LoginActivity.currentUser.friendsList.size() != LoginActivity.currentUser.friendsListIds.size())
-                pullFriendsFromDB();
-            else
-                pullLocalFriends();
+            pullFriendsFromDB();
             changedFriends = false;
         }
     }
