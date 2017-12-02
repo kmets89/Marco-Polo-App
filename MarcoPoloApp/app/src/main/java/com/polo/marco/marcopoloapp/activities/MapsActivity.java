@@ -43,6 +43,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.polo.marco.marcopoloapp.firebase.models.Marco;
+import com.polo.marco.marcopoloapp.firebase.models.Polo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,9 +70,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private DatabaseReference databaseUsers = FirebaseDatabase.getInstance().getReference("users");
     private DatabaseReference databaseMarcos = FirebaseDatabase.getInstance().getReference("marcos");
+    private DatabaseReference databasePolos = FirebaseDatabase.getInstance().getReference("polos");
 
     //
-    public static boolean mIsInForegroundMode=false;
+    public static boolean mIsInForegroundMode = false;
+
     //test
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +108,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         Marco marco = child.getValue(Marco.class);
                         if (marco.getStatus() == true)
-                                addMarcoMarker(marco.getLatitude(), marco.getLongitude(), marco.getMessage(), marco.getName());
+                            addMarcoMarker(marco.getLatitude(), marco.getLongitude(), marco.getMessage(), marco.getName(), false);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        databasePolos.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        for (DataSnapshot childs : child.getChildren()) {
+                            Polo polo = childs.getValue(Polo.class);
+                            if (child.getKey().equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
+                                addMarcoMarker(polo.getLatitude(), polo.getLongitude(), polo.getMessage(), polo.getSenderName(), true);
+                            }
+                        }
                     }
                 }
             }
@@ -255,9 +279,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         Intent intent = this.getIntent();
         Bundle extras = intent.getExtras();
-        if(!extras.isEmpty()){
+        if (!extras.isEmpty()) {
             boolean hasMarkerLocations = extras.containsKey("latitude");
-            if(hasMarkerLocations){
+            if (hasMarkerLocations) {
                 LatLng extraLatlng = new LatLng(extras.getDouble("latitude"), extras.getDouble("longitude"));
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(extraLatlng);
@@ -265,6 +289,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
     }
+
     //Getting current location
     private void getCurrentLocation() {
         //Creating a location object
@@ -331,7 +356,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
         }
 
-        if(LoginActivity.currentUser != null) {
+        if (LoginActivity.currentUser != null) {
             //update User in DB
             LoginActivity.currentUser.setLatitude(location.getLatitude());
             LoginActivity.currentUser.setLongitude(location.getLongitude());
@@ -346,8 +371,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         Intent intent = null;
         //if (!friendsRead) {
-            //testRead();
-            //friendsRead = true;
+        //testRead();
+        //friendsRead = true;
         //}
         if (menuItem.getItemId() == R.id.nav_account) {
             intent = new Intent(this, SettingsActivity.class);
@@ -376,11 +401,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return false;
     }
 
-    public static void addMarcoMarker(double lat, double lng, String message, String sender){
+    public static void addMarcoMarker(double lat, double lng, String message, String sender, boolean privat) {
         LatLng extraLatlng = new LatLng(lat, lng);
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(extraLatlng);
-        //markerOptions.snippet(userId);
+
+        if (privat) {
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+        }
+
+        markerOptions.snippet(sender + "," + message);
         mMap.addMarker(markerOptions).showInfoWindow();
     }
 
@@ -390,7 +420,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onMarkerClick(Marker marker) {
         lastMarkerClicked = marker;
         Intent intent = new Intent(this, PoloActivity.class);
-        intent.putExtra("userId", marker.getSnippet());
+        intent.putExtra("sender", marker.getSnippet().substring(0, marker.getSnippet().indexOf(",")));
+        intent.putExtra("message", marker.getSnippet().substring(marker.getSnippet().indexOf(",") + 1, marker.getSnippet().length()));
         startActivity(intent);
         return false;
     }

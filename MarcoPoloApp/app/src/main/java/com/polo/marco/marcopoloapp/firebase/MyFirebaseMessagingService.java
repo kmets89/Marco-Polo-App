@@ -44,7 +44,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 @Override
                 public void run() {
                     MapsActivity.addMarcoMarker(Double.parseDouble(lat),
-                            Double.parseDouble(lng), msg, sender);
+                            Double.parseDouble(lng), msg, sender, false);
                 }
             };
 
