@@ -72,7 +72,9 @@
     <string name="current_user"></string>
     <string name="send">Send</string>
     <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
     <string name="marco_title">Send a Marco</string>
+    <string name="polo_title">Send a Polo</string>
     <string name="marco_switch_public">Public</string>
     <string name="marco_switch_private">Private</string>
     <string name="marco_message_hint">What would you like to say?</string>

@@ -1,8 +1,6 @@
 package com.polo.marco.marcopoloapp.activities;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -18,14 +16,11 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Switch;
 import android.widget.Toast;
 
-import com.facebook.login.Login;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -48,17 +43,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.polo.marco.marcopoloapp.firebase.models.Marco;
-import com.polo.marco.marcopoloapp.firebase.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
-        NavigationView.OnNavigationItemSelectedListener {
+        NavigationView.OnNavigationItemSelectedListener,
+        GoogleMap.OnMarkerClickListener {
 
     //Google maps stuff
     private static GoogleMap mMap;
@@ -224,6 +218,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setOnMarkerClickListener(this);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             buildGoogleApiClient();
@@ -385,7 +380,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         LatLng extraLatlng = new LatLng(lat, lng);
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(extraLatlng);
-        markerOptions.title(sender + ": " + message);
+        //markerOptions.snippet(userId);
         mMap.addMarker(markerOptions).showInfoWindow();
+    }
+
+    public static Marker lastMarkerClicked = null;
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        lastMarkerClicked = marker;
+        Intent intent = new Intent(this, PoloActivity.class);
+        intent.putExtra("userId", marker.getSnippet());
+        startActivity(intent);
+        return false;
     }
 }
