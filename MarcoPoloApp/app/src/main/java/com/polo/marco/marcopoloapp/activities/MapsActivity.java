@@ -17,7 +17,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,7 +46,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
@@ -61,10 +59,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleApiClient client;
     private LocationRequest locationRequest;
     private Location lastLocation = null;
-    private LatLng destinationCoordinates;
+    private LatLng destinationPoint;
     private Marker currentLocationMarker = null;
     private Marker destinationMarker = null;
     public static final int REQUEST_LOCATION_CODE = 99;
+    private Boolean pathCleared = true;
 
     //Hamburger menu stuff
     private NavigationView mDrawer;
@@ -100,76 +99,70 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     public  void onMapLongClick (LatLng destination) {
-        //create a destination marker from a long click on the map
-        //double latitude = destination.latitude;
-        //double longitude = destination.longitude;
-
         Location currentLocationHolder;
 
         currentLocationHolder = lastLocation;
         mMap.clear();
         lastLocation = currentLocationHolder;
+        pathCleared = true;
 
-
-        destinationCoordinates = new LatLng(destination.latitude, destination.longitude);
+        destinationPoint = new LatLng(destination.latitude, destination.longitude);
         LatLng currentLocation = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.draggable(true);
         markerOptions.title("destination");
 
-        /*
-        if(destinationMarker != null){
-            destinationMarker.remove();
-        }
-        */
-
         currentLocationMarker = mMap.addMarker(markerOptions.position(currentLocation).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
         destinationMarker = mMap.addMarker(markerOptions.position(destination).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
         destinationMarker.showInfoWindow();
-        //LatLng lastLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-        /*
-        mMap.addPolyline(new PolylineOptions().add(
-                destination,
-                lastLatLng
-        ));
-        */
 
     }
 
     public void getRoute(List<Route> routes) {
-        ArrayList polylinePaths = new ArrayList<>();
-        //ArrayList originMarkers = new ArrayList<>();
-        //ArrayList destinationMarkers = new ArrayList<>();
-
 
         mMap.clear();
 
         for (Route route : routes) {
-            //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 16));
-            //((TextView) findViewById(R.id.tvDuration)).setText(route.duration.text);
-            //((TextView) findViewById(R.id.tvDistance)).setText(route.distance.text);
-
             currentLocationMarker = mMap.addMarker(new MarkerOptions()
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
                     .title(route.startAddress)
-                    .position(route.startLocation));
+                    .position(route.startPoint));
             destinationMarker = mMap.addMarker(new MarkerOptions()
-                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
                     .title(route.endAddress)
-                    .position(route.endLocation));
+                    .snippet("Expected time: " + route.duration.text + ", Distance: " + route.distance.text)
+                    .position(route.endPoint));
 
 
             PolylineOptions polylineOptions = new PolylineOptions().
                     geodesic(true).
                     color(Color.BLUE).
-                    width(10);
+                    width(7);
 
             for (int i = 0; i < route.points.size(); i++)
                 polylineOptions.add(route.points.get(i));
 
-            polylinePaths.add(mMap.addPolyline(polylineOptions));
+            mMap.addPolyline(polylineOptions);
+            pathCleared = false;
         }
 
+    }
+
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        if(pathCleared && destinationMarker != null && destinationMarker.getPosition().latitude == marker.getPosition().latitude && destinationMarker.getPosition().longitude == marker.getPosition().longitude){
+            String currentLatitude = String.valueOf(lastLocation.getLatitude());
+            String currentLongitude = String.valueOf(lastLocation.getLongitude());
+            String destinationLatitude = String.valueOf(destinationPoint.latitude);
+            String destinationLongitude = String.valueOf(destinationPoint.longitude);
+
+            try {
+                new RouteFinder(this, currentLatitude + "," + currentLongitude, destinationLatitude + "," + destinationLongitude).execute();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
     }
 
 
@@ -393,25 +386,4 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return false;
     }
 
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        if(destinationMarker != null && destinationMarker.getPosition().latitude == marker.getPosition().latitude && destinationMarker.getPosition().longitude == marker.getPosition().longitude){
-            String currentLatitude = String.valueOf(lastLocation.getLatitude());
-            String currentLongitude = String.valueOf(lastLocation.getLongitude());
-            String destinationLatitude = String.valueOf(destinationCoordinates.latitude);
-            String destinationLongitude = String.valueOf(destinationCoordinates.longitude);
-
-            Log.w("current latitude", currentLatitude);
-            Log.w("current longitude", currentLongitude);
-            Log.w("destination latitude", destinationLatitude);
-            Log.w("destination longitude", destinationLongitude);
-
-            try {
-                new RouteFinder(this, currentLatitude + "," + currentLongitude, destinationLatitude + "," + destinationLongitude).execute();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        }
-        return false;
-    }
 }

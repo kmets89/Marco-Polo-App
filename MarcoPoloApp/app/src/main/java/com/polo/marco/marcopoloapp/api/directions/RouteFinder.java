@@ -23,11 +23,11 @@ public class RouteFinder {
     private String directionURL="https://maps.googleapis.com/maps/api/directions/json?";
     private String directionAPIKey="AIzaSyAaQhqHmYa-eX4gtHtQoxWpQCe6oRrBgpg";
     private RouteFinderListener listener;
-    private String startLocation;
+    private String startAddress;
     private String destination;
 
     public RouteFinder(RouteFinderListener listener, String startLocation, String destination) {
-        this.startLocation = startLocation;
+        this.startAddress = startLocation;
         this.destination = destination;
         this.listener =  listener;
     }
@@ -39,7 +39,7 @@ public class RouteFinder {
 
     private String createUrl() throws UnsupportedEncodingException {
 
-        return directionURL + "origin=" + startLocation + "&destination=" + destination + "&key=" + directionAPIKey;
+        return directionURL + "origin=" + startAddress + "&destination=" + destination + "&key=" + directionAPIKey;
     }
 
     private class GetData extends AsyncTask<String, Void, String> {
@@ -100,8 +100,8 @@ public class RouteFinder {
             route.duration = new Duration(jsonDuration.getString("text"), jsonDuration.getInt("value"));
             route.endAddress = jsonLeg.getString("end_address");
             route.startAddress = jsonLeg.getString("start_address");
-            route.startLocation = new LatLng(jsonStartLocation.getDouble("lat"), jsonStartLocation.getDouble("lng"));
-            route.endLocation = new LatLng(jsonEndLocation.getDouble("lat"), jsonEndLocation.getDouble("lng"));
+            route.startPoint = new LatLng(jsonStartLocation.getDouble("lat"), jsonStartLocation.getDouble("lng"));
+            route.endPoint = new LatLng(jsonEndLocation.getDouble("lat"), jsonEndLocation.getDouble("lng"));
             route.points = decodePolyLine(overview_polylineJson.getString("points"));
 
             routes.add(route);
