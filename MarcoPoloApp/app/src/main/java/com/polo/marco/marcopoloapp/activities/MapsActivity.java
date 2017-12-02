@@ -75,6 +75,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //
     public static boolean mIsInForegroundMode = false;
 
+    // Active Polo Session Variables
+    public boolean hasActivePolo = false;
+    public Polo activePolo = null;
+    public String activePoloerUserId = "";
+    public Marker activePoloerMarker = null;
+    public static ArrayList<Marker> mapMarkerArray = new ArrayList<>();
+
     //test
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,8 +103,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
 
@@ -128,6 +134,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             Polo polo = childs.getValue(Polo.class);
                             if (child.getKey().equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
                                 addMarcoMarker(polo.getLatitude(), polo.getLongitude(), polo.getMessage(), polo.getSenderName(), childs.getKey(), true);
+                                if (polo.getResponded() == true) {
+                                    hasActivePolo = true;
+                                    activePolo = polo;
+                                    activePoloerUserId = childs.getKey();
+                                    Marker m = getMarker(childs.getKey());
+                                    if (m != null) {
+                                        m.setPosition(new LatLng(polo.getLatitude(), polo.getLongitude()));
+                                    }
+                                    // activePoloerLatitude = polo.getLatitude();
+                                    // activePoloerLongitude = polo.getLongitude();
+                                    // updateLocation = true;
+                                }
                             }
                         }
                     }
@@ -139,10 +157,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             }
         });
-
-
     }
-
 
     @Override
     protected void onPause() {
@@ -158,6 +173,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //Function that's called when the marco button is clicked
     public void onClickBtnMarco(View view) {
+        if (hasActivePolo) {
+            Toast.makeText(this, getResources().getString(R.string.has_active_polo), Toast.LENGTH_LONG).show();
+            return;
+        }
+
         Intent intent = new Intent(this, MarcoActivity.class);
         startActivity(intent);
     }
@@ -362,6 +382,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LoginActivity.currentUser.setLongitude(location.getLongitude());
             databaseUsers.child(LoginActivity.currentUser.getUserId()).child("latitude").setValue(location.getLatitude());
             databaseUsers.child(LoginActivity.currentUser.getUserId()).child("longitude").setValue(location.getLongitude());
+
+            if (hasActivePolo) {
+                databasePolos.child(LoginActivity.currentUser.getUserId()).child(activePoloerUserId).child("latitude").setValue(location.getLatitude());
+                databasePolos.child(LoginActivity.currentUser.getUserId()).child(activePoloerUserId).child("longitude").setValue(location.getLongitude());
+            }
         }
     }
 
@@ -407,17 +432,37 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         markerOptions.position(extraLatlng);
 
         if (privat) {
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
         }
 
-        markerOptions.snippet(privat + "|" + sender + "|" + message + "|" + userId);
-        mMap.addMarker(markerOptions).showInfoWindow();
+        markerOptions.snippet(privat + "|" + sender + "|" + message + "|" + userId).title(userId);
+        Marker marker = mMap.addMarker(markerOptions);
+        mapMarkerArray.add(marker);
+    }
+
+    public static Marker getMarker(String userId) {
+        for (final Marker marker : mapMarkerArray) {
+            if (marker.getTitle().equalsIgnoreCase(userId)) {
+                return marker;
+            }
+        }
+        return null;
+    }
+
+    public static void removeMarcoMarker(Marker marker) {
+        mapMarkerArray.remove(marker);
+        marker.remove();
     }
 
     public static Marker lastMarkerClicked = null;
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        if (hasActivePolo) {
+            Toast.makeText(this, getResources().getString(R.string.has_active_polo), Toast.LENGTH_LONG).show();
+            return false;
+        }
+
         lastMarkerClicked = marker;
         Intent intent = new Intent(this, PoloActivity.class);
         if (marker.getSnippet() != null && marker.getSnippet().contains("|")) {

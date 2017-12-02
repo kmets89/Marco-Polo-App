@@ -6,12 +6,18 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.polo.marco.marcopoloapp.R;
+import com.polo.marco.marcopoloapp.firebase.models.Polo;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class PoloActivity extends AppCompatActivity {
 
@@ -21,9 +27,14 @@ public class PoloActivity extends AppCompatActivity {
     private TextView sender;
     private TextView message;
     private Button cancelPolo;
+    private EditText poloText;
 
     double lat = LoginActivity.currentUser.getLatitude();
     double lng = LoginActivity.currentUser.getLongitude();
+
+    DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+    Date date = new Date();
+    private String currentDate = dateFormat.format(date);
 
     private DatabaseReference databaseMarcos = FirebaseDatabase.getInstance().getReference("marcos");
     private DatabaseReference databaseUsers = FirebaseDatabase.getInstance().getReference("users");
@@ -42,6 +53,8 @@ public class PoloActivity extends AppCompatActivity {
         sender = (TextView) findViewById(R.id.sender);
         message = (TextView) findViewById(R.id.message);
         cancelPolo = (Button) findViewById(R.id.cancelPolo);
+        poloText = (EditText) findViewById(R.id.poloText);
+
         if (getIntent().getStringExtra("private").equalsIgnoreCase("false")) {
             cancelPolo.setText("Dismiss");
         }
@@ -60,6 +73,15 @@ public class PoloActivity extends AppCompatActivity {
         getWindow().setLayout((int) (width * w), (int) (height * h));
     }
 
+    public void onClickSendPolo(View v) {
+        databasePolos.child(LoginActivity.currentUser.getUserId()).child(getIntent().getStringExtra("userId")).child("responded").setValue(true);
+
+        Polo polo = new Polo(getIntent().getStringExtra("userId"), poloText.getText().toString(), LoginActivity.currentUser.getName(), currentDate, lat, lng, true);
+        databasePolos.child(getIntent().getStringExtra("userId")).child(LoginActivity.currentUser.getUserId()).setValue(polo);
+
+        finish();
+    }
+
     public void onClickDeletePolo(View v) {
         if (getIntent().getStringExtra("private").equalsIgnoreCase("false")) {
             finish();
@@ -70,7 +92,7 @@ public class PoloActivity extends AppCompatActivity {
         databasePolos.child(LoginActivity.currentUser.getUserId()).child(getIntent().getStringExtra("userId")).removeValue();
 
         if (MapsActivity.lastMarkerClicked != null) {
-            MapsActivity.lastMarkerClicked.remove();
+            MapsActivity.removeMarcoMarker(MapsActivity.lastMarkerClicked);
             MapsActivity.lastMarkerClicked = null;
         }
 

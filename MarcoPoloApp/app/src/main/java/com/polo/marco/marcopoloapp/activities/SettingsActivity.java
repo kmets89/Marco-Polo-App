@@ -10,17 +10,13 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.design.widget.BaseTransientBottomBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
@@ -38,13 +34,10 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.firebase.MyFirebaseInstanceIdService;
 import com.polo.marco.marcopoloapp.firebase.models.Marco;
-import com.polo.marco.marcopoloapp.firebase.models.Polo;
 import com.polo.marco.marcopoloapp.firebase.models.User;
-import com.polo.marco.marcopoloapp.firebase.tasks.LoadUserFromDbEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import com.squareup.picasso.Picasso;
 
