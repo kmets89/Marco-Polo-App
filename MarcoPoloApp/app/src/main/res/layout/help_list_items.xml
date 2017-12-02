@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/help_about"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/help_about"/>
+
+    <TextView
+        android:id="@+id/help_marco"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/help_marco"/>
+
+    <TextView
+        android:id="@+id/help_public"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/help_public"/>
+
+    <TextView
+        android:id="@+id/help_private"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/help_private"/>
+
+    <TextView
+        android:id="@+id/help_polo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/help_polo"/>
+
+    <TextView
+        android:id="@+id/help_friends"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/help_friends"/>
+
+</android.support.constraint.ConstraintLayout>
