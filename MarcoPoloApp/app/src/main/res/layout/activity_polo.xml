@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/grassGreen">
+
+    <TextView
+        android:id="@+id/marco_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorPrimary"
+        android:text="@string/polo_title"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="24sp" />
+
+    <EditText
+        android:id="@+id/marcoText"
+        android:layout_width="match_parent"
+        android:layout_height="160sp"
+        android:layout_below="@+id/marco_title"
+        android:layout_marginTop="14dp"
+        android:layout_toEndOf="@+id/textView1"
+        android:background="@color/streetGray"
+        android:gravity="top|start"
+        android:hint="@string/marco_message_hint"
+        android:textColor="@color/colorPrimaryDark" />
+
+    <LinearLayout
+        android:id="@+id/button_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:elevation="14dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/cancelMarco"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:elevation="12dp"
+            android:onClick="onClickDeleteMarco"
+            android:text="@string/delete"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/sendMarco"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:elevation="12dp"
+            android:onClick="onClickSendPolo"
+            android:text="@string/send"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/marcoText"
+        android:layout_marginBottom="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/marco_friends_list"
+        android:visibility="gone" />
+
+    <ScrollView
+        android:id="@+id/friends_list"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:layout_below="@+id/textView1">
+
+        <LinearLayout
+            android:id="@+id/check_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="vertical">
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

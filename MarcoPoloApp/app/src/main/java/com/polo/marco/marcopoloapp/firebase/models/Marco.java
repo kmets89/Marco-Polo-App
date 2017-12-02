@@ -8,6 +8,7 @@ import java.util.List;
 
 public class Marco {
     private String userId;
+    private String name;
     private String message;
     private String timestamp;
     private double latitude;
@@ -17,6 +18,9 @@ public class Marco {
 
     public String getUserId() {return userId;}
     public void setUserId(String id) {this.userId = id;}
+
+    public String getName() {return name;}
+    public void setName(String name) {this.name = name;}
 
     public String getMessage() {return message;}
     public void setMessage(String m) {this.message = m;}
@@ -43,8 +47,9 @@ public class Marco {
     public Marco() {}
 
     //constructor for a public Marco
-    public Marco(String id, String m, String t, double lat, double lon, boolean p){
+    public Marco(String id, String n, String m, String t, double lat, double lon, boolean p){
         this.userId = id;
+        this.name = n;
         this.message = m;
         this.timestamp = t;
         this.latitude = lat;
@@ -54,8 +59,9 @@ public class Marco {
     }
 
     //constructor for a private Marco
-    public Marco(String id, String m, String t, double lat, double lon, boolean p, List<String>recv){
+    public Marco(String id, String n, String m, String t, double lat, double lon, boolean p, List<String>recv){
         this.userId = id;
+        this.name = n;
         this.message = m;
         this.timestamp = t;
         this.latitude = lat;

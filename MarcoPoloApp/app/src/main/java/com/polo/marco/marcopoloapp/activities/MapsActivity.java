@@ -1,8 +1,6 @@
 package com.polo.marco.marcopoloapp.activities;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -18,14 +16,11 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Switch;
 import android.widget.Toast;
 
-import com.facebook.login.Login;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,17 +42,17 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.polo.marco.marcopoloapp.firebase.models.User;
+import com.polo.marco.marcopoloapp.firebase.models.Marco;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
-        NavigationView.OnNavigationItemSelectedListener {
+        NavigationView.OnNavigationItemSelectedListener,
+        GoogleMap.OnMarkerClickListener {
 
     //Google maps stuff
     private static GoogleMap mMap;
@@ -66,7 +61,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Location lastLocation = null;
     private Marker currentLocationMarker = null;
     final private int PERMISSIONS_REQUEST_CODE = 124;
-    private static boolean friendsRead = false;
 
     //Hamburger menu stuff
     private NavigationView mDrawer;
@@ -74,6 +68,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ActionBarDrawerToggle mDrawerToggle;
 
     private DatabaseReference databaseUsers = FirebaseDatabase.getInstance().getReference("users");
+    private DatabaseReference databaseMarcos = FirebaseDatabase.getInstance().getReference("marcos");
 
     //
     public static boolean mIsInForegroundMode=false;
@@ -98,9 +93,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
+        databaseMarcos.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        Marco marco = child.getValue(Marco.class);
+                        if (marco.getStatus() == true)
+                                addMarcoMarker(marco.getLatitude(), marco.getLongitude(), marco.getMessage(), marco.getName());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
     }
 
 
@@ -118,10 +134,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //Function that's called when the marco button is clicked
     public void onClickBtnMarco(View view) {
-//        if (!friendsRead) {
-//            //testRead();
-//            friendsRead = true;
-//        }
         Intent intent = new Intent(this, MarcoActivity.class);
         startActivity(intent);
     }
@@ -134,10 +146,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return true;
         }
         if (item.getItemId() == R.id.nav_notifications) {
-//            if (!friendsRead) {
-//                //testRead();
-//                friendsRead = true;
-//            }
             startActivity(new Intent(MapsActivity.this, Notifications.class));
             return true;
         }
@@ -210,6 +218,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setOnMarkerClickListener(this);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             buildGoogleApiClient();
@@ -371,7 +380,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         LatLng extraLatlng = new LatLng(lat, lng);
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(extraLatlng);
-        markerOptions.title(sender + ": " + message);
+        //markerOptions.snippet(userId);
         mMap.addMarker(markerOptions).showInfoWindow();
+    }
+
+    public static Marker lastMarkerClicked = null;
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        lastMarkerClicked = marker;
+        Intent intent = new Intent(this, PoloActivity.class);
+        intent.putExtra("userId", marker.getSnippet());
+        startActivity(intent);
+        return false;
     }
 }
