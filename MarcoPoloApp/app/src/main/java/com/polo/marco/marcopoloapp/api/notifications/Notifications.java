@@ -31,6 +31,7 @@ import java.util.LinkedHashMap;
 //This class provides a popup window detailing a user's notifications inside an expandable list
 //For alterations/debugging, consult CustomListAdapter, DetailInfo, and HeaderInfo classes and their
 //XML files
+//and stuff
 public class Notifications extends AppCompatActivity implements OnClickListener {
 
     Dialogs dialogs = new Dialogs();
