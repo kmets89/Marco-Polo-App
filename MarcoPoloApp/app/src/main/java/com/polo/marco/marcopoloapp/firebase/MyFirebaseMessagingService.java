@@ -37,6 +37,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             final String lng = payload.get("longitude");
             final String msg = payload.get("message");
             final String sender = payload.get("sender");
+            final String userId = payload.get("userId");
 
             Handler mainHandler = new Handler(this.getBaseContext().getMainLooper());
 
@@ -44,7 +45,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 @Override
                 public void run() {
                     MapsActivity.addMarcoMarker(Double.parseDouble(lat),
-                            Double.parseDouble(lng), msg, sender, false);
+                            Double.parseDouble(lng), msg, sender, userId, false);
                 }
             };
 

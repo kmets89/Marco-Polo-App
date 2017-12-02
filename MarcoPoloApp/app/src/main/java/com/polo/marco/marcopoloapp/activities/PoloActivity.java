@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +20,7 @@ public class PoloActivity extends AppCompatActivity {
     private final double publicHeight = 0.42;
     private TextView sender;
     private TextView message;
+    private Button cancelPolo;
 
     double lat = LoginActivity.currentUser.getLatitude();
     double lng = LoginActivity.currentUser.getLongitude();
@@ -39,6 +41,10 @@ public class PoloActivity extends AppCompatActivity {
 
         sender = (TextView) findViewById(R.id.sender);
         message = (TextView) findViewById(R.id.message);
+        cancelPolo = (Button) findViewById(R.id.cancelPolo);
+        if (getIntent().getStringExtra("private").equalsIgnoreCase("false")) {
+            cancelPolo.setText("Dismiss");
+        }
 
         sender.append(" " + getIntent().getStringExtra("sender"));
         message.append(" " + getIntent().getStringExtra("message"));
@@ -54,16 +60,21 @@ public class PoloActivity extends AppCompatActivity {
         getWindow().setLayout((int) (width * w), (int) (height * h));
     }
 
-    public void onClickDeleteMarco(View v) {
+    public void onClickDeletePolo(View v) {
+        if (getIntent().getStringExtra("private").equalsIgnoreCase("false")) {
+            finish();
+            return;
+        }
+
         Toast.makeText(this, getIntent().getStringExtra("userId"), Toast.LENGTH_LONG).show();
-        databaseMarcos.child(getIntent().getStringExtra("userId")).removeValue();
-        databasePolos.child(getIntent().getStringExtra("userId")).removeValue();
-        databasePolos.child(LoginActivity.currentUser.getUserId()).removeValue();
+        databasePolos.child(LoginActivity.currentUser.getUserId()).child(getIntent().getStringExtra("userId")).removeValue();
 
         if (MapsActivity.lastMarkerClicked != null) {
             MapsActivity.lastMarkerClicked.remove();
             MapsActivity.lastMarkerClicked = null;
         }
+
+        finish();
     }
 
 }

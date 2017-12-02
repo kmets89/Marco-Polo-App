@@ -95,22 +95,6 @@ public class LoginActivity extends AppCompatActivity implements
         databaseEmails = FirebaseDatabase.getInstance().getReference("emails");
         databaseNames = FirebaseDatabase.getInstance().getReference("names");
 
-
-//        try {
-//            PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
-//            for (Signature signature : info.signatures) {
-//                MessageDigest md = MessageDigest.getInstance("SHA");
-//                md.update(signature.toByteArray());
-//                String hashKey = new String(Base64.encode(md.digest(), 0));
-//                Log.i(TAG, "printHashKey() Hash Key: " + hashKey);
-//            }
-//        } catch (NoSuchAlgorithmException e) {
-//            Log.e(TAG, "printHashKey()", e);
-//        } catch (Exception e) {
-//            Log.e(TAG, "printHashKey()", e);
-//        }
-
-
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -140,11 +124,7 @@ public class LoginActivity extends AppCompatActivity implements
         facebookLoginButton.setScaleY(1.3f);
         // [END customize_button]
 
-        if (LoginManager.getInstance() != null) {
-            LoginManager.getInstance().logOut();
-        }
-
-/*        // BEGIN FACEBOOK LOGIN
+        // BEGIN FACEBOOK LOGIN
         accessTokenTracker = new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken newAccessToken) {
@@ -152,7 +132,7 @@ public class LoginActivity extends AppCompatActivity implements
             }
         };
 
-        updateWithToken(AccessToken.getCurrentAccessToken());*/
+        updateWithToken(AccessToken.getCurrentAccessToken());
 
         facebookCallbackManager = CallbackManager.Factory.create();
         facebookLoginButton.registerCallback(facebookCallbackManager, new FacebookCallback<LoginResult>() {

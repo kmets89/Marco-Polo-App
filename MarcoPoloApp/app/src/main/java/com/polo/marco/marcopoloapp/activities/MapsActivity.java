@@ -108,7 +108,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         Marco marco = child.getValue(Marco.class);
                         if (marco.getStatus() == true)
-                            addMarcoMarker(marco.getLatitude(), marco.getLongitude(), marco.getMessage(), marco.getName(), false);
+                            addMarcoMarker(marco.getLatitude(), marco.getLongitude(), marco.getMessage(), marco.getName(), marco.getUserId(), false);
                     }
                 }
             }
@@ -127,7 +127,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         for (DataSnapshot childs : child.getChildren()) {
                             Polo polo = childs.getValue(Polo.class);
                             if (child.getKey().equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
-                                addMarcoMarker(polo.getLatitude(), polo.getLongitude(), polo.getMessage(), polo.getSenderName(), true);
+                                addMarcoMarker(polo.getLatitude(), polo.getLongitude(), polo.getMessage(), polo.getSenderName(), childs.getKey(), true);
                             }
                         }
                     }
@@ -401,7 +401,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return false;
     }
 
-    public static void addMarcoMarker(double lat, double lng, String message, String sender, boolean privat) {
+    public static void addMarcoMarker(double lat, double lng, String message, String sender, String userId, boolean privat) {
         LatLng extraLatlng = new LatLng(lat, lng);
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(extraLatlng);
@@ -410,7 +410,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
         }
 
-        markerOptions.snippet(sender + "," + message);
+        markerOptions.snippet(privat + "|" + sender + "|" + message + "|" + userId);
         mMap.addMarker(markerOptions).showInfoWindow();
     }
 
@@ -420,8 +420,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onMarkerClick(Marker marker) {
         lastMarkerClicked = marker;
         Intent intent = new Intent(this, PoloActivity.class);
-        intent.putExtra("sender", marker.getSnippet().substring(0, marker.getSnippet().indexOf(",")));
-        intent.putExtra("message", marker.getSnippet().substring(marker.getSnippet().indexOf(",") + 1, marker.getSnippet().length()));
+        if (marker.getSnippet() != null && marker.getSnippet().contains("|")) {
+            String[] data = marker.getSnippet().split("\\|");
+            intent.putExtra("private", data[0]);
+            intent.putExtra("sender", data[1]);
+            intent.putExtra("message", data[2]);
+            intent.putExtra("userId", data[3]);
+        }
         startActivity(intent);
         return false;
     }
