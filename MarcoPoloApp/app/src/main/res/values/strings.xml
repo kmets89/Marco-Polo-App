@@ -96,4 +96,13 @@
         Do you want to sync your phone contacts to your friends list?</string>
     <string name="delete_marco_prompt">Do you want to delete your current Marco?</string>
 
+
+    <string name="current_meetup">Active Meetups</string>
+    <string name="DummyUser">User</string>
+    <string name="NoUser">No Profile</string>
+    <string name="Username">Username:</string>
+    <string name="about_me_from_facebook">We can pull this from your facebook profile or feel free to write something new! </string>
+    <string name="FacebookProfile">Facebook Profile Attached</string>
+    <string name="GoogleProfile">Google Profile Attached</string>
+    <string name="Logout">Logout</string>
 </resources>
