@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MarcoPoloApp.iml" filepath="$PROJECT_DIR$/MarcoPoloApp.iml" />
+      <module fileurl="file://Y:\cs472\fall2017-marcopologame\MarcoPoloApp\MarcoPoloApp.iml" filepath="Y:\cs472\fall2017-marcopologame\MarcoPoloApp\MarcoPoloApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://Y:\cs472\fall2017-marcopologame\MarcoPoloApp\app\app.iml" filepath="Y:\cs472\fall2017-marcopologame\MarcoPoloApp\app\app.iml" />
     </modules>
   </component>
 </project>

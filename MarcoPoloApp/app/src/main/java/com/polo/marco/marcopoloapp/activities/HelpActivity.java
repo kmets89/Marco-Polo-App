@@ -30,6 +30,7 @@ public class HelpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help);
         addDatum("About", getString(R.string.help_about));
+        addDatum("Icons", getString(R.string.help_icons));
         addDatum("Marco", getString(R.string.help_marco));
         addDatum("Public", getString(R.string.help_public));
         addDatum("Private", getString(R.string.help_private));

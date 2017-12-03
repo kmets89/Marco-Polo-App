@@ -98,30 +98,36 @@
 
     <!-- Help Activity Strings -->
     <string name = "help_about">
-        Marco Polo is a location enabled social app, designed to make meeting up with your friends easier!
+        Marco Polo is a location enabled social app, designed to make meeting up with your friends easier!\n
     </string>
     <string name = "help_marco">
-        To share your location with a friend you can send them a Marco. There are two types of Marcos, public and private.
+        To share your location with a friend you can send them a Marco. There are two types of Marcos, public and private.\n
     </string>
     <string name = "help_public">
-        A public Marco will be shared with everyone that uses the Marco Polo App. To create a public marco tap Marco on the main page and enter a description of the event you are marking.
-        Keep in mind you may only have one public Marco at a time.
+        A public Marco will be shared with everyone that uses the Marco Polo App.\n
+        To create a public marco tap Marco on the main page and enter a description of the event you are marking.\n
+        Keep in mind you may only have one public Marco at a time.\n
     </string>
     <string name = "help_private">
-        A private Marco will be shared only with the people that you choose. To create a private Marco tap Marco on the main page and tap the switch at the top.
-        Then you can enter a message to send with your location.
-        Finally you may select the friends that you wish to send the Marco to!
-        A few things to keep in mind:
-            Your friends will have to Polo back to you to signify that they will be joining you.
-            If you do not have any friends you can not send a private Marco.
+        A private Marco will be shared only with the people that you choose. To create a private Marco tap Marco on the main page and tap the switch at the top.\n
+        Then you can enter a message to send with your location.\n
+        Finally you may select the friends that you wish to send the Marco to!\n
+        A few things to keep in mind:\n
+            \t Your friends will have to Polo back to you to signify that they will be joining you.\n
+            \t If you do not have any friends you can not send a private Marco.\n
     </string>
     <string name = "help_polo">
-        When a friend sends you a Marco you will need to let them know if you will be joining them.
-        In order to do this you do the polo thing to let them know! (Not sure exactly what the process is EDIT THIS)
+        When a friend sends you a Marco you will need to let them know if you will be joining them.\n
+        In order to do this you do the polo thing to let them know! (Not sure exactly what the process is EDIT THIS)\n
     </string>
     <string name = "help_friends">
-        To add friends you may select Friends from the main menu and search for them by name or email address.
-        If you allow this app to access your contacts then Marco Polo will attempt to automatically add contacts that also use the app to your friends list.
-        Please note that the app may not find all friends in your contacts automatically.
+        To add friends you may select Friends from the main menu and search for them by name or email address. \n
+        If you allow this app to access your contacts then Marco Polo will attempt to automatically add contacts that also use the app to your friends list. \n
+        Please note that the app may not find all friends in your contacts automatically. \n
     </string>
+
+    <string name = "help_icons">
+        Here are the icons! They do stuff!
+    </string>
+
 </resources>
