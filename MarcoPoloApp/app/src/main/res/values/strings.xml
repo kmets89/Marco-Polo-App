@@ -113,8 +113,8 @@
         Then you can enter a message to send with your location.\n
         Finally you may select the friends that you wish to send the Marco to!\n
         A few things to keep in mind:\n
-            \t Your friends will have to Polo back to you to signify that they will be joining you.\n
-            \t If you do not have any friends you can not send a private Marco.\n
+            \t\t Your friends will have to Polo back to you to signify that they will be joining you.\n
+            \t\t If you do not have any friends you can not send a private Marco.\n
     </string>
     <string name = "help_polo">
         When a friend sends you a Marco you will need to let them know if you will be joining them.\n
@@ -128,6 +128,7 @@
 
     <string name = "help_icons">
         Here are the icons! They do stuff!
+        <img src = "@drawable/ic_launcher.png"></img>
     </string>
 
 </resources>

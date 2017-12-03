@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.polo.marco.marcopoloapp.R;
@@ -11,6 +12,7 @@ import com.polo.marco.marcopoloapp.api.notifications.CustomListAdapter;
 import com.polo.marco.marcopoloapp.api.notifications.DetailInfo;
 import com.polo.marco.marcopoloapp.api.notifications.HeaderInfo;
 import com.polo.marco.marcopoloapp.api.notifications.Notifications;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -97,8 +99,13 @@ public class HelpActivity extends AppCompatActivity {
         ArrayList<DetailInfo> childList = headerInfo.getChildList();
         int listSize = childList.size();
         listSize++;
-
         DetailInfo detailInfo = new DetailInfo();
+
+        if(group.equals("Icons")) {
+            setContentView(R.layout.help_list_items);
+
+        }
+
         detailInfo.setName(child);
         childList.add(detailInfo);
         headerInfo.setChildList(childList);
