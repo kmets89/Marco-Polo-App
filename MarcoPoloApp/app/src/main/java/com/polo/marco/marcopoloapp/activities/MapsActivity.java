@@ -13,6 +13,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -101,15 +103,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        databasePolos.addValueEventListener(new ValueEventListener() {
+        /*databasePolos.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         for (DataSnapshot childs : child.getChildren()) {
-                            Polo polo = childs.getValue(Polo.class);
-                            if (child.getKey().equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
-                                addMarcoMarker(polo.getLatitude(), polo.getLongitude(), polo.getMessage(), polo.getSenderName(), childs.getKey(), true);
+                            if (childs.exists()) {
+                                Polo polo = childs.getValue(Polo.class);
+                                if (child.getKey().equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
+                                    addMarcoMarker(polo.getLatitude(), polo.getLongitude(), polo.getMessage(), polo.getSenderName(), childs.getKey(), true);
+                                }
                             }
                         }
                     }
@@ -120,7 +124,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        });*/
 
     }
 

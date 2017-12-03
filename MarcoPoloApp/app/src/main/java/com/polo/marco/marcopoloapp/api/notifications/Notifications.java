@@ -1,6 +1,8 @@
 package com.polo.marco.marcopoloapp.api.notifications;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -9,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ExpandableListView;
@@ -58,7 +61,16 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
         int width = dispMetrics.widthPixels;
         int height = dispMetrics.heightPixels;
 
-        getWindow().setLayout((int) (width * 0.8), (int) (height * 0.3));
+        Window win = getWindow();
+        getWindow().setLayout((int) (width * 0.8), (int) (height * 0.35));
+
+        win.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        WindowManager.LayoutParams params = win.getAttributes();
+        params.dimAmount = 0.6f;
+        win.setAttributes(params);
+
+
+
 
         //Creates an adapter to pipe in data to the list view.  For now ignore the spinner
         //that we're not using
@@ -105,7 +117,7 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
                    for (DataSnapshot child : snapshot.getChildren()) {
                        Polo retrievedPolo = child.getValue(Polo.class);
                        String shortDate = retrievedPolo.getTimestamp().split(" ")[0];
-                       addDatum(child.getKey(), "Marco from: "+ retrievedPolo.getSenderName() + "\nSent on: " + shortDate, retrievedPolo.getMessage());
+                       addDatum(child.getKey(), "Marco from: "+ retrievedPolo.getSenderName(), "Sent on: " + shortDate + "\n" + retrievedPolo.getMessage());
 
                        expandableListView = (ExpandableListView) findViewById(R.id.notificationListView);
                        listAdapter = new CustomListAdapter(Notifications.this, sectionList);
@@ -188,7 +200,7 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
 
         alertDialogBuilder.setMessage(prompt);
         final String senderId = id;
-        alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
                 databasePolos.child(LoginActivity.currentUser.getUserId()).child(senderId).child("responded").setValue(true);
@@ -199,7 +211,7 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
             }
         });
 
-        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setNegativeButton("Decline", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 databasePolos.child(LoginActivity.currentUser.getUserId()).child(senderId).removeValue();

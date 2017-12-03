@@ -29,6 +29,8 @@ import com.polo.marco.marcopoloapp.*;
 import com.polo.marco.marcopoloapp.firebase.models.User;
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,6 +138,9 @@ public class FriendsListActivity extends AppCompatActivity {
 
             ImageView profilePicView = (ImageView) newView.findViewById(R.id.friendslist_profile_image);
             Picasso.with(FriendsListActivity.this).load(retrieved.getImgUrl()).into(profilePicView);
+
+            TextView emailView = (TextView) newView.findViewById(R.id.friendslist_email_address);
+            emailView.setText(retrieved.getEmail());
 
             LinearLayout friendsView = (LinearLayout) findViewById(R.id.friends_layout_child);
             friendsView.addView(newView);

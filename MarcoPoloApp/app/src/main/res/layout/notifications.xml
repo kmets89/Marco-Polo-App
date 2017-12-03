@@ -2,30 +2,41 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/streetGray">
+    android:background="@drawable/red_bubble">
 
     <!--<Spinner android:id="@+id/spinGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:paddingLeft="100sp"/>
+        android:paddingLeft="100sp"/>-->
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/notifications_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:layout_marginBottom="7dp"
+        android:layout_marginLeft="15dp"
+        android:background="@color/darkPoloRed"
+        android:text="What you've missed"
+        android:textSize="22sp"
+        android:textColor="@color/darkStreetGray"/>
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
+        android:background="@color/streetGray"
         android:layout_margin="5dp"
-        android:background="@color/poloRed"
-        android:padding="5dp"
-        android:text="Testing, testing..."/>-->
-    <ExpandableListView
-        android:id="@+id/notificationListView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:divider="@color/MarcoBlue"
-        android:dividerHeight="2sp"
-        android:childDivider="@color/MarcoBlue"
-        android:listSelector="@color/MarcoBlue"/>
+        android:layout_below="@+id/notifications_header">
+
+        <ExpandableListView
+            android:id="@+id/notificationListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:divider="@color/streetGray"
+            android:dividerHeight="2sp"
+            android:childDivider="@color/darkPoloRed"
+            android:listSelector="@color/darkStreetGray"/>
+
+    </RelativeLayout>
 </RelativeLayout>
