@@ -47,14 +47,13 @@ public class Notifications extends AppCompatActivity implements OnClickListener 
         public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
             HeaderInfo headerInfo = sectionList.get(groupPosition);
             DetailInfo detailInfo = headerInfo.getChildList().get(childPosition);
-            Toast.makeText(getBaseContext(), "Clicked on detail " + headerInfo.getName() + "/" + detailInfo.getName(), Toast.LENGTH_LONG).show();
 
             if ((headerInfo.getName()).contains("Marco sent from")) {
                 String segments[] = headerInfo.getName().split(": ");
 
                 dialogs.poloNotif(v, segments[segments.length - 1], detailInfo.getName());
             } else {
-                dialogs.poloNotif(v, headerInfo.getName(), detailInfo.getName());
+                dialogs.meetupNotif(v, headerInfo.getName(), detailInfo.getName());
             }
             return false;
         }
@@ -131,18 +130,29 @@ public class Notifications extends AppCompatActivity implements OnClickListener 
                     for (DataSnapshot child : snapshot.getChildren()) {
 
                         Polo retrievedPolo = child.getValue(Polo.class);
-                        Toast.makeText(getApplicationContext(), child.getKey(), Toast.LENGTH_LONG).show();
+                        if (!retrievedPolo.getResponded()) {
+                            addDatum("Marco sent from: " + retrievedPolo.getSenderName(), retrievedPolo.getMessage());
+                            poloList.add(new PoloMore(retrievedPolo, child.getKey()));
+                            expandableListView = (ExpandableListView) findViewById(R.id.notificationListView);
+                            listAdapter = new CustomListAdapter(Notifications.this, sectionList);
+                            expandableListView.setAdapter(listAdapter);
 
-                        addDatum("Marco sent from: " + retrievedPolo.getSenderName(), retrievedPolo.getMessage());
-                        poloList.add(new PoloMore(retrievedPolo, child.getKey()));
-                        expandableListView = (ExpandableListView) findViewById(R.id.notificationListView);
-                        listAdapter = new CustomListAdapter(Notifications.this, sectionList);
-                        expandableListView.setAdapter(listAdapter);
+                            collapseAll();
 
-                        collapseAll();
+                            expandableListView.setOnChildClickListener(myListItemClicked);
+                            expandableListView.setOnGroupClickListener(myListGroupClicked);
+                        } else {
+                            addDatum("Current Meetup", retrievedPolo.getMessage());
+                            poloList.add(new PoloMore(retrievedPolo, child.getKey()));
+                            expandableListView = (ExpandableListView) findViewById(R.id.notificationListView);
+                            listAdapter = new CustomListAdapter(Notifications.this, sectionList);
+                            expandableListView.setAdapter(listAdapter);
 
-                        expandableListView.setOnChildClickListener(myListItemClicked);
-                        expandableListView.setOnGroupClickListener(myListGroupClicked);
+                            collapseAll();
+
+                            expandableListView.setOnChildClickListener(myListItemClicked);
+                            expandableListView.setOnGroupClickListener(myListGroupClicked);
+                        }
                     }
 
 
@@ -159,42 +169,7 @@ public class Notifications extends AppCompatActivity implements OnClickListener 
 
     }
 
-    private void getCurrentPolo() {
-        databasePolos.child(LoginActivity.currentUser.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                if (!snapshot.exists()) {
-                    Log.d("TESTING", "it doesnt exist!");
-                } else {
-                    Polo retrievedPolo = snapshot.getValue(Polo.class);
-                    if (retrievedPolo.getResponded()) {
 
-                        addDatum("Marco sent from: " + retrievedPolo.getSenderName(), retrievedPolo.getMessage());
-
-                        expandableListView = (ExpandableListView) findViewById(R.id.notificationListView);
-                        listAdapter = new CustomListAdapter(Notifications.this, sectionList);
-                        expandableListView.setAdapter(listAdapter);
-
-                        collapseAll();
-
-                        expandableListView.setOnChildClickListener(myListItemClicked);
-                        expandableListView.setOnGroupClickListener(myListGroupClicked);
-                    }
-
-                    addDatum("Fruits", "Onion");
-
-                    addDatum("Fruits", "Apple");
-                    addDatum("Fruits", "Orange");
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-    }
 
     //adds one key, value pair to the expandable list
     private int addDatum(String group, String child) {
@@ -269,40 +244,41 @@ public class Notifications extends AppCompatActivity implements OnClickListener 
                 if (poloMore.polo.getSenderName().equals(marcoer)) {
                     senderID = poloMore.senderId;
                     Toast.makeText(getApplicationContext(), senderID, Toast.LENGTH_SHORT).show();
+                    poloMore.polo.setResponded(true);
                     databasePolos.child(LoginActivity.currentUser.getUserId()).child(senderID).child("responded").setValue(true);
 
 
+                } else {
+                    senderID = poloMore.senderId;
+                    Toast.makeText(getApplicationContext(), senderID, Toast.LENGTH_SHORT).show();
+                    poloMore.polo.setResponded(false);
+                    databasePolos.child(LoginActivity.currentUser.getUserId()).child(senderID).child("responded").setValue(false);
                 }
             }
-            //Toast.makeText(getApplicationContext(), senderID, Toast.LENGTH_SHORT).show();
-
-            //databasePolos.child(LoginActivity.currentUser.getUserId()).child(senderID).child("responded").setValue(true);
 
         }
 
-/*
-    public void meetupNotif(View v, String titleOfMeetup){
+
+    public void meetupNotif(View v, String titleOfMeetup, String message){
         AlertDialog.Builder altdial = new AlertDialog.Builder(Notifications.this);
 
-        Integer sizeOfFriends = Notifications.hm.get("Friends").size();
-        ArrayList<String> Friends = Notifications.hm.get("Friends");
-        String MakeList = "<ul compact>Others invited:";
+        /*String MakeList = "<ul compact>Others invited:";
         for (int x = 0; x < sizeOfFriends; x++){
             MakeList += "<p>"+ Friends.get(x) +"</p>";
         }
         MakeList +="</ul>";
-        Toast.makeText(getApplicationContext(), MakeList, Toast.LENGTH_SHORT).show();
-        Spanned html = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            html = fromHtml(MakeList, Html.FROM_HTML_MODE_LEGACY);
+            Toast.makeText(getApplicationContext(), MakeList, Toast.LENGTH_SHORT).show();
+            Spanned html = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                html = fromHtml(MakeList, Html.FROM_HTML_MODE_LEGACY);
         }
-        altdial.setMessage(html).setCancelable(false);
+        */
+        altdial.setMessage(message).setCancelable(false);
         altdial.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
                 Toast.makeText(getApplicationContext(), "hello", Toast.LENGTH_SHORT).show();
                 //MainActivity.textV.setText("MarcoState");
-                Notifications.meetupState = true;
 
 
             }
@@ -322,7 +298,7 @@ public class Notifications extends AppCompatActivity implements OnClickListener 
         AlertDialog alert = altdial.create();
         alert.setTitle("You are participating in" + titleOfMeetup );
         alert.show();
-    }*/
+    }
 
 
     }
