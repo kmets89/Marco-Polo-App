@@ -21,9 +21,9 @@
         android:id="@+id/marcoText"
         android:layout_width="match_parent"
         android:layout_height="160sp"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/marco_title"
-        android:layout_marginTop="14dp"
-        android:layout_toEndOf="@+id/textView1"
+        android:layout_marginTop="87dp"
         android:background="@color/streetGray"
         android:gravity="top|start"
         android:hint="@string/marco_message_hint"
@@ -38,13 +38,13 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/cancelMarco"
+            android:id="@+id/cancelPolo"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:elevation="12dp"
-            android:onClick="onClickDeleteMarco"
+            android:onClick="onClickDeletePolo"
             android:text="@string/delete"
             android:textAlignment="center"
             android:textAllCaps="false"
@@ -91,5 +91,25 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <TextView
+        android:id="@+id/sender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/marco_title"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="13dp"
+        android:layout_toEndOf="@+id/textView1"
+        android:text="Sender:" />
+
+    <TextView
+        android:id="@+id/message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/marco_title"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="40dp"
+        android:layout_toEndOf="@+id/textView1"
+        android:text="Message:" />
 
 </RelativeLayout>

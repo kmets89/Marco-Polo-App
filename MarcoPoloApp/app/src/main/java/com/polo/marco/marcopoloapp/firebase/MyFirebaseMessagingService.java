@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
@@ -13,7 +14,9 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.activities.MapsActivity;
+import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -37,18 +40,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             final String lng = payload.get("longitude");
             final String msg = payload.get("message");
             final String sender = payload.get("sender");
+            final String imgUrl = payload.get("imgUrl");
+            final String userId = payload.get("userId");
 
-            Handler mainHandler = new Handler(this.getBaseContext().getMainLooper());
-
-            Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    MapsActivity.addMarcoMarker(Double.parseDouble(lat),
-                            Double.parseDouble(lng), msg, sender);
-                }
-            };
-
-            mainHandler.post(r);
+            try {
+                final Bitmap bitmap = Picasso.with(this).load(imgUrl).get();
+                Handler mainHandler = new Handler(this.getBaseContext().getMainLooper());
+                Runnable r = new Runnable() {
+                    @Override
+                    public void run() {
+                        MapsActivity.addMarcoMarker(Double.parseDouble(lat), Double.parseDouble(lng), msg, sender, userId, false, bitmap);
+                    }
+                };
+                mainHandler.post(r);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
             builder.setSmallIcon(R.drawable.ic_launcher);

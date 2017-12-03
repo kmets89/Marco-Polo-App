@@ -42,23 +42,28 @@
 
         <activity
             android:name=".activities.MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:theme="@style/AppTheme.ScreenBelow"
+            android:label="@string/title_activity_maps"
+            android:screenOrientation="portrait"></activity>
 
         <activity
             android:name=".activities.MarcoActivity"
             android:label="Marco"
             android:theme="@style/AppTheme.ScreenBelow"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"></activity>
 
         <activity
             android:name=".activities.PoloActivity"
             android:label="Polo"
             android:theme="@style/AppTheme.ScreenBelow"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"></activity>
 
         <activity
             android:name=".activities.SplashActivity"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -68,26 +73,31 @@
 
         <activity
             android:name=".activities.SettingsActivity"
-            android:label="@string/title_activity_account_settings">
+            android:label="@string/title_activity_account_settings"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".api.notifications.Notifications"
             android:label="@string/title_activity_notifications"
-            android:theme="@style/AppTheme.ScreenBelow">
+            android:theme="@style/AppTheme.ScreenBelow"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".activities.PrivacyPolicyActivity"
-            android:label="@string/title_activity_privacy_policy">
+            android:label="@string/title_activity_privacy_policy"
+            android:screenOrientation="portrait">
         </activity>
 
         <activity
             android:name=".activities.LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
         </activity>
 
         <activity
             android:name=".activities.CustomDialogActivity"
-            android:theme="@style/AppTheme.ScreenBelow">
+            android:theme="@style/AppTheme.ScreenBelow"
+            android:screenOrientation="portrait">
 
         </activity>
 
@@ -113,11 +123,13 @@
         </activity>
 
         <activity android:name=".activities.FriendsListActivity"
-            android:label="My Friends"></activity>
+            android:label="My Friends"
+            android:screenOrientation="portrait"></activity>
+
         <activity
             android:name=".activities.SearchResultsActivity"
-            android:label="User Search">
-        </activity>
+            android:label="User Search"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".firebase.MyFirebaseInstanceIdService">
