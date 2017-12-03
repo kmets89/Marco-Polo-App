@@ -3,37 +3,21 @@ package com.polo.marco.marcopoloapp.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
-import android.graphics.drawable.Icon;
 import android.location.Location;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.polo.marco.marcopoloapp.api.notifications.Notifications;
-import com.polo.marco.marcopoloapp.R;
-
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -42,8 +26,16 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.polo.marco.marcopoloapp.R;
+import com.polo.marco.marcopoloapp.api.notifications.Notifications;
 import com.polo.marco.marcopoloapp.firebase.models.Marco;
 import com.polo.marco.marcopoloapp.firebase.models.Polo;
 
@@ -79,7 +71,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mIsInForegroundMode = true;
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.expand_button);
-        floatingActionButton.setImageResource(android.R.drawable.ic_menu_preferences);
+        floatingActionButton.setImageResource(R.drawable.ic_menu_white_24dp);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
@@ -152,32 +144,32 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (menuOpened) {
             visibility = View.VISIBLE;
-            floatingActionButton.setImageResource(android.R.drawable.ic_menu_close_clear_cancel);
+            floatingActionButton.setImageResource(R.drawable.ic_clear_white_24dp);
         }
         else {
             visibility = View.INVISIBLE;
-            floatingActionButton.setImageResource(android.R.drawable.ic_menu_preferences);
+            floatingActionButton.setImageResource(R.drawable.ic_menu_white_24dp);
         }
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.nav_account);
         floatingActionButton.setVisibility(visibility);
-        floatingActionButton.setImageResource(android.R.drawable.ic_menu_compass);
+        floatingActionButton.setImageResource(R.drawable.ic_person_white_24dp);
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.nav_friends);
         floatingActionButton.setVisibility(visibility);
-        floatingActionButton.setImageResource(android.R.drawable.ic_menu_my_calendar);
+        floatingActionButton.setImageResource(R.drawable.ic_people_white_24dp);
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.nav_notifications);
         floatingActionButton.setVisibility(visibility);
-        floatingActionButton.setImageResource(android.R.drawable.ic_popup_reminder);
+        floatingActionButton.setImageResource(R.drawable.ic_notifications_white_24dp);
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.nav_help);
         floatingActionButton.setVisibility(visibility);
-        floatingActionButton.setImageResource(android.R.drawable.ic_menu_help);
+        floatingActionButton.setImageResource(R.drawable.ic_help_outline_white_24dp);
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.nav_privacy_policy);
         floatingActionButton.setVisibility(visibility);
-        floatingActionButton.setImageResource(android.R.drawable.ic_lock_idle_lock);
+        floatingActionButton.setImageResource(R.drawable.ic_lock_white_24dp);
     }
 
     public void onClickNavAccount (View view){
@@ -249,6 +241,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setOnMarkerClickListener(this);
+
+        mMap.setMapStyle(
+                MapStyleOptions.loadRawResourceStyle(
+                        this, R.raw.style_json));
+
+        mMap.setPadding(0, 300, 0, 0);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             buildGoogleApiClient();

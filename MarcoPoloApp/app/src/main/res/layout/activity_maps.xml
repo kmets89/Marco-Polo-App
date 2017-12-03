@@ -17,7 +17,8 @@
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:animateLayoutChanges="true">
 
         <LinearLayout
             android:id="@+id/nav_image_view_container"
@@ -25,24 +26,28 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:orientation="vertical"
-            android:elevation="20dp">
+            android:elevation="10dp">
 
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="wrap_content"
                 android:layout_height="70dp"
-                app:srcCompat="@drawable/login_logo" />
+                app:srcCompat="@drawable/login_logo"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:contentDescription="@string/header_logo" />
+
         </LinearLayout>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/expand_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="50dp"
             android:layout_below="@+id/nav_image_view_container"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="15dp"
             android:onClick="onClickExpandButton"
-            tools:icon="?android:attr/floatingToolbarOpenDrawable"/>
+            tools:icon="@drawable/ic_menu_white_24dp" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/nav_account"
@@ -50,11 +55,13 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/expand_button"
             android:layout_marginTop="18dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="25dp"
             android:visibility="invisible"
             android:onClick="onClickNavAccount"
-            android:icon="@android:drawable/ic_menu_compass"
-            app:fabSize="mini"/>
+            android:icon="@drawable/ic_person_white_24dp"
+            app:fabSize="mini"
+            app:layout_anchor="@id/expand_button"
+            app:layout_anchorGravity="top"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/nav_friends"
@@ -62,11 +69,11 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/nav_account"
             android:layout_marginTop="18dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="25dp"
             android:onClick="onClickNavFriends"
             android:visibility="invisible"
             app:fabSize="mini"
-            tools:icon="@android:drawable/ic_menu_my_calendar" />
+            tools:icon="@drawable/ic_people_white_24dp" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/nav_notifications"
@@ -74,10 +81,10 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/nav_friends"
             android:layout_marginTop="18dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="25dp"
             android:visibility="invisible"
             android:onClick="onClickNavNotifications"
-            tools:icon="@android:drawable/ic_popup_reminder"
+            tools:icon="@drawable/ic_notifications_white_24dp"
             app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
@@ -86,10 +93,10 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/nav_notifications"
             android:layout_marginTop="18dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="25dp"
             android:visibility="invisible"
             android:onClick="onClickNavHelp"
-            tools:icon="@android:drawable/ic_menu_help"
+            tools:icon="@drawable/ic_help_outline_white_24dp"
             app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
@@ -98,10 +105,10 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/nav_help"
             android:layout_marginTop="18dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="25dp"
             android:visibility="invisible"
             android:onClick="onClickNavPrivacyPolicy"
-            tools:icon="@android:drawable/ic_lock_idle_lock"
+            tools:icon="@drawable/ic_lock_white_24dp"
             app:fabSize="mini"/>
 
         <Button

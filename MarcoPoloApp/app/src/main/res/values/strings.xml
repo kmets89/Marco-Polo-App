@@ -98,5 +98,6 @@
         currently have an account here to your friends list.\n
         Do you want to sync your phone contacts to your friends list?</string>
     <string name="delete_marco_prompt">Do you want to delete your current Marco?</string>
+    <string name="header_logo">Header Logo</string>
 
 </resources>
