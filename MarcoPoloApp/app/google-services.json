@@ -15,11 +15,19 @@
       },
       "oauth_client": [
         {
+          "client_id": "736384937236-v6rqgkqeflm2ng20mlciiumf7ovm9sp3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.polo.marco.marcopoloapp",
+            "certificate_hash": "9a7be5a01a06663be3ce83415ad2e30043440f7e"
+          }
+        },
+        {
           "client_id": "736384937236-qmoma523d7odptehf3116cg69v663idj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.polo.marco.marcopoloapp",
-            "certificate_hash": "fc1c70c84628cb458e868448362b1d53603dca16"
+            "certificate_hash": "52b218313a0e35b706aaa9f5b4cc53475892ab85"
           }
         },
         {

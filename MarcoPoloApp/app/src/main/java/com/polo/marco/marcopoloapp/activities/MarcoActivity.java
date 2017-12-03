@@ -73,7 +73,7 @@ public class MarcoActivity extends AppCompatActivity {
         friends = new String[LoginActivity.currentUser.friendsListIds.size()];
         //check which activity called this one, show specific user if from FriendsListActivity
         Intent extras = getIntent();
-        if (extras.getStringExtra("callingActivity") != null && extras.getStringExtra("callingActivity").equals("CustomDialog")){
+        if (extras.getStringExtra("callingActivity") != null && extras.getStringExtra("callingActivity").equals("CustomDialog")) {
             publicSwitch.setChecked(true);
             publicSwitch.setVisibility(View.INVISIBLE);
             setWinSize(winWidth, 0.55);
@@ -93,17 +93,19 @@ public class MarcoActivity extends AppCompatActivity {
         publicSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     setWinSize(winWidth, privateHeight);
                     findViewById(R.id.textView1).setVisibility(View.VISIBLE);
 
                     //create checklist from FriendsList and add to view
-                    if (friends.length == 0){
+                    if (LoginActivity.currentUser == null || LoginActivity.currentUser.friendsList == null || LoginActivity.currentUser.friendsListIds == null || friends.length == 0) {
                         showAlert(getResources().getString(R.string.empty_friends_list));
                         publicSwitch.setChecked(false);
                         findViewById(R.id.textView1).setVisibility(View.GONE);
                         setWinSize(winWidth, publicHeight);
+                        return;
                     }
+
                     if (!friendsListExists) {
                         if (LoginActivity.currentUser.friendsList.size() != LoginActivity.currentUser.friendsListIds.size())
                             for (int i = 0; i < friends.length; i++)
@@ -113,13 +115,11 @@ public class MarcoActivity extends AppCompatActivity {
                                 pullUserLocally(i);
 
                         friendsListExists = true;
-                    }
-                    else {
+                    } else {
                         for (int i = 0; i < friends.length; i++)
                             findViewById(i).setVisibility(View.VISIBLE);
                     }
-                }
-                else{
+                } else {
                     for (int j = 0; j < friends.length; j++)
                         findViewById(j).setVisibility(View.GONE);
                     findViewById(R.id.textView1).setVisibility(View.GONE);
@@ -130,7 +130,7 @@ public class MarcoActivity extends AppCompatActivity {
     }
 
     //Resize the activity window as a fraction of the default size
-    public void setWinSize(double w, double h){
+    public void setWinSize(double w, double h) {
         DisplayMetrics dispMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dispMetrics);
         int width = dispMetrics.widthPixels;
@@ -140,29 +140,29 @@ public class MarcoActivity extends AppCompatActivity {
     }
 
     //Handle selections in checklist
-    View.OnClickListener getOnClickDoSomething(final Button button){
-        return new View.OnClickListener(){
+    View.OnClickListener getOnClickDoSomething(final Button button) {
+        return new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 Log.d("ON_CLICK", "CheckBox ID: " + button.getId() + " Text: " + button.getText().toString());
             }
         };
     }
 
     //Close the activity, not saving any data
-    public void onClickCancelMarco(View view){
+    public void onClickCancelMarco(View view) {
         finish();
     }
 
     //Grabs current system date and time, userId and location, Marco message, public/private bool,
     // and adds it to the Marco table in the database. If the message is private, the selected
     //recipients are stored as well
-    public void onClickSendMarco(View view){
+    public void onClickSendMarco(View view) {
         boolean isPublic;
         String userId = LoginActivity.currentUser.getUserId();
 
-        String message = ((EditText)findViewById(R.id.marcoText)).getText().toString();
-        if (message.equals("")){
+        String message = ((EditText) findViewById(R.id.marcoText)).getText().toString();
+        if (message.equals("")) {
             showAlert(getResources().getString(R.string.empty_message));
             return;
         }
@@ -183,10 +183,9 @@ public class MarcoActivity extends AppCompatActivity {
 
             Polo polo = new Polo(retrievedUser.getUserId(), message, LoginActivity.currentUser.getName(), currentDate, lat, lng, false);
             databasePolos.child(retrievedUser.getUserId()).child(LoginActivity.currentUser.getUserId()).setValue(polo);
-        }
-        else {
+        } else {
             if (publicSwitch.isChecked()) {
-                    sendPrivateMarcoFromDB(message, currentDate);
+                sendPrivateMarcoFromDB(message, currentDate);
             } else {
                 isPublic = true;
                 Marco publicMarco = new Marco(userId, message, currentDate, lat, lng, isPublic);
@@ -216,15 +215,14 @@ public class MarcoActivity extends AppCompatActivity {
         positiveButton.setLayoutParams(positiveButtonLL);
     }
 
-    public void pullUserNamefromDB(int n, String id){
+    public void pullUserNamefromDB(int n, String id) {
         final int i = n;
         databaseUsers.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
                     Log.d("TESTING", "it doesnt exist!");
-                }
-                else {
+                } else {
                     User retrievedUser = snapshot.getValue(User.class);
                     friends[i] = retrievedUser.getName();
                     checkBox = new CheckBox(MarcoActivity.this);
@@ -234,6 +232,7 @@ public class MarcoActivity extends AppCompatActivity {
                     checkView.addView(checkBox);
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
@@ -241,7 +240,7 @@ public class MarcoActivity extends AppCompatActivity {
         });
     }
 
-    public void pullUserLocally (int i){
+    public void pullUserLocally(int i) {
         User retrievedUser = LoginActivity.currentUser.friendsList.get(i);
         friends[i] = retrievedUser.getName();
         checkBox = new CheckBox(MarcoActivity.this);
@@ -251,17 +250,17 @@ public class MarcoActivity extends AppCompatActivity {
         checkView.addView(checkBox);
     }
 
-    public void checkForDuplicates(){
+    public void checkForDuplicates() {
         databaseMarcos.child(LoginActivity.currentUser.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
                     Log.d("TESTING", "it doesnt exist!");
-                }
-                else {
+                } else {
                     showAlert(getResources().getString(R.string.duplicate_marco));
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
@@ -269,13 +268,13 @@ public class MarcoActivity extends AppCompatActivity {
         });
     }
 
-    public void sendPrivateMarcoFromDB (final String message, String currentDate){
+    public void sendPrivateMarcoFromDB(final String message, String currentDate) {
         boolean isPublic = false;
         final String cd = currentDate;
         Marco privateMarco = new Marco(LoginActivity.currentUser.getUserId(), message, currentDate, lat, lng, isPublic, recv);
         databaseMarcos.child(LoginActivity.currentUser.getUserId()).setValue(privateMarco);
-        for (int i = 0; i < friends.length; i++){
-            if (((CheckBox)findViewById(i)).isChecked()) {
+        for (int i = 0; i < friends.length; i++) {
+            if (((CheckBox) findViewById(i)).isChecked()) {
                 Log.d("CHECKING USER", LoginActivity.currentUser.friendsListIds.get(i));
                 final int n = i;
                 databaseUsers.child(LoginActivity.currentUser.friendsListIds.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -283,10 +282,9 @@ public class MarcoActivity extends AppCompatActivity {
                     public void onDataChange(DataSnapshot snapshot) {
                         if (!snapshot.exists()) {
                             Toast.makeText(getApplicationContext(),
-                                    "User "+ (CheckBox)((CheckBox) findViewById(n)).getText() + "Could not be reached!",
+                                    "User " + (CheckBox) ((CheckBox) findViewById(n)).getText() + "Could not be reached!",
                                     Toast.LENGTH_LONG).show();
-                        }
-                        else {
+                        } else {
                             User retrievedUser = snapshot.getValue(User.class);
                             if (!retrievedUser.getBlockList().contains(LoginActivity.currentUser.getUserId())) {
                                 recv.add(retrievedUser.getFirebaseToken());
@@ -297,6 +295,7 @@ public class MarcoActivity extends AppCompatActivity {
                             }
                         }
                     }
+
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                     }
@@ -305,7 +304,7 @@ public class MarcoActivity extends AppCompatActivity {
         }
     }
 
-    public int findUser(String id){
+    public int findUser(String id) {
         for (int i = 0; i < LoginActivity.currentUser.friendsList.size(); i++)
             if (LoginActivity.currentUser.friendsList.get(i).getUserId().equals(id))
                 return i;

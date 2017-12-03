@@ -4,13 +4,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -48,11 +44,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /*
     Implemented by Joseph (Google) & Chase (Facebook)
@@ -95,22 +88,6 @@ public class LoginActivity extends AppCompatActivity implements
         databaseEmails = FirebaseDatabase.getInstance().getReference("emails");
         databaseNames = FirebaseDatabase.getInstance().getReference("names");
 
-
-//        try {
-//            PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
-//            for (Signature signature : info.signatures) {
-//                MessageDigest md = MessageDigest.getInstance("SHA");
-//                md.update(signature.toByteArray());
-//                String hashKey = new String(Base64.encode(md.digest(), 0));
-//                Log.i(TAG, "printHashKey() Hash Key: " + hashKey);
-//            }
-//        } catch (NoSuchAlgorithmException e) {
-//            Log.e(TAG, "printHashKey()", e);
-//        } catch (Exception e) {
-//            Log.e(TAG, "printHashKey()", e);
-//        }
-
-
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -140,11 +117,7 @@ public class LoginActivity extends AppCompatActivity implements
         facebookLoginButton.setScaleY(1.3f);
         // [END customize_button]
 
-        if (LoginManager.getInstance() != null) {
-            LoginManager.getInstance().logOut();
-        }
-
-/*        // BEGIN FACEBOOK LOGIN
+        // BEGIN FACEBOOK LOGIN
         accessTokenTracker = new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken newAccessToken) {
@@ -152,7 +125,7 @@ public class LoginActivity extends AppCompatActivity implements
             }
         };
 
-        updateWithToken(AccessToken.getCurrentAccessToken());*/
+        updateWithToken(AccessToken.getCurrentAccessToken());
 
         facebookCallbackManager = CallbackManager.Factory.create();
         facebookLoginButton.registerCallback(facebookCallbackManager, new FacebookCallback<LoginResult>() {
@@ -299,7 +272,6 @@ public class LoginActivity extends AppCompatActivity implements
                     });
         }
     }
-
 
     @Override
     public void onClick(View v) {
