@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -59,7 +60,7 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
 
         win.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         WindowManager.LayoutParams params = win.getAttributes();
-        params.dimAmount = 0.7f;
+        params.dimAmount = 0.5f;
         win.setAttributes(params);
 
 
@@ -105,6 +106,8 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
            public void onDataChange(DataSnapshot snapshot) {
                if (!snapshot.exists()) {
                    Log.d("TESTING", "it doesnt exist!");
+                   TextView textview = (TextView) findViewById(R.id.notifications_empty);
+                   textview.setVisibility(View.VISIBLE);
                }
                else {
                    for (DataSnapshot child : snapshot.getChildren()) {

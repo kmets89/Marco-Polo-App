@@ -12,23 +12,39 @@
         android:layout_alignParentTop="true"
         android:paddingLeft="100sp"/>-->
 
-    <ImageView
-        android:id="@+id/bell_icon"
+    <!--<TextView
+        android:id="@+id/notifications_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_notifications_active_white_24dp"
         android:layout_centerHorizontal="true"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:contentDescription="@string/notification_window_icon" />
+        android:layout_marginLeft="7dp"
+        android:text="What you've missed"
+        android:textColor="@color/streetGray"
+        android:textSize="30sp"/>-->
 
     <LinearLayout
         android:layout_width="250dp"
-        android:layout_height="218dp"
-        android:layout_below="@+id/bell_icon"
+        android:layout_height="260dp"
+        android:layout_marginTop="30dp"
         android:layout_centerHorizontal="true"
         android:background="@color/streetGray"
         android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/notifications_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginTop="5dp"
+            android:text="You have no recent notifications!"
+            android:textColor="@color/veryDarkGray"
+            android:textSize="18sp"
+            android:visibility="gone"/>
 
         <ExpandableListView
             android:id="@+id/notificationListView"

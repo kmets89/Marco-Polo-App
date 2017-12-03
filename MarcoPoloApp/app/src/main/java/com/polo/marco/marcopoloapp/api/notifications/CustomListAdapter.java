@@ -37,16 +37,23 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View view, ViewGroup parent){
-        DetailInfo detailInfo = (DetailInfo) getChild(groupPosition, childPosition);
-        if (view == null){
+        if (!groupList.isEmpty()) {
+            DetailInfo detailInfo = (DetailInfo) getChild(groupPosition, childPosition);
+            if (view == null) {
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                view = inflater.inflate(R.layout.notification_children, null);
+            }
+
+            TextView childItem = (TextView) view.findViewById(R.id.childItem);
+            childItem.setText(detailInfo.getName().trim());
+
+            return view;
+        }
+        else{
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.notification_children, null);
+            return view;
         }
-
-        TextView childItem = (TextView) view.findViewById(R.id.childItem);
-        childItem.setText(detailInfo.getName().trim());
-
-        return view;
     }
 
     @Override
@@ -72,16 +79,23 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getGroupView(int groupPosition, boolean isLastChild, View view, ViewGroup parent){
-        HeaderInfo headerInfo = (HeaderInfo) getGroup(groupPosition);
-        if (view == null){
+        if (!groupList.isEmpty()) {
+            HeaderInfo headerInfo = (HeaderInfo) getGroup(groupPosition);
+            if (view == null) {
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                view = inflater.inflate(R.layout.notification_groups, null);
+            }
+
+            TextView heading = (TextView) view.findViewById(R.id.heading);
+            heading.setText(headerInfo.getName().trim());
+
+            return view;
+        }
+        else{
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.notification_groups, null);
+            return view;
         }
-
-        TextView heading = (TextView) view.findViewById(R.id.heading);
-        heading.setText(headerInfo.getName().trim());
-
-        return view;
     }
 
     @Override
