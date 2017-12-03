@@ -11,12 +11,14 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -29,6 +31,8 @@ import com.polo.marco.marcopoloapp.firebase.models.Marco;
 import com.polo.marco.marcopoloapp.firebase.models.Polo;
 import com.polo.marco.marcopoloapp.firebase.models.User;
 
+import org.w3c.dom.Text;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,7 +44,7 @@ public class MarcoActivity extends AppCompatActivity {
     private Switch publicSwitch;
     private final double winWidth = 0.8;
     private final double privateHeight = 0.75;
-    private final double publicHeight = 0.42;
+    private final double publicHeight = 0.5;
     private String[] friends;
     List<String> recv = new ArrayList<String>();
     CheckBox checkBox;
@@ -64,6 +68,12 @@ public class MarcoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        Window win = getWindow();
+        win.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        WindowManager.LayoutParams params = win.getAttributes();
+        params.dimAmount = 0.6f;
+        win.setAttributes(params);
+
         setContentView(R.layout.activity_marco);
         checkView = (LinearLayout) findViewById(R.id.check_layout);
 
@@ -75,8 +85,12 @@ public class MarcoActivity extends AppCompatActivity {
         Intent extras = getIntent();
         if (extras.getStringExtra("callingActivity") != null && extras.getStringExtra("callingActivity").equals("CustomDialog")) {
             publicSwitch.setChecked(true);
-            publicSwitch.setVisibility(View.INVISIBLE);
-            setWinSize(winWidth, 0.55);
+            publicSwitch.setVisibility(View.GONE);
+            TextView textView = (TextView) findViewById(R.id.publicText);
+            textView.setVisibility(View.GONE);
+            textView = (TextView) findViewById(R.id.privateText);
+            textView.setVisibility(View.GONE);
+            setWinSize(winWidth, 0.475);
             findViewById(R.id.textView1).setVisibility(View.VISIBLE);
             int userPosition = findUser(extras.getStringExtra("userId"));
             checkBox = new CheckBox(MarcoActivity.this);

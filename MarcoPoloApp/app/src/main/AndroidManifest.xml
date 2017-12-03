@@ -79,7 +79,7 @@
         <activity
             android:name=".api.notifications.Notifications"
             android:label="@string/title_activity_notifications"
-            android:theme="@style/AppTheme.ScreenBelow"
+            android:theme="@style/Theme.AppCompat.Translucent"
             android:screenOrientation="portrait">
         </activity>
         <activity
