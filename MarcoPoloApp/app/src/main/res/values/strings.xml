@@ -109,4 +109,5 @@
     <string name="FacebookProfile">Facebook Profile Attached</string>
     <string name="GoogleProfile">Google Profile Attached</string>
     <string name="Logout">Logout</string>
+    <string name="notification_window_icon">Notification Window Icon</string>
 </resources>

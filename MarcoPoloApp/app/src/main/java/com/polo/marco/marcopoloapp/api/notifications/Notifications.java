@@ -1,23 +1,19 @@
 package com.polo.marco.marcopoloapp.api.notifications;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,10 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.activities.LoginActivity;
-import com.polo.marco.marcopoloapp.activities.MarcoActivity;
-import com.polo.marco.marcopoloapp.activities.SettingsActivity;
 import com.polo.marco.marcopoloapp.firebase.models.Polo;
-import com.polo.marco.marcopoloapp.firebase.models.User;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -62,7 +55,7 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
         int height = dispMetrics.heightPixels;
 
         Window win = getWindow();
-        getWindow().setLayout((int) (width * 0.8), (int) (height * 0.35));
+        getWindow().setLayout((int) (width * 0.8), (int) (height * 0.5));
 
         win.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         WindowManager.LayoutParams params = win.getAttributes();
