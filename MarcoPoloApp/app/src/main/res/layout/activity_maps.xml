@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true">
 
     <fragment
         android:id="@+id/map"
@@ -17,6 +18,75 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:elevation="20dp">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                app:srcCompat="@drawable/login_logo" />
+        </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/expand_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickExpandButton"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/nav_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/expand_button"
+            android:layout_marginTop="15dp"
+            android:visibility="invisible"
+            android:onClick="onClickNavAccount"
+            android:icon="@android:drawable/ic_menu_compass"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/nav_friends"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/nav_account"
+            android:layout_marginTop="15dp"
+            android:onClick="onClickNavFriends"
+            android:visibility="invisible"
+            app:fabSize="mini" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/nav_notifications"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/nav_friends"
+            android:layout_marginTop="15dp"
+            android:visibility="invisible"
+            android:onClick="onClickNavNotifications"
+            android:icon="@android:drawable/ic_popup_reminder"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/nav_help"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/nav_notifications"
+            android:layout_marginTop="15dp"
+            android:visibility="invisible"
+            android:onClick="onClickNavHelp"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/nav_privacy_policy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/nav_help"
+            android:layout_marginTop="15dp"
+            android:visibility="invisible"
+            android:onClick="onClickNavPrivacyPolicy"
+            android:icon="@android:drawable/ic_lock_idle_lock"/>
 
         <Button
             android:id="@+id/btn_marco"
@@ -33,12 +103,12 @@
 
     </RelativeLayout>
 
-    <android.support.design.widget.NavigationView
+    <!--<android.support.design.widget.NavigationView
         android:id="@+id/main_drawer"
         android:layout_height="match_parent"
         android:layout_width="wrap_content"
         app:menu= "@menu/navigation_menu"
         android:layout_gravity="start">
-    </android.support.design.widget.NavigationView>
+    </android.support.design.widget.NavigationView>-->
 
 </android.support.v4.widget.DrawerLayout>
