@@ -59,7 +59,7 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
 
         win.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         WindowManager.LayoutParams params = win.getAttributes();
-        params.dimAmount = 0.6f;
+        params.dimAmount = 0.7f;
         win.setAttributes(params);
 
 

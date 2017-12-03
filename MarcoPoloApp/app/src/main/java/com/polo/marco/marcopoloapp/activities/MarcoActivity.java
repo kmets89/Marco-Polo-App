@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -40,7 +41,7 @@ public class MarcoActivity extends AppCompatActivity {
     private Switch publicSwitch;
     private final double winWidth = 0.8;
     private final double privateHeight = 0.75;
-    private final double publicHeight = 0.42;
+    private final double publicHeight = 0.5;
     private String[] friends;
     List<String> recv = new ArrayList<String>();
     CheckBox checkBox;
@@ -64,6 +65,12 @@ public class MarcoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        Window win = getWindow();
+        win.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        WindowManager.LayoutParams params = win.getAttributes();
+        params.dimAmount = 0.7f;
+        win.setAttributes(params);
+
         setContentView(R.layout.activity_marco);
         checkView = (LinearLayout) findViewById(R.id.check_layout);
 
