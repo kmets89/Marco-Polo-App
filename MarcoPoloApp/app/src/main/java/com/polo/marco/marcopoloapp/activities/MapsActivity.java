@@ -479,7 +479,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         markerOptions.position(extraLatlng);
 
         markerOptions.title(sender + ": " + message);
-        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
+        if(bitmap != null)
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
         mMap.addMarker(markerOptions).showInfoWindow();
     }
 
