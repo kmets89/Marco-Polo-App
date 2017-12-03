@@ -133,7 +133,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    for (final DataSnapshot child : dataSnapshot.getChildren()) {
                         for (DataSnapshot childs : child.getChildren()) {
                             Polo polo = childs.getValue(Polo.class);
                             if (child.getKey().equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
@@ -156,32 +156,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     if (m != null)
                                         removeMarcoMarker(m);
 
-                                    activePoloerUserId = "";
 
-/*                                    while (deletePoloLoop) {
-                                        databasePolos.child(activePoloerUserId).addListenerForSingleValueEvent(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot snapshot) {
-                                                if (snapshot != null) {
-                                                    for (DataSnapshot child : snapshot.getChildren()) {
-                                                        if (child.getKey().equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
-                                                            if (child.child("message").getValue().toString().equalsIgnoreCase("delete")) {
-                                                                deletePoloLoop = false;
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-                                                }
+                                    databasePolos.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot snapshot) {
+                                            if (snapshot.hasChild(LoginActivity.currentUser.getUserId())) {
+                                                databasePolos.child(LoginActivity.currentUser.getUserId()).child(activePoloerUserId).child("message").setValue("DELETE");
                                             }
+                                        }
 
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
 
-                                            }
-                                        });
-                                    }*/
+                                        }
+                                    });
 
-                                    // databasePolos.child(LoginActivity.currentUser.getUserId()).child(activePoloerUserId).removeValue();
+                                    // activePoloerUserId = "";
                                 }
                             }
                         }
