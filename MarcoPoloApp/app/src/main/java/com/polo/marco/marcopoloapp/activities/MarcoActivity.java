@@ -18,6 +18,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -29,6 +30,8 @@ import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.firebase.models.Marco;
 import com.polo.marco.marcopoloapp.firebase.models.Polo;
 import com.polo.marco.marcopoloapp.firebase.models.User;
+
+import org.w3c.dom.Text;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -68,7 +71,7 @@ public class MarcoActivity extends AppCompatActivity {
         Window win = getWindow();
         win.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         WindowManager.LayoutParams params = win.getAttributes();
-        params.dimAmount = 0.7f;
+        params.dimAmount = 0.6f;
         win.setAttributes(params);
 
         setContentView(R.layout.activity_marco);
@@ -82,8 +85,12 @@ public class MarcoActivity extends AppCompatActivity {
         Intent extras = getIntent();
         if (extras.getStringExtra("callingActivity") != null && extras.getStringExtra("callingActivity").equals("CustomDialog")) {
             publicSwitch.setChecked(true);
-            publicSwitch.setVisibility(View.INVISIBLE);
-            setWinSize(winWidth, 0.55);
+            publicSwitch.setVisibility(View.GONE);
+            TextView textView = (TextView) findViewById(R.id.publicText);
+            textView.setVisibility(View.GONE);
+            textView = (TextView) findViewById(R.id.privateText);
+            textView.setVisibility(View.GONE);
+            setWinSize(winWidth, 0.475);
             findViewById(R.id.textView1).setVisibility(View.VISIBLE);
             int userPosition = findUser(extras.getStringExtra("userId"));
             checkBox = new CheckBox(MarcoActivity.this);

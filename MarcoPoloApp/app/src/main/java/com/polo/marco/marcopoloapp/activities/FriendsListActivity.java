@@ -106,6 +106,9 @@ public class FriendsListActivity extends AppCompatActivity {
                         ImageView profilePicView = (ImageView) newView.findViewById(R.id.friendslist_profile_image);
                         Picasso.with(FriendsListActivity.this).load(retrieved.getImgUrl()).into(profilePicView);
 
+                        TextView emailView = (TextView) newView.findViewById(R.id.friendslist_email_address);
+                        emailView.setText(retrieved.getEmail());
+
                         LinearLayout friendsView = (LinearLayout) findViewById(R.id.friends_layout_child);
                         friendsView.addView(newView);
 
