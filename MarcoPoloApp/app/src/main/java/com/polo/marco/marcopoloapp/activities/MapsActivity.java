@@ -16,16 +16,20 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ExpandableListView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.polo.marco.marcopoloapp.api.notifications.CustomListAdapter;
 import com.polo.marco.marcopoloapp.api.notifications.Notifications;
 import com.polo.marco.marcopoloapp.R;
 
@@ -77,10 +81,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     // Active Polo Session Variables
     public boolean hasActivePolo = false;
-    public Polo activePolo = null;
     public String activePoloerUserId = "";
-    public Marker activePoloerMarker = null;
     public static ArrayList<Marker> mapMarkerArray = new ArrayList<>();
+    public ValueEventListener poloListener = null;
+    public boolean deletePoloLoop = true;
 
     //test
     @Override
@@ -133,22 +137,56 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         for (DataSnapshot childs : child.getChildren()) {
                             Polo polo = childs.getValue(Polo.class);
                             if (child.getKey().equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
-                                addMarcoMarker(polo.getLatitude(), polo.getLongitude(), polo.getMessage(), polo.getSenderName(), childs.getKey(), true);
-                                if (polo.getResponded() == true) {
-                                    hasActivePolo = true;
-                                    activePolo = polo;
+
+                                Marker m = getMarker(childs.getKey());
+                                if (!hasActivePolo && m == null) {
                                     activePoloerUserId = childs.getKey();
-                                    Marker m = getMarker(childs.getKey());
-                                    if (m != null) {
-                                        m.setPosition(new LatLng(polo.getLatitude(), polo.getLongitude()));
+                                    addMarcoMarker(polo.getLatitude(), polo.getLongitude(), polo.getMessage(), polo.getSenderName(), childs.getKey(), true);
+                                } else if (m != null) {
+                                    m.setPosition(new LatLng(polo.getLatitude(), polo.getLongitude()));
+                                    if (polo.getResponded() == true) {
+                                        hasActivePolo = true;
                                     }
-                                    // activePoloerLatitude = polo.getLatitude();
-                                    // activePoloerLongitude = polo.getLongitude();
-                                    // updateLocation = true;
+                                }
+
+                                if (distance(LoginActivity.currentUser.getLatitude(), LoginActivity.currentUser.getLongitude(), polo.getLatitude(), polo.getLongitude()) <= 0.01) {
+                                    Toast.makeText(getBaseContext(), "You have found eachother, congrats!", Toast.LENGTH_LONG).show();
+                                    hasActivePolo = false;
+
+                                    if (m != null)
+                                        removeMarcoMarker(m);
+
+                                    activePoloerUserId = "";
+
+/*                                    while (deletePoloLoop) {
+                                        databasePolos.child(activePoloerUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot snapshot) {
+                                                if (snapshot != null) {
+                                                    for (DataSnapshot child : snapshot.getChildren()) {
+                                                        if (child.getKey().equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
+                                                            if (child.child("message").getValue().toString().equalsIgnoreCase("delete")) {
+                                                                deletePoloLoop = false;
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                    }*/
+
+                                    // databasePolos.child(LoginActivity.currentUser.getUserId()).child(activePoloerUserId).removeValue();
                                 }
                             }
                         }
                     }
+
                 }
             }
 
@@ -352,6 +390,31 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    private static double distance(double lat1, double lon1, double lat2, double lon2) {
+        double theta = lon1 - lon2;
+        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515;
+        dist = dist * 1.609344;
+
+        return (dist);
+    }
+
+    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+    /*::	This function converts decimal degrees to radians						 :*/
+    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+    private static double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+    /*::	This function converts radians to decimal degrees						 :*/
+    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+    private static double rad2deg(double rad) {
+        return (rad * 180 / Math.PI);
+    }
+
     @Override
     public void onLocationChanged(Location location) {
         lastLocation = location;
@@ -369,23 +432,33 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         currentLocationMarker = mMap.addMarker(markerOptions);
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
-        mMap.animateCamera(CameraUpdateFactory.zoomBy(10));
+/*        mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
+        mMap.animateCamera(CameraUpdateFactory.zoomBy(10));*/
 
-        if (client != null) {
+        /*if (client != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
-        }
+        }*/
 
         if (LoginActivity.currentUser != null) {
             //update User in DB
             LoginActivity.currentUser.setLatitude(location.getLatitude());
             LoginActivity.currentUser.setLongitude(location.getLongitude());
-            databaseUsers.child(LoginActivity.currentUser.getUserId()).child("latitude").setValue(location.getLatitude());
-            databaseUsers.child(LoginActivity.currentUser.getUserId()).child("longitude").setValue(location.getLongitude());
 
             if (hasActivePolo) {
-                databasePolos.child(LoginActivity.currentUser.getUserId()).child(activePoloerUserId).child("latitude").setValue(location.getLatitude());
-                databasePolos.child(LoginActivity.currentUser.getUserId()).child(activePoloerUserId).child("longitude").setValue(location.getLongitude());
+                databasePolos.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        if (snapshot.hasChild(activePoloerUserId)) {
+                            databasePolos.child(activePoloerUserId).child(LoginActivity.currentUser.getUserId()).child("latitude").setValue(LoginActivity.currentUser.getLatitude());
+                            databasePolos.child(activePoloerUserId).child(LoginActivity.currentUser.getUserId()).child("longitude").setValue(LoginActivity.currentUser.getLongitude());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
             }
         }
     }
@@ -450,8 +523,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public static void removeMarcoMarker(Marker marker) {
-        mapMarkerArray.remove(marker);
-        marker.remove();
+        if (marker != null) {
+            mapMarkerArray.remove(marker);
+            marker.remove();
+        }
     }
 
     public static Marker lastMarkerClicked = null;

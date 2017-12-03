@@ -15,7 +15,7 @@ public class Polo {
 
     public Polo(){}
 
-    public Polo (String rId, String msg, String senderName, String timestamp, double lat, double lng, boolean responded){
+    public Polo(String rId, String msg, String senderName, String timestamp, double lat, double lng, boolean responded){
         this.receiverId = rId;
         this.message = msg;
         this.senderName = senderName;

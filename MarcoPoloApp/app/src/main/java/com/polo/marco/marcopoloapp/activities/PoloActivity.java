@@ -55,7 +55,7 @@ public class PoloActivity extends AppCompatActivity {
         cancelPolo = (Button) findViewById(R.id.cancelPolo);
         poloText = (EditText) findViewById(R.id.poloText);
 
-        if (getIntent().getStringExtra("private").equalsIgnoreCase("false")) {
+        if (getIntent().getStringExtra("private") != null && getIntent().getStringExtra("private").equalsIgnoreCase("false")) {
             cancelPolo.setText("Dismiss");
         }
 
