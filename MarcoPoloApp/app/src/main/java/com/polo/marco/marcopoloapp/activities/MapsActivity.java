@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,11 +36,16 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.polo.marco.marcopoloapp.R;
+import com.polo.marco.marcopoloapp.api.directions.Route;
+import com.polo.marco.marcopoloapp.api.directions.RouteFinder;
+import com.polo.marco.marcopoloapp.api.directions.RouteFinderListener;
 import com.polo.marco.marcopoloapp.api.notifications.Notifications;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,16 +53,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
-        NavigationView.OnNavigationItemSelectedListener {
+        NavigationView.OnNavigationItemSelectedListener,
+        GoogleMap.OnMarkerClickListener,
+        GoogleMap.OnMapLongClickListener,
+        RouteFinderListener {
 
     //Google maps stuff
     private static GoogleMap mMap;
     private GoogleApiClient client;
     private LocationRequest locationRequest;
     private Location lastLocation = null;
+    private LatLng destinationPoint;
     private Marker currentLocationMarker = null;
+    private Marker destinationMarker = null;
     final private int PERMISSIONS_REQUEST_CODE = 124;
     private static boolean friendsRead = false;
+    private Boolean pathCleared = true;
 
     //Hamburger menu stuff
     private NavigationView mDrawer;
@@ -92,6 +104,75 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
+
+
+    public  void onMapLongClick (LatLng destination) {
+        Location currentLocationHolder;
+
+        currentLocationHolder = lastLocation;
+        mMap.clear();
+        lastLocation = currentLocationHolder;
+        pathCleared = true;
+
+        destinationPoint = new LatLng(destination.latitude, destination.longitude);
+        LatLng currentLocation = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.draggable(true);
+        markerOptions.title("destination");
+
+        currentLocationMarker = mMap.addMarker(markerOptions.position(currentLocation).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+        destinationMarker = mMap.addMarker(markerOptions.position(destination).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+        destinationMarker.showInfoWindow();
+
+    }
+
+    public void getRoute(List<Route> routes) {
+
+        mMap.clear();
+
+        for (Route route : routes) {
+            currentLocationMarker = mMap.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                    .title(route.startAddress)
+                    .position(route.startPoint));
+            destinationMarker = mMap.addMarker(new MarkerOptions()
+                    .title(route.endAddress)
+                    .snippet("Expected time: " + route.duration.text + ", Distance: " + route.distance.text)
+                    .position(route.endPoint));
+
+
+            PolylineOptions polylineOptions = new PolylineOptions().
+                    geodesic(true).
+                    color(Color.BLUE).
+                    width(7);
+
+            for (int i = 0; i < route.points.size(); i++)
+                polylineOptions.add(route.points.get(i));
+
+            mMap.addPolyline(polylineOptions);
+            pathCleared = false;
+        }
+
+    }
+
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        if(pathCleared && destinationMarker != null && destinationMarker.getPosition().latitude == marker.getPosition().latitude && destinationMarker.getPosition().longitude == marker.getPosition().longitude){
+            String currentLatitude = String.valueOf(lastLocation.getLatitude());
+            String currentLongitude = String.valueOf(lastLocation.getLongitude());
+            String destinationLatitude = String.valueOf(destinationPoint.latitude);
+            String destinationLongitude = String.valueOf(destinationPoint.longitude);
+
+            try {
+                new RouteFinder(this, currentLatitude + "," + currentLongitude, destinationLatitude + "," + destinationLongitude).execute();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
 
 
     @Override
@@ -205,6 +286,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
         }
+
+
+        mMap.setOnMapLongClickListener(this);
+        mMap.setOnMarkerClickListener(this);
     }
 
     protected synchronized void buildGoogleApiClient() {
