@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grassGreen">
+    android:background="@color/streetGray">
 
     <!--<Spinner android:id="@+id/spinGroup"
         android:layout_width="match_parent"
@@ -26,6 +26,6 @@
         android:background="@android:color/transparent"
         android:divider="@color/MarcoBlue"
         android:dividerHeight="2sp"
-        android:childDivider="@color/streetGray"
-        android:listSelector="@color/streetGray"/>
+        android:childDivider="@color/MarcoBlue"
+        android:listSelector="@color/MarcoBlue"/>
 </RelativeLayout>

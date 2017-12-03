@@ -25,6 +25,7 @@
         <item>Books</item>
         <item>Language</item>
     </string-array>
+    <string name="polo_prompt">Do you want to Polo back?</string>
 
     <!-- Account settings activity strings -->
     <string name="title_activity_account_settings">Account</string>
@@ -71,7 +72,9 @@
     <string name="current_user"></string>
     <string name="send">Send</string>
     <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
     <string name="marco_title">Send a Marco</string>
+    <string name="polo_title">Send a Polo</string>
     <string name="marco_switch_public">Public</string>
     <string name="marco_switch_private">Private</string>
     <string name="marco_message_hint">What would you like to say?</string>
@@ -95,6 +98,7 @@
         currently have an account here to your friends list.\n
         Do you want to sync your phone contacts to your friends list?</string>
     <string name="delete_marco_prompt">Do you want to delete your current Marco?</string>
+    <string name="header_logo">Header Logo</string>
 
 
     <string name="current_meetup">Active Meetups</string>

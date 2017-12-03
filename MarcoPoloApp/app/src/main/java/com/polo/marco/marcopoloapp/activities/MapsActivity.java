@@ -3,7 +3,6 @@ package com.polo.marco.marcopoloapp.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
@@ -11,15 +10,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -34,26 +28,32 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.api.directions.Route;
 import com.polo.marco.marcopoloapp.api.directions.RouteFinder;
 import com.polo.marco.marcopoloapp.api.directions.RouteFinderListener;
 import com.polo.marco.marcopoloapp.api.notifications.Notifications;
+import com.polo.marco.marcopoloapp.firebase.models.Marco;
+import com.polo.marco.marcopoloapp.firebase.models.Polo;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
-        NavigationView.OnNavigationItemSelectedListener,
         GoogleMap.OnMarkerClickListener,
         GoogleMap.OnMapLongClickListener,
         RouteFinderListener {
@@ -70,15 +70,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static boolean friendsRead = false;
     private Boolean pathCleared = true;
 
-    //Hamburger menu stuff
-    private NavigationView mDrawer;
-    private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mDrawerToggle;
-
     private DatabaseReference databaseUsers = FirebaseDatabase.getInstance().getReference("users");
+    private DatabaseReference databaseMarcos = FirebaseDatabase.getInstance().getReference("marcos");
+    private DatabaseReference databasePolos = FirebaseDatabase.getInstance().getReference("polos");
 
-    //
-    public static boolean mIsInForegroundMode=false;
+    public static boolean mIsInForegroundMode = false;
+    private static boolean menuOpened = false;
+    public String tmpImgUrl = "";
+
     //test
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,25 +85,63 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
         mIsInForegroundMode = true;
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawer = (NavigationView) findViewById(R.id.main_drawer);
-        mDrawer.setNavigationItemSelectedListener(this);
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
-        mDrawerToggle.syncState();
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.expand_button);
+        floatingActionButton.setImageResource(R.drawable.ic_menu_white_24dp);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-    }
 
+
+        databaseMarcos.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        Marco marco = child.getValue(Marco.class);
+                        if (marco.getStatus() == true) {
+
+
+
+                            addMarcoMarker(marco.getLatitude(), marco.getLongitude(), marco.getMessage(), marco.getName(), marco.getUserId(), false, null);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        databasePolos.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        for (DataSnapshot childs : child.getChildren()) {
+                            Polo polo = childs.getValue(Polo.class);
+                            if (child.getKey().equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
+                                addMarcoMarker(polo.getLatitude(), polo.getLongitude(), polo.getMessage(), polo.getSenderName(), childs.getKey(), true, null);
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
 
     public  void onMapLongClick (LatLng destination) {
         Location currentLocationHolder;
@@ -170,6 +207,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 e.printStackTrace();
             }
         }
+
+        lastMarkerClicked = marker;
+        Intent intent = new Intent(this, PoloActivity.class);
+        if (marker.getSnippet() != null && marker.getSnippet().contains("|")) {
+            String[] data = marker.getSnippet().split("\\|");
+            intent.putExtra("private", data[0]);
+            intent.putExtra("sender", data[1]);
+            intent.putExtra("message", data[2]);
+            intent.putExtra("userId", data[3]);
+        }
+        startActivity(intent);
+
         return false;
     }
 
@@ -187,61 +236,71 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mIsInForegroundMode = true;
     }
 
-    //Function that's called when the marco button is clicked
-    public void onClickBtnMarco(View view) {
-//        if (!friendsRead) {
-//            //testRead();
-//            friendsRead = true;
-//        }
-        Intent intent = new Intent(this, MarcoActivity.class);
+    public void onClickExpandButton (View view){
+        menuOpened = !menuOpened;
+        int visibility;
+
+        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.expand_button);
+
+        if (menuOpened) {
+            visibility = View.VISIBLE;
+            floatingActionButton.setImageResource(R.drawable.ic_clear_white_24dp);
+        }
+        else {
+            visibility = View.INVISIBLE;
+            floatingActionButton.setImageResource(R.drawable.ic_menu_white_24dp);
+        }
+
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.nav_account);
+        floatingActionButton.setVisibility(visibility);
+        floatingActionButton.setImageResource(R.drawable.ic_person_white_24dp);
+
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.nav_friends);
+        floatingActionButton.setVisibility(visibility);
+        floatingActionButton.setImageResource(R.drawable.ic_people_white_24dp);
+
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.nav_notifications);
+        floatingActionButton.setVisibility(visibility);
+        floatingActionButton.setImageResource(R.drawable.ic_notifications_white_24dp);
+
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.nav_help);
+        floatingActionButton.setVisibility(visibility);
+        floatingActionButton.setImageResource(R.drawable.ic_help_outline_white_24dp);
+
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.nav_privacy_policy);
+        floatingActionButton.setVisibility(visibility);
+        floatingActionButton.setImageResource(R.drawable.ic_lock_white_24dp);
+    }
+
+    public void onClickNavAccount (View view){
+        Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
 
-    //Handle action bar items only
-    //The regular menu items are handled in OnNavigationItemClickListener()
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        if (item.getItemId() == R.id.nav_notifications) {
-//            if (!friendsRead) {
-//                //testRead();
-//                friendsRead = true;
-//            }
-            startActivity(new Intent(MapsActivity.this, Notifications.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+    public void onClickNavNotifications (View view){
+        Intent intent = new Intent(this, Notifications.class);
+        startActivity(intent);
     }
 
-    //Inflate the menu so that action buttons are visible while
-    //using a navigation drawer
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.navigation_menu, menu);
-        return true;
+    public void onClickNavFriends (View view){
+        Intent intent = new Intent(this, FriendsListActivity.class);
+        startActivity(intent);
     }
 
-    //Sets all menu options other than notifications to invisible so that only notifications
-    //icon is visible in the action bar.  MUST be updated if other menu items are added later.
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem item = menu.findItem(R.id.nav_account);
-        item.setVisible(false);
-        item = menu.findItem(R.id.nav_privacy_policy);
-        item.setVisible(false);
-        item = menu.findItem(R.id.nav_friends);
-        item.setVisible(false);
-        super.onPrepareOptionsMenu(menu);
-        return true;
+    public void onClickNavHelp (View view){
+        //Intent intent = new Intent(this, HelpActivity.class);
+        //startActivity(intent);
     }
 
-    //Ensures drawer toggle behavior if the state of the app changes
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
+    public void onClickNavPrivacyPolicy (View view){
+        Intent intent = new Intent(this, PrivacyPolicyActivity.class);
+        startActivity(intent);
+    }
+
+    //Function that's called when the marco button is clicked
+    public void onClickBtnMarco(View view) {
+        Intent intent = new Intent(this, MarcoActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -281,6 +340,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setOnMarkerClickListener(this);
+
+        mMap.setMapStyle(
+                MapStyleOptions.loadRawResourceStyle(
+                        this, R.raw.style_json));
+
+        mMap.setPadding(0, 300, 0, 0);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             buildGoogleApiClient();
@@ -321,9 +387,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         Intent intent = this.getIntent();
         Bundle extras = intent.getExtras();
-        if(!extras.isEmpty()){
+        if (!extras.isEmpty()) {
             boolean hasMarkerLocations = extras.containsKey("latitude");
-            if(hasMarkerLocations){
+            if (hasMarkerLocations) {
                 LatLng extraLatlng = new LatLng(extras.getDouble("latitude"), extras.getDouble("longitude"));
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(extraLatlng);
@@ -331,6 +397,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
     }
+
     //Getting current location
     private void getCurrentLocation() {
         //Creating a location object
@@ -397,7 +464,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
         }
 
-        if(LoginActivity.currentUser != null) {
+        if (LoginActivity.currentUser != null) {
             //update User in DB
             LoginActivity.currentUser.setLatitude(location.getLatitude());
             LoginActivity.currentUser.setLongitude(location.getLongitude());
@@ -406,48 +473,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    //This is where we handle the clicks for the drawer menu items
-    //Each option creates a new activity, see corresponding .java/.xml files
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        Intent intent = null;
-        //if (!friendsRead) {
-            //testRead();
-            //friendsRead = true;
-        //}
-        if (menuItem.getItemId() == R.id.nav_account) {
-            intent = new Intent(this, SettingsActivity.class);
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-            startActivity(intent);
-            return true;
-        }
-        if (menuItem.getItemId() == R.id.nav_notifications) {
-            intent = new Intent(this, Notifications.class);
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-            startActivity(intent);
-            return true;
-        }
-        if (menuItem.getItemId() == R.id.nav_privacy_policy) {
-            intent = new Intent(this, PrivacyPolicyActivity.class);
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-            startActivity(intent);
-            return true;
-        }
-        if (menuItem.getItemId() == R.id.nav_friends) {
-            intent = new Intent(this, FriendsListActivity.class);
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-            startActivity(intent);
-            return true;
-        }
-        return false;
-    }
-
-    public static void addMarcoMarker(double lat, double lng, String message, String sender, Bitmap bitmap){
+    public static void addMarcoMarker(double lat, double lng, String message, String sender, String userId, boolean privat, Bitmap bitmap) {
         LatLng extraLatlng = new LatLng(lat, lng);
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(extraLatlng);
+
         markerOptions.title(sender + ": " + message);
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
         mMap.addMarker(markerOptions).showInfoWindow();
     }
+
+    public static Marker lastMarkerClicked = null;
+
 }

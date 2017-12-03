@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.polo.marco.marcopoloapp.R;
@@ -42,6 +41,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             final String msg = payload.get("message");
             final String sender = payload.get("sender");
             final String imgUrl = payload.get("imgUrl");
+            final String userId = payload.get("userId");
 
             try {
                 final Bitmap bitmap = Picasso.with(this).load(imgUrl).get();
@@ -49,8 +49,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 Runnable r = new Runnable() {
                     @Override
                     public void run() {
-                        MapsActivity.addMarcoMarker(Double.parseDouble(lat),
-                                Double.parseDouble(lng), msg, sender, bitmap);
+                        MapsActivity.addMarcoMarker(Double.parseDouble(lat), Double.parseDouble(lng), msg, sender, userId, false, bitmap);
                     }
                 };
                 mainHandler.post(r);
