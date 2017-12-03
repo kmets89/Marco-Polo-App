@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.drawable.Icon;
 import android.location.Location;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -63,16 +64,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Marker currentLocationMarker = null;
     final private int PERMISSIONS_REQUEST_CODE = 124;
 
-    //Hamburger menu stuff
-    //private NavigationView mDrawer;
-    //private DrawerLayout mDrawerLayout;
-    //private ActionBarDrawerToggle mDrawerToggle;
-
     private DatabaseReference databaseUsers = FirebaseDatabase.getInstance().getReference("users");
     private DatabaseReference databaseMarcos = FirebaseDatabase.getInstance().getReference("marcos");
     private DatabaseReference databasePolos = FirebaseDatabase.getInstance().getReference("polos");
 
-    //
     public static boolean mIsInForegroundMode = false;
     private static boolean menuOpened = false;
 
@@ -83,14 +78,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
         mIsInForegroundMode = true;
 
-        /*mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawer = (NavigationView) findViewById(R.id.main_drawer);
-        mDrawer.setNavigationItemSelectedListener(this);
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
-        mDrawerToggle.syncState();
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);*/
+        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.expand_button);
+        floatingActionButton.setImageResource(android.R.drawable.ic_menu_preferences);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
@@ -141,9 +130,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-
     }
-
 
     @Override
     protected void onPause() {
@@ -162,29 +149,35 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         int visibility;
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.expand_button);
-        //floatingActionButton.set
 
         if (menuOpened) {
             visibility = View.VISIBLE;
+            floatingActionButton.setImageResource(android.R.drawable.ic_menu_close_clear_cancel);
         }
         else {
             visibility = View.INVISIBLE;
+            floatingActionButton.setImageResource(android.R.drawable.ic_menu_preferences);
         }
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.nav_account);
         floatingActionButton.setVisibility(visibility);
+        floatingActionButton.setImageResource(android.R.drawable.ic_menu_compass);
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.nav_friends);
         floatingActionButton.setVisibility(visibility);
+        floatingActionButton.setImageResource(android.R.drawable.ic_menu_my_calendar);
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.nav_notifications);
         floatingActionButton.setVisibility(visibility);
+        floatingActionButton.setImageResource(android.R.drawable.ic_popup_reminder);
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.nav_help);
         floatingActionButton.setVisibility(visibility);
+        floatingActionButton.setImageResource(android.R.drawable.ic_menu_help);
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.nav_privacy_policy);
         floatingActionButton.setVisibility(visibility);
+        floatingActionButton.setImageResource(android.R.drawable.ic_lock_idle_lock);
     }
 
     public void onClickNavAccount (View view){
@@ -212,60 +205,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         startActivity(intent);
     }
 
-
-
-
-
-
-
     //Function that's called when the marco button is clicked
     public void onClickBtnMarco(View view) {
         Intent intent = new Intent(this, MarcoActivity.class);
         startActivity(intent);
     }
-
-    /*//Handle action bar items only
-    //The regular menu items are handled in OnNavigationItemClickListener()
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        if (item.getItemId() == R.id.nav_notifications) {
-            startActivity(new Intent(MapsActivity.this, Notifications.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }*/
-
-    //Inflate the menu so that action buttons are visible while
-    //using a navigation drawer
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.navigation_menu, menu);
-        return true;
-    }*/
-
-    //Sets all menu options other than notifications to invisible so that only notifications
-    //icon is visible in the action bar.  MUST be updated if other menu items are added later.
-    /*@Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem item = menu.findItem(R.id.nav_account);
-        item.setVisible(false);
-        item = menu.findItem(R.id.nav_privacy_policy);
-        item.setVisible(false);
-        item = menu.findItem(R.id.nav_friends);
-        item.setVisible(false);
-        super.onPrepareOptionsMenu(menu);
-        return true;
-    }*/
-
-    //Ensures drawer toggle behavior if the state of the app changes
-    /*@Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
-    }*/
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -426,42 +370,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             databaseUsers.child(LoginActivity.currentUser.getUserId()).child("longitude").setValue(location.getLongitude());
         }
     }
-
-    //This is where we handle the clicks for the drawer menu items
-    //Each option creates a new activity, see corresponding .java/.xml files
-    /*@Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        Intent intent = null;
-        //if (!friendsRead) {
-        //testRead();
-        //friendsRead = true;
-        //}
-        if (menuItem.getItemId() == R.id.nav_account) {
-            intent = new Intent(this, SettingsActivity.class);
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-            startActivity(intent);
-            return true;
-        }
-        if (menuItem.getItemId() == R.id.nav_notifications) {
-            intent = new Intent(this, Notifications.class);
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-            startActivity(intent);
-            return true;
-        }
-        if (menuItem.getItemId() == R.id.nav_privacy_policy) {
-            intent = new Intent(this, PrivacyPolicyActivity.class);
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-            startActivity(intent);
-            return true;
-        }
-        if (menuItem.getItemId() == R.id.nav_friends) {
-            intent = new Intent(this, FriendsListActivity.class);
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-            startActivity(intent);
-            return true;
-        }
-        return false;
-    }*/
 
     public static void addMarcoMarker(double lat, double lng, String message, String sender, String userId, boolean privat) {
         LatLng extraLatlng = new LatLng(lat, lng);

@@ -20,6 +20,7 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/nav_image_view_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"
@@ -37,56 +38,71 @@
             android:id="@+id/expand_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="onClickExpandButton"/>
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="50dp"
+            android:layout_below="@+id/nav_image_view_container"
+            android:onClick="onClickExpandButton"
+            tools:icon="?android:attr/floatingToolbarOpenDrawable"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/nav_account"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/expand_button"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginLeft="20dp"
             android:visibility="invisible"
             android:onClick="onClickNavAccount"
-            android:icon="@android:drawable/ic_menu_compass"/>
+            android:icon="@android:drawable/ic_menu_compass"
+            app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/nav_friends"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/nav_account"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginLeft="20dp"
             android:onClick="onClickNavFriends"
             android:visibility="invisible"
-            app:fabSize="mini" />
+            app:fabSize="mini"
+            tools:icon="@android:drawable/ic_menu_my_calendar" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/nav_notifications"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/nav_friends"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginLeft="20dp"
             android:visibility="invisible"
             android:onClick="onClickNavNotifications"
-            android:icon="@android:drawable/ic_popup_reminder"/>
+            tools:icon="@android:drawable/ic_popup_reminder"
+            app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/nav_help"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/nav_notifications"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginLeft="20dp"
             android:visibility="invisible"
-            android:onClick="onClickNavHelp"/>
+            android:onClick="onClickNavHelp"
+            tools:icon="@android:drawable/ic_menu_help"
+            app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/nav_privacy_policy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/nav_help"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginLeft="20dp"
             android:visibility="invisible"
             android:onClick="onClickNavPrivacyPolicy"
-            android:icon="@android:drawable/ic_lock_idle_lock"/>
+            tools:icon="@android:drawable/ic_lock_idle_lock"
+            app:fabSize="mini"/>
 
         <Button
             android:id="@+id/btn_marco"
