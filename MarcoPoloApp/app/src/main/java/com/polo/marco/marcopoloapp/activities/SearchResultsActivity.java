@@ -193,6 +193,28 @@ public class SearchResultsActivity extends AppCompatActivity {
 
                                 dialog.show();
                             }
+                            //If they are in your block list
+                            else if(LoginActivity.currentUser.getBlockList().contains(id)){
+                                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(SearchResultsActivity.this);
+                                View view = getLayoutInflater().inflate(R.layout.dialog_select_unblock, null);
+                                TextView txtViewFriend = (TextView) view.findViewById(R.id.txt_friend_name);
+                                Button btnUnblock = (Button) view.findViewById(R.id.btn_unBlock);
+
+                                dialogBuilder.setView(view);
+                                final AlertDialog dialog = dialogBuilder.create();
+
+                                txtViewFriend.setText(retrieved.getName());
+
+                                btnUnblock.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        LoginActivity.currentUser.blockList.remove(id);
+                                        databaseUsers.child(LoginActivity.currentUser.getUserId()).child("blockList").setValue(LoginActivity.currentUser.blockList);
+                                        dialog.dismiss();
+                                    }
+                                });
+                                dialog.show();
+                            }
                             //If it is not yourself
                             else if(!id.equals(LoginActivity.currentUser.getUserId())){
                                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(SearchResultsActivity.this);
@@ -200,7 +222,6 @@ public class SearchResultsActivity extends AppCompatActivity {
                                 TextView txtViewFriend = (TextView) view.findViewById(R.id.txt_friend_name);
                                 Button btnAddFriend = (Button) view.findViewById(R.id.btn_unfriend);
                                 Button btnBlock = (Button) view.findViewById(R.id.btn_block);
-
 
                                 dialogBuilder.setView(view);
                                 final AlertDialog dialog = dialogBuilder.create();
@@ -217,8 +238,26 @@ public class SearchResultsActivity extends AppCompatActivity {
                                         dialog.dismiss();
                                     }
                                 });
+                                btnBlock.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        LoginActivity.currentUser.blockList.add(retrieved.getUserId());
+                                        databaseUsers.child(LoginActivity.currentUser.getUserId()).child("blockList").setValue(LoginActivity.currentUser.blockList);
+
+                                        if (LoginActivity.currentUser.friendsListIds.contains(retrieved.getUserId())) {
+                                            LoginActivity.currentUser.friendsListIds.remove(retrieved.getUserId());
+                                            databaseUsers.child(LoginActivity.currentUser.getUserId()).child("friendsListIds").setValue(LoginActivity.currentUser.friendsListIds);
+                                            FriendsListActivity.changedFriends = true;
+                                            int position = findUser(retrieved.getUserId());
+                                            LoginActivity.currentUser.friendsList.remove(position);
+                                        }
+                                        dialog.dismiss();
+                                        onResume();
+                                    }
+                                });
                                 dialog.show();
                             }
+                            //If it is yourself
                             else if(id.equals(LoginActivity.currentUser.getUserId())){
                                 Toast.makeText(SearchResultsActivity.this, "You found yourself!", Toast.LENGTH_LONG).show();
                             }
