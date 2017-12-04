@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <ImageView
@@ -8,8 +9,8 @@
         android:layout_width="@dimen/com_facebook_profilepictureview_preset_size_normal"
         android:layout_height="@dimen/com_facebook_profilepictureview_preset_size_normal"
         android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
-        android:layout_toEndOf="@+id/marco_description"
         app:srcCompat="@drawable/com_facebook_profile_picture_blank_square" />
 
     <TextView
@@ -22,30 +23,43 @@
         android:text="TextView"
         android:textSize="28sp" />
 
-    <ImageView
-        android:id="@+id/settings_logged_in_as"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/marco_description"
-        android:layout_alignTop="@+id/settings_user_email"
-        android:layout_marginStart="15dp"
-        app:srcCompat="@drawable/com_facebook_button_icon_blue" />
+    <LinearLayout
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/settings_textView"
+    android:layout_marginTop="16dp"
+    android:gravity="center"
+        tools:ignore="NotSibling">
 
-    <TextView
-        android:id="@+id/settings_user_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/settings_textView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:text="TextView"
-        android:textSize="20sp" />
+        <ImageView
+            android:id="@+id/settings_logged_in_as"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/settings_user_email"
+            app:srcCompat="@drawable/com_facebook_button_icon_blue" />
+
+        <TextView
+            android:id="@+id/settings_user_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/settings_textView"
+            android:layout_marginLeft="16dp"
+            android:gravity="center"
+            android:text="TextView"
+
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
 
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_below="@+id/linearLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="45dp"
         android:indeterminate="true"
         android:visibility="invisible" />
 
@@ -53,10 +67,10 @@
         android:id="@+id/marco_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/settings_user_email"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="20dp"
-        android:text="Most Current Marco:"
+        android:layout_alignStart="@+id/settings_imageView"
+        android:layout_alignTop="@+id/progress_bar"
+        android:text="Current Marco:"
+        android:textSize="18sp"
         android:visibility="invisible" />
 
     <ScrollView
@@ -65,37 +79,41 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/marco_description"
         android:layout_centerInParent="true">
+
         <TextView
             android:id="@+id/my_marco_text_view"
             android:layout_width="300dp"
             android:layout_height="500dp"
             android:layout_centerInParent="true"
             android:layout_marginBottom="25dp"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="45dp"
             android:layout_marginTop="3dp"
             android:background="@color/MarcoBlue"
-            android:visibility="gone"/>
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:visibility="gone" />
     </ScrollView>
 
     <Button
         android:id="@+id/delete_marco"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/my_marco_scroll_box"
+        android:layout_below="@+id/progress_bar"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp"
+        android:layout_marginTop="26dp"
         android:enabled="false"
         android:onClick="onClickDeleteMarco"
-        android:text="Delete My Marco"/>
+        android:text="Delete My Marco" />
 
     <Button
         android:id="@+id/sync_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/delete_marco"
-        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/button4"
+        android:layout_alignEnd="@+id/marco_description"
+        android:layout_marginBottom="18dp"
         android:onClick="onClickSyncContacts"
-        android:text="Sync Contacts"/>
+        android:text="Sync Contacts" />
 
     <Button
         android:id="@+id/button4"
