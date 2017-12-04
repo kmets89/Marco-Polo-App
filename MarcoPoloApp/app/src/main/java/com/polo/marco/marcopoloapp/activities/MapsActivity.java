@@ -117,7 +117,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (dataSnapshot.exists()) {
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         Marco marco = child.getValue(Marco.class);
-                        if (marco.getStatus() == true)
+                        if (marco.isPublic())
                             addMarcoMarker(marco.getLatitude(), marco.getLongitude(), marco.getMessage(), marco.getName(), marco.getUserId(), false);
                     }
                 }
@@ -136,6 +136,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     for (final DataSnapshot child : dataSnapshot.getChildren()) {
                         for (final DataSnapshot childs : child.getChildren()) {
                             Polo polo = childs.getValue(Polo.class);
+                            Log.d("MapsActivity", "Poloer key: " + child.getKey() + ", my key: " + LoginActivity.currentUser.getUserId());
                             if (child.getKey().equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
                                 if (polo.getMessage().equalsIgnoreCase("delete") || preventReloop) {
                                     preventReloop = false;

@@ -38,8 +38,13 @@ public class Marco {
     public double getLongitude() {return longitude;}
     public void setLongitude(double lon) {this.longitude = lon;}
 
-    public boolean getStatus() {return isPublic;}
-    public void setStatus(boolean p) {this.isPublic = p;}
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
+    }
 
     public List<String> getReceiverList() {
         return receiverList;

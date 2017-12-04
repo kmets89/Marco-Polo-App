@@ -1,6 +1,5 @@
 package com.polo.marco.marcopoloapp.activities;
 
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;

@@ -234,9 +234,6 @@ public class LoginActivity extends AppCompatActivity implements
                                                     try {
 
                                                         JSONArray data = (JSONArray) response.getJSONObject().get("data");
-                                                        //currentUser.setFriendsList(new ArrayList<User>());
-                                                        currentUser.setFriendsListIds(new ArrayList<String>());
-
                                                         for (int i = 0; i < data.length(); i++) {
                                                             String id = ((JSONObject) data.get(i)).getString("id");
                                                             databaseUsers.child(id)
@@ -245,9 +242,11 @@ public class LoginActivity extends AppCompatActivity implements
                                                                         public void onDataChange(DataSnapshot dataSnapshot) {
                                                                             User retrievedUser = dataSnapshot.getValue(User.class);
                                                                             if (retrievedUser != null) {
-                                                                                //currentUser.friendsList.add(retrievedUser);
+                                                                               /* //currentUser.friendsList.add(retrievedUser);
+                                                                                currentUser = retrievedUser;
                                                                                 currentUser.friendsListIds.add(retrievedUser.getUserId());
                                                                                 Log.d(TAG, retrievedUser.getName());
+                                                                                databaseUsers.child(currentUser.getUserId()).setValue(currentUser);*/
                                                                             }
                                                                         }
 
@@ -257,7 +256,6 @@ public class LoginActivity extends AppCompatActivity implements
                                                                         }
                                                                     });
                                                         }
-                                                        databaseUsers.child(currentUser.getUserId()).setValue(currentUser);
                                                     } catch (JSONException e) {
                                                         e.printStackTrace();
                                                     }
