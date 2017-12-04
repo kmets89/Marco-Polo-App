@@ -5,11 +5,11 @@
 
     <ImageView
         android:id="@+id/settings_imageView"
-        android:layout_width="@dimen/com_facebook_profilepictureview_preset_size_normal"
-        android:layout_height="@dimen/com_facebook_profilepictureview_preset_size_normal"
+        android:layout_width="@dimen/com_facebook_profilepictureview_preset_size_large"
+        android:layout_height="@dimen/com_facebook_profilepictureview_preset_size_large"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="12dp"
+        android:layout_toEndOf="@+id/marco_description"
         app:srcCompat="@drawable/com_facebook_profile_picture_blank_square" />
 
     <TextView
@@ -24,21 +24,20 @@
 
     <ImageView
         android:id="@+id/settings_logged_in_as"
-        android:layout_below="@+id/settings_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="20dp"
+        android:layout_alignStart="@+id/marco_description"
+        android:layout_alignTop="@+id/settings_user_email"
+        android:layout_marginStart="15dp"
         app:srcCompat="@drawable/com_facebook_button_icon_blue" />
 
     <TextView
         android:id="@+id/settings_user_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/settings_logged_in_as"
+        android:layout_below="@+id/settings_textView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
         android:text="TextView"
         android:textSize="20sp" />
 
@@ -51,52 +50,52 @@
         android:visibility="invisible" />
 
     <TextView
+        android:id="@+id/marco_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/marco_description"
         android:layout_below="@+id/settings_user_email"
-        android:layout_marginTop="20dp"
         android:layout_marginLeft="15dp"
-        android:text="Most recent Marco:"
-        android:visibility="invisible"/>
+        android:layout_marginTop="20dp"
+        android:text="Most Current Marco:"
+        android:visibility="invisible" />
 
     <ScrollView
         android:id="@+id/my_marco_scroll_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_below="@+id/marco_description">
+        android:layout_below="@+id/marco_description"
+        android:layout_centerInParent="true">
         <TextView
             android:id="@+id/my_marco_text_view"
             android:layout_width="300dp"
             android:layout_height="500dp"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="25dp"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="3dp"
-            android:layout_marginBottom="25dp"
-            android:visibility="gone"
-            android:layout_centerInParent="true"
-            android:background="@color/MarcoBlue"/>
+            android:background="@color/MarcoBlue"
+            android:visibility="gone"/>
     </ScrollView>
 
     <Button
         android:id="@+id/delete_marco"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/my_marco_scroll_box"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="30dp"
-        android:layout_below="@+id/my_marco_scroll_box"
-        android:text="Delete My Marco"
+        android:enabled="false"
         android:onClick="onClickDeleteMarco"
-        android:enabled="false"/>
+        android:text="Delete My Marco"/>
 
     <Button
         android:id="@+id/sync_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="Sync Contacts"
         android:layout_below="@+id/delete_marco"
-        android:onClick="onClickSyncContacts"/>
+        android:layout_centerHorizontal="true"
+        android:onClick="onClickSyncContacts"
+        android:text="Sync Contacts"/>
 
     <Button
         android:id="@+id/button4"

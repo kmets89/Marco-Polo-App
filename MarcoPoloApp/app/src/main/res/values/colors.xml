@@ -5,8 +5,11 @@
     <color name="grassGreen">#afca89</color>
     <color name="colorAccent">#FFCD5F</color>
     <color name="streetGray">#eeebe2</color>
+    <color name="darkStreetGray">#c6c4bc</color>
     <color name="MarcoBlue">#3d8f9e</color>
     <color name="colorPrimary">#3d8f9e</color>
     <color name="colorPrimaryDark">#2c6873</color>
     <color name="poloRed">#bd3021</color>
+    <color name="darkPoloRed">#681a11</color>
+    <color name="veryDarkGray">#232321</color>
 </resources>

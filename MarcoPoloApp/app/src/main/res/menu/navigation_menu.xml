@@ -2,7 +2,7 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
+    <!--<item
         android:id="@+id/nav_account"
         android:icon="@android:drawable/ic_menu_compass"
         android:title="@string/account" />
@@ -21,6 +21,6 @@
         android:id="@+id/nav_privacy_policy"
         android:icon="@android:drawable/ic_lock_idle_lock"
         android:title="@string/privacy_policy"
-        app:showAsAction="never" />
+        app:showAsAction="never" />-->
 
 </menu>
