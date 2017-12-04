@@ -1,18 +1,20 @@
 package com.polo.marco.marcopoloapp.api.notifications;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,9 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.activities.LoginActivity;
-import com.polo.marco.marcopoloapp.activities.MarcoActivity;
 import com.polo.marco.marcopoloapp.firebase.models.Polo;
-import com.polo.marco.marcopoloapp.firebase.models.User;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -55,7 +55,16 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
         int width = dispMetrics.widthPixels;
         int height = dispMetrics.heightPixels;
 
-        getWindow().setLayout((int) (width * 0.8), (int) (height * 0.3));
+        Window win = getWindow();
+        getWindow().setLayout((int) (width * 0.8), (int) (height * 0.5));
+
+        win.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        WindowManager.LayoutParams params = win.getAttributes();
+        params.dimAmount = 0.6f;
+        win.setAttributes(params);
+
+
+
 
         //Creates an adapter to pipe in data to the list view.  For now ignore the spinner
         //that we're not using
@@ -97,11 +106,14 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
            public void onDataChange(DataSnapshot snapshot) {
                if (!snapshot.exists()) {
                    Log.d("TESTING", "it doesnt exist!");
+                   TextView textview = (TextView) findViewById(R.id.notifications_empty);
+                   textview.setVisibility(View.VISIBLE);
                }
                else {
                    for (DataSnapshot child : snapshot.getChildren()) {
                        Polo retrievedPolo = child.getValue(Polo.class);
-                       addDatum("Marco sent from: "+ retrievedPolo.getSenderName(), retrievedPolo.getMessage());
+                       String shortDate = retrievedPolo.getTimestamp().split(" ")[0];
+                       addDatum(child.getKey(), "Marco from: "+ retrievedPolo.getSenderName(), "Sent on: " + shortDate + "\n" + retrievedPolo.getMessage());
 
                        expandableListView = (ExpandableListView) findViewById(R.id.notificationListView);
                        listAdapter = new CustomListAdapter(Notifications.this, sectionList);
@@ -127,7 +139,8 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
        public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
            HeaderInfo headerInfo = sectionList.get(groupPosition);
            DetailInfo detailInfo = headerInfo.getChildList().get(childPosition);
-           Toast.makeText(getBaseContext(), "Clicked on detail " + headerInfo.getName() + "/" + detailInfo.getName(), Toast.LENGTH_LONG).show();
+           //Toast.makeText(getBaseContext(), "Clicked on detail " + headerInfo.getName() + "/" + detailInfo.getName(), Toast.LENGTH_LONG).show();
+           showGoAheadDialog(getResources().getString(R.string.polo_prompt), detailInfo.getId());
            return false;
        }
    };
@@ -137,13 +150,13 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
        @Override
        public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
            HeaderInfo headerInfo = sectionList.get(groupPosition);
-           Toast.makeText(getBaseContext(), "Child on header " + headerInfo.getName(), Toast.LENGTH_LONG).show();
+           //Toast.makeText(getBaseContext(), "Child on header " + headerInfo.getName(), Toast.LENGTH_LONG).show();
            return false;
        }
    };
 
    //adds one key, value pair to the expandable list
-   private int addDatum(String group, String child){
+   private int addDatum(String id, String group, String child){
        int groupPosition = 0;
 
        HeaderInfo headerInfo = mySection.get(group);
@@ -160,6 +173,7 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
 
        DetailInfo detailInfo = new DetailInfo();
        detailInfo.setName(child);
+       detailInfo.setId(id);
        childList.add(detailInfo);
        headerInfo.setChildList(childList);
 
@@ -175,5 +189,36 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
             default:
                 break;
         }
+    }
+
+    public void showGoAheadDialog(String prompt, String id){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        alertDialogBuilder.setMessage(prompt);
+        final String senderId = id;
+        alertDialogBuilder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                databasePolos.child(LoginActivity.currentUser.getUserId()).child(senderId).child("responded").setValue(true);
+                sectionList.clear();
+                mySection.clear();
+                addData();
+                arg0.cancel();
+            }
+        });
+
+        alertDialogBuilder.setNegativeButton("Decline", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                databasePolos.child(LoginActivity.currentUser.getUserId()).child(senderId).removeValue();
+                sectionList.clear();
+                mySection.clear();
+                addData();
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 }

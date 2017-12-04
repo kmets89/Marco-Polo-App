@@ -1,31 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grassGreen">
+    android:background="@drawable/brighter_red_bubble">
 
     <!--<Spinner android:id="@+id/spinGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:paddingLeft="100sp"/>
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_margin="5dp"
-        android:background="@color/poloRed"
-        android:padding="5dp"
-        android:text="Testing, testing..."/>-->
-    <ExpandableListView
-        android:id="@+id/notificationListView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:divider="@color/MarcoBlue"
-        android:dividerHeight="2sp"
-        android:childDivider="@color/streetGray"
-        android:listSelector="@color/streetGray"/>
+        android:paddingLeft="100sp"/>-->
+
+    <!--<TextView
+        android:id="@+id/notifications_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:layout_marginLeft="7dp"
+        android:text="What you've missed"
+        android:textColor="@color/streetGray"
+        android:textSize="30sp"/>-->
+
+    <LinearLayout
+        android:layout_width="250dp"
+        android:layout_height="260dp"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/rounded_layout"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/notifications_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginTop="5dp"
+            android:text="You have no recent notifications!"
+            android:textColor="@color/veryDarkGray"
+            android:textSize="18sp"
+            android:visibility="gone"/>
+
+        <ExpandableListView
+            android:id="@+id/notificationListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:childDivider="@color/darkPoloRed"
+            android:divider="@color/streetGray"
+            android:dividerHeight="2sp"
+            android:listSelector="@color/darkStreetGray" />
+
+    </LinearLayout>
 </RelativeLayout>

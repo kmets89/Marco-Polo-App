@@ -1,28 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent">
-
-<!-- Layout used for Icon help child.... -->
-
-    <ImageView
-        android:id="@+id/help_icon_image_a"
-        android:layout_width="76dp"
-        android:layout_height="69dp"
-        android:maxWidth="80dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat= "@drawable/splash_logo"/>
+    <TextView
+        android:id="@+id/help_about"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/help_about"/>
 
     <TextView
-        android:id="@+id/help_icon_text_a"
-        android:layout_width="140dp"
-        android:layout_height="25dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="8dp"
-        android:textSize="20sp"
-        android:text = "@string/help_icons"
-         />
+        android:id="@+id/help_marco"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/help_marco"/>
+
+    <TextView
+        android:id="@+id/help_public"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/help_public"/>
+
+    <TextView
+        android:id="@+id/help_private"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/help_private"/>
+
+    <TextView
+        android:id="@+id/help_polo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/help_polo"/>
+
+    <TextView
+        android:id="@+id/help_friends"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/help_friends"/>
 
 </android.support.constraint.ConstraintLayout>
