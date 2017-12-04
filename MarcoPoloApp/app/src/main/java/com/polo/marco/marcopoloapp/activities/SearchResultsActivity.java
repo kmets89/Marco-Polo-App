@@ -82,6 +82,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                 if (!snapshot.exists()) {
                     Log.d("SEARCHING", "not found!");
                 }
+
                 else {
                     for (DataSnapshot child : snapshot.getChildren()) {
                         Log.d("SEARCHING", "found name " + child.toString());
