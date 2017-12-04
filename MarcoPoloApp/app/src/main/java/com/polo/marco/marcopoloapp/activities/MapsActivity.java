@@ -134,14 +134,34 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     for (final DataSnapshot child : dataSnapshot.getChildren()) {
-                        for (DataSnapshot childs : child.getChildren()) {
+                        for (final DataSnapshot childs : child.getChildren()) {
                             Polo polo = childs.getValue(Polo.class);
                             if (child.getKey().equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
+                                if (polo.getMessage().equalsIgnoreCase("delete")) {
+                                    return;
+                                }
 
                                 Marker m = getMarker(childs.getKey());
                                 if (!hasActivePolo && m == null) {
                                     activePoloerUserId = childs.getKey();
                                     addMarcoMarker(polo.getLatitude(), polo.getLongitude(), polo.getMessage(), polo.getSenderName(), childs.getKey(), true);
+
+                                    databasePolos.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot snap) {
+                                            if (snap.exists()) {
+                                                if (snap.child(childs.getKey()).exists()) {
+                                                    Log.d("MapsActivity", "Now has active polo");
+                                                    hasActivePolo = true;
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
                                 } else if (m != null) {
                                     m.setPosition(new LatLng(polo.getLatitude(), polo.getLongitude()));
                                     if (polo.getResponded() == true) {
@@ -434,6 +454,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LoginActivity.currentUser.setLatitude(location.getLatitude());
             LoginActivity.currentUser.setLongitude(location.getLongitude());
 
+            Log.d("MapsActivity", "hasActivePolo: " + hasActivePolo);
             if (hasActivePolo) {
                 databasePolos.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/friends_list_layout">
@@ -16,35 +14,24 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:maxWidth="80dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/com_facebook_profile_picture_blank_square"
-        tools:maxHeight="80dp" />
+        android:maxHeight="80dp"/>
 
     <TextView
         android:id="@+id/friendslist_user_name"
-        android:layout_width="140dp"
-        android:layout_height="25dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginTop="8dp"
-        android:layout_toEndOf="@+id/friendslist_profile_image"
-        android:text="TextView"
-        android:textSize="20sp"
-        app:layout_constraintLeft_toRightOf="@+id/friendslist_profile_image"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="David Rodriguez" />
+        android:layout_toRightOf="@+id/friendslist_profile_image"
+        android:textSize="20sp" />
 
-    <!--<TextView
-        android:id="@+id/friendslist_last_login"
+    <TextView
+        android:id="@+id/friendslist_email_address"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_alignBottom="@+id/friendslist_profile_image"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="60dp"
-        android:layout_toEndOf="@+id/friendslist_profile_image"
-        android:text="Last Marco: 10/09"
-        android:textSize="14sp"
-        app:layout_constraintLeft_toRightOf="@+id/friendslist_profile_image"
-        app:layout_constraintTop_toBottomOf="@+id/friendslist_user_name" />-->
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_toRightOf="@+id/friendslist_profile_image"
+        android:layout_below="@+id/friendslist_user_name"
+        android:textSize="14sp" />
 
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>
