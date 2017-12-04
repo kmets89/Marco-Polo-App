@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.polo.marco.marcopoloapp.R;
@@ -94,6 +95,7 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
         else{
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.notification_groups, null);
+
             return view;
         }
     }
