@@ -110,4 +110,12 @@
     <string name="GoogleProfile">Google Profile Attached</string>
     <string name="Logout">Logout</string>
     <string name="notification_window_icon">Notification Window Icon</string>
+    <string name="delete_my_marco">Delete</string>
+    <string name="sync_contacts">Sync Contacts</string>
+    <string name="sign_out">Sign out</string>
+    <string name="my_marco">My Marco:</string>
+    <string name="user_name">User Name</string>
+    <string name="user_email">User Email</string>
+    <string name="user_profile_picture">user profile picture</string>
+    <string name="linked_account">linked account</string>
 </resources>
