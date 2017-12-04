@@ -306,7 +306,7 @@ public class LoginActivity extends AppCompatActivity implements
 
     private void handleFacebookSignInResult(String id, String name, String email) {
         databaseUsers.child(id).addListenerForSingleValueEvent(
-                new LoadUserFromDbEvent(databaseUsers, id, name, "facebook", "https://graph.facebook.com/" + id + "/picture?type=large&height=1200&width=1200", email)
+                new LoadUserFromDbEvent(databaseUsers, id, name, "facebook", "https://graph.facebook.com/" + id + "/picture?type=square", email)
         );
         updateUI(true, name);
     }
