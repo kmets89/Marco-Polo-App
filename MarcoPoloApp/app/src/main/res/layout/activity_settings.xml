@@ -66,6 +66,17 @@
         android:textSize="16sp"
         android:textAllCaps="false"/>
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@+id/sync_button"
+        android:layout_alignTop="@+id/sync_button"
+        android:layout_alignBottom="@+id/sync_button"
+        android:elevation="5dp"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
     <View
         android:id="@+id/horizontal_bar"
         android:layout_width="wrap_content"
@@ -145,13 +156,5 @@
         android:textColor="@color/white"
         android:background="@drawable/red_rounded_button"
         android:textAllCaps="false"/>
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:indeterminate="true"
-        android:visibility="gone" />
 
 </RelativeLayout>
