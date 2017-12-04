@@ -1,6 +1,5 @@
 package com.polo.marco.marcopoloapp.activities;
 
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -199,7 +198,7 @@ public class MarcoActivity extends AppCompatActivity {
             databasePolos.child(retrievedUser.getUserId()).child(LoginActivity.currentUser.getUserId()).setValue(polo);
         } else {
             if (publicSwitch.isChecked()) {
-                    sendPrivateMarcoFromDB(message, currentDate, expireTime);
+                sendPrivateMarcoFromDB(message, currentDate, expireTime);
             } else {
                 isPublic = true;
                 Marco publicMarco = new Marco(userId, LoginActivity.currentUser.getName(), message, currentDate, expireTime, lat, lng, isPublic);

@@ -28,6 +28,12 @@ public class User {
     public String email;
 
     public User() {
+        if (friendsList == null) {
+            this.friendsList = new ArrayList<User>();
+        } else {
+            this.friendsList = friendsList;
+        }
+
         if (friendsListIds == null) {
             this.friendsListIds = new ArrayList<String>();
         } else {
@@ -45,6 +51,12 @@ public class User {
         this.userId = userId;
         this.name = name;
         this.loginApiType = loginApiType;
+
+        if (friendsList == null) {
+            this.friendsList = new ArrayList<User>();
+        } else {
+            this.friendsList = friendsList;
+        }
 
         if (friendsListIds == null) {
             this.friendsListIds = new ArrayList<String>();
