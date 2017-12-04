@@ -28,7 +28,7 @@
     <string name="polo_prompt">Do you want to Polo back?</string>
 
     <!-- Account settings activity strings -->
-    <string name="title_activity_account_settings">Account</string>
+    <string name="title_activity_account_settings">My Account</string>
 
     <!-- Friends list activity strings -->
     <string name="title_activity_friends">Friends</string>

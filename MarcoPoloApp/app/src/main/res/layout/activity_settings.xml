@@ -2,10 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="@color/streetGray">
+    android:background="@color/white">
 
     <ImageView
         android:id="@+id/settings_profile_pic"
+        android:elevation="3dp"
         android:layout_width="110dp"
         android:layout_height="110dp"
         android:layout_alignParentTop="true"
@@ -38,11 +39,12 @@
 
     <TextView
         android:id="@+id/settings_user_email"
+        android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/settings_user_name"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="6dp"
         android:text="TextView"
         android:textSize="18sp" />
 
@@ -58,96 +60,80 @@
         android:id="@+id/marco_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/settings_user_email"
+        android:layout_below="@+id/sync_button"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="15dp"
+        android:layout_marginLeft="30dp"
         android:layout_marginBottom="10dp"
         android:text="My Marco:"
-        android:textSize="16sp"/>
+        android:textSize="18sp"/>
 
-    <ScrollView
+    <RelativeLayout
         android:id="@+id/my_marco_scroll_box"
-        android:layout_width="280dp"
-        android:layout_height="100dp"
-        android:layout_below="@+id/marco_description"
         android:layout_centerInParent="true"
-        android:layout_marginBottom="5dp">
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:padding="5dp"
+        android:layout_below="@+id/marco_description"
+        android:background="@drawable/gray_background">
+    <ScrollView
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:layout_centerInParent="true"
+        android:background="@color/white">
         <TextView
             android:id="@+id/my_marco_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"/>
+            android:textSize="18sp"
+            android:layout_marginLeft="3dp"
+            android:background="@color/white"/>
     </ScrollView>
+    </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:background="@color/MarcoBlue"
-        android:layout_below="@+id/my_marco_scroll_box"
-        android:elevation="5dp">
-
-        <TextView
+        <Button
             android:id="@+id/delete_marco"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:elevation="2dp"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:clickable="false"
             android:onClick="onClickDeleteMarco"
+            android:layout_marginTop="10dp"
             android:text="Delete My Marco"
+            android:layout_alignLeft="@+id/my_marco_scroll_box"
+            android:layout_below="@+id/my_marco_scroll_box"
             android:textColor="@color/streetGray"
-            android:background="@color/MarcoBlue"
-            android:textSize="22sp"/>
+            android:background="@drawable/marco_button"
+            android:textSize="14sp"/>
 
-        <ImageView
-            android:id="@+id/settings_line1"
-            android:elevation="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/veryDarkGray"
-            android:layout_below="@+id/delete_marco"/>
-
-        <TextView
+        <Button
             android:id="@+id/sync_button"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_below="@+id/settings_line1"
+            android:elevation="2dp"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/settings_user_email"
+            android:layout_marginTop="16dp"
             android:gravity="center"
-            android:clickable="true"
             android:onClick="onClickSyncContacts"
             android:text="Sync Contacts"
-            android:textSize="22sp"
-            android:textColor="@color/veryDarkGray"
-            android:background="@color/MarcoBlue"/>
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:layout_centerInParent="true"
+            android:background="@drawable/marco_button"/>
 
-        <ImageView
-            android:id="@+id/settings_line2"
-            android:layout_below="@+id/sync_button"
-            android:elevation="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/veryDarkGray"/>
-
-        <TextView
+        <Button
             android:id="@+id/sign_out_button"
-            android:layout_below="@+id/settings_line2"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:elevation="2dp"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:gravity="center"
+            android:layout_centerInParent="true"
+            android:layout_margin="10dp"
             android:layout_marginTop="10dp"
-            android:clickable="true"
             android:onClick="onClickSignOut"
             android:text="Sign out"
-            android:textSize="22sp"
-            android:textColor="@color/veryDarkGray"
-            android:background="@color/MarcoBlue"/>
-
-        <ImageView
-            android:id="@+id/settings_line3"
-            android:layout_below="@+id/sign_out_button"
-            android:elevation="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/veryDarkGray"/>
-    </RelativeLayout>
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:background="@drawable/marco_button"/>
 
 </RelativeLayout>

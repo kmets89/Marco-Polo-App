@@ -306,9 +306,9 @@ public class SettingsActivity extends AppCompatActivity {
                     textView = (TextView) findViewById(R.id.my_marco_text_view);
                     textView.setText(myMarco.getMessage() + "\nSent on: " + sentDate);
 
-                    textView = (TextView) findViewById(R.id.delete_marco);
-                    textView.setClickable(true);
-                    textView.setTextColor(getResources().getColor(R.color.veryDarkGray));
+                    Button button = (Button) findViewById(R.id.delete_marco);
+                    button.setEnabled(true);
+                    button.setTextColor(getResources().getColor(R.color.white));
                 }
             }
             @Override
