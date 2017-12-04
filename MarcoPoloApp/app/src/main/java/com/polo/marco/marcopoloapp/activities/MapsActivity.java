@@ -8,6 +8,7 @@ import android.location.Location;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.solver.widgets.Snapshot;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
@@ -81,10 +82,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     // Active Polo Session Variables
     public boolean hasActivePolo = false;
-    public String activePoloerUserId = "";
+    public boolean preventReloop = false;
+    public String activePoloerUserId = "000000000000000000000000";
     public static ArrayList<Marker> mapMarkerArray = new ArrayList<>();
-    public ValueEventListener poloListener = null;
-    public boolean deletePoloLoop = true;
 
     //test
     @Override
@@ -137,7 +137,41 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         for (final DataSnapshot childs : child.getChildren()) {
                             Polo polo = childs.getValue(Polo.class);
                             if (child.getKey().equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
-                                if (polo.getMessage().equalsIgnoreCase("delete")) {
+                                if (polo.getMessage().equalsIgnoreCase("delete") || preventReloop) {
+                                    preventReloop = false;
+                                    return;
+                                }
+
+                                if (!hasActivePolo && distance(LoginActivity.currentUser.getLatitude(), LoginActivity.currentUser.getLongitude(), polo.getLatitude(), polo.getLongitude()) <= 0.01) {
+                                    Toast.makeText(getBaseContext(), "You are already in the same location!", Toast.LENGTH_LONG).show();
+                                    removeMarcoMarker(getMarker(childs.getKey()));
+                                    removeMarcoMarker(getMarker(activePoloerUserId));
+
+                                    databasePolos.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot snap) {
+                                            if (snap.exists()) {
+                                                for (DataSnapshot c : snap.getChildren()) {
+                                                    if (c.exists()) {
+                                                        if (c.getKey().equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
+                                                            for (DataSnapshot d : c.getChildren()) {
+                                                                if (d.exists()) {
+                                                                    databasePolos.child(LoginActivity.currentUser.getUserId()).child(d.getKey()).child("message").setValue("DELETE");
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+
+                                    preventReloop = true;
                                     return;
                                 }
 
@@ -191,7 +225,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         }
                                     });
 
-                                    // activePoloerUserId = "";
+                                    activePoloerUserId = "000000000000000000000000";
                                 }
                             }
                         }
@@ -526,7 +560,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public static Marker getMarker(String userId) {
         for (final Marker marker : mapMarkerArray) {
-            if (marker.getTitle().equalsIgnoreCase(userId)) {
+            if (marker.getTitle() != null && marker.getTitle().equalsIgnoreCase(userId)) {
                 return marker;
             }
         }
@@ -544,6 +578,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        marker.setInfoWindowAnchor(10000, 10000);
+
         if (hasActivePolo) {
             Toast.makeText(this, getResources().getString(R.string.has_active_polo), Toast.LENGTH_LONG).show();
             return false;
@@ -551,6 +587,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         lastMarkerClicked = marker;
         Intent intent = new Intent(this, PoloActivity.class);
+
         if (marker.getSnippet() != null && marker.getSnippet().contains("|")) {
             String[] data = marker.getSnippet().split("\\|");
             intent.putExtra("private", data[0]);
