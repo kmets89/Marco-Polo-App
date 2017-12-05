@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +23,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.firebase.models.User;
 import com.squareup.picasso.Picasso;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +40,10 @@ public class SearchResultsActivity extends AppCompatActivity {
 
     private List<String> foundAccounts = new ArrayList<String>();
     private List<User> foundUsers = new ArrayList<User>();
+    private boolean foundSomeonebyName = true;
+    private boolean foundSomeonebyEmail = true;
+    ProgressBar progressBar;
+    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,16 +51,25 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         setContentView(R.layout.search_results_activity);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        progressBar = (ProgressBar) findViewById(R.id.search_progress_bar);
+        textView = (TextView) findViewById(R.id.no_results_text);
 
         Intent extras = getIntent();
         String searchText = (extras.getStringExtra("searchText")).toLowerCase();
         searchText = searchText.replace('.', ',');
+
+        progressBar.setVisibility(View.VISIBLE);
 
         //pull account numbers from matching email
         databaseEmails.child(searchText).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
+                    foundSomeonebyEmail = false;
+                    if (!foundSomeonebyName && !foundSomeonebyEmail) {
+                        textView.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
+                    }
                 }
                 else {
                     for (DataSnapshot child : snapshot.getChildren()) {
@@ -76,6 +92,11 @@ public class SearchResultsActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
                     Log.d("SEARCHING", "not found!");
+                    foundSomeonebyName = false;
+                    if (!foundSomeonebyName && !foundSomeonebyEmail) {
+                        textView.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
+                    }
                 }
                 else {
                     for (DataSnapshot child : snapshot.getChildren()) {
@@ -105,6 +126,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         databaseUsers.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                progressBar.setVisibility(View.GONE);
                 if (!snapshot.exists()) {
                     Log.d("RESULTS", "not found!");
                 }
