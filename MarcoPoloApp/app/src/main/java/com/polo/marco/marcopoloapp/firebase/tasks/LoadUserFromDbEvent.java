@@ -14,6 +14,7 @@ import java.util.List;
 
 import static com.polo.marco.marcopoloapp.activities.LoginActivity.firebaseToken;
 import static com.polo.marco.marcopoloapp.activities.LoginActivity.currentUser;
+
 /**
  * Created by Krazy on 11/26/2017.
  */
@@ -40,17 +41,17 @@ public class LoadUserFromDbEvent implements ValueEventListener {
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
         User retrievedUser = dataSnapshot.getValue(User.class);
-        if(retrievedUser != null){
+        if (retrievedUser != null) {
             currentUser = retrievedUser;
             currentUser.friendsList = new ArrayList<User>();
             //If the firebasetoken is not null, it means it has been updated.
             //So we must update the users' token in the database.
-            if(firebaseToken != null){
+            if (firebaseToken != null) {
                 currentUser.setFirebaseToken(firebaseToken);
                 databaseUsers.child(id).setValue(currentUser);
             }
-            if(currentUser.getFriendsListIds() != null){
-                for(int i = 0; i < currentUser.getFriendsListIds().size(); i++){
+            if (currentUser.getFriendsListIds() != null) {
+                for (int i = 0; i < currentUser.getFriendsListIds().size(); i++) {
                     databaseUsers.child(currentUser.getFriendsListIds().get(i))
                             .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
@@ -67,7 +68,7 @@ public class LoadUserFromDbEvent implements ValueEventListener {
                             });
                 }
             }
-        }else{
+        } else {
             //public User(String userId, String name, String loginApiType, List<User> friendsList, double latitude, double longitude, String imgUrl, String email, String firebaseToken) {
 
             currentUser = new User(id, name, loginApiType, new ArrayList<String>(), new ArrayList<String>(), imgUrl, email, firebaseToken);
