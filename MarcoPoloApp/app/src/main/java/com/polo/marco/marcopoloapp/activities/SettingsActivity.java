@@ -13,10 +13,11 @@ import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
@@ -35,11 +36,11 @@ import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.firebase.MyFirebaseInstanceIdService;
 import com.polo.marco.marcopoloapp.firebase.models.Marco;
 import com.polo.marco.marcopoloapp.firebase.models.User;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import com.squareup.picasso.Picasso;
 
 public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = "SettingsActivity";
@@ -209,6 +210,8 @@ public class SettingsActivity extends AppCompatActivity {
                     new syncContacts().execute();
                 else if (msg.equals(getResources().getString(R.string.delete_marco_prompt))) {
                     databaseMarcos.child(LoginActivity.currentUser.getUserId()).removeValue();
+                    // Refresh activity to no longer show marco
+                    recreate();
                 }
                 arg0.cancel();
             }
@@ -229,11 +232,18 @@ public class SettingsActivity extends AppCompatActivity {
         //prompt the user to search for contacts from their phone
 
         private ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        private Button syncButton = (Button) findViewById(R.id.sync_button);
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             progressBar.setVisibility(View.VISIBLE);
+            syncButton.setTextColor(getResources().getColor(R.color.darkStreetGray));
+            syncButton.setEnabled(false);
+
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
         }
 
         @Override
@@ -280,6 +290,10 @@ public class SettingsActivity extends AppCompatActivity {
                 emailInDB(result.get(i));
             }
             progressBar.setVisibility(View.GONE);
+            syncButton.setTextColor(getResources().getColor(R.color.white));
+            syncButton.setEnabled(true);
+
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
     }
 
@@ -289,8 +303,12 @@ public class SettingsActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot snapshot) {
                 TextView textView = (TextView) findViewById(R.id.my_marco_text_view);
 
+                Button delete_button = (Button) findViewById(R.id.delete_marco);
+
                 if (!snapshot.exists()) {
                     textView.setText("You don't have a current Marco!");
+                    delete_button.setEnabled(false);
+                    delete_button.setTextColor(getResources().getColor(R.color.darkStreetGray));
                 }
                 else {
                     Marco myMarco = snapshot.getValue(Marco.class);
@@ -299,9 +317,8 @@ public class SettingsActivity extends AppCompatActivity {
                     textView = (TextView) findViewById(R.id.my_marco_text_view);
                     textView.setText(myMarco.getMessage() + "\nSent on: " + sentDate);
 
-                    Button button = (Button) findViewById(R.id.delete_marco);
-                    button.setEnabled(true);
-                    button.setTextColor(getResources().getColor(R.color.white));
+                    delete_button.setEnabled(true);
+                    delete_button.setTextColor(getResources().getColor(R.color.white));
                 }
             }
             @Override

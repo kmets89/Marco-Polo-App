@@ -132,6 +132,23 @@
         Please note that the app may not find all friends in your contacts automatically. \n
     </string>
 
+    <string name="current_meetup">Active Meetups</string>
+    <string name="DummyUser">User</string>
+    <string name="NoUser">No Profile</string>
+    <string name="Username">Username:</string>
+    <string name="about_me_from_facebook">We can pull this from your facebook profile or feel free to write something new! </string>
+    <string name="FacebookProfile">Facebook Profile Attached</string>
+    <string name="GoogleProfile">Google Profile Attached</string>
+    <string name="Logout">Logout</string>
+    <string name="notification_window_icon">Notification Window Icon</string>
+    <string name="delete_my_marco">Delete</string>
+    <string name="sync_contacts">Sync Contacts</string>
+    <string name="sign_out">Sign out</string>
+    <string name="my_marco">My Marco:</string>
+    <string name="user_name">User Name</string>
+    <string name="user_email">User Email</string>
+    <string name="user_profile_picture">user profile picture</string>
+    <string name="linked_account">linked account</string>
     <string name = "help_icons">
         Here are the icons! They do stuff!
     </string>
