@@ -72,6 +72,35 @@
         android:hint="@string/marco_message_hint"
         android:textColor="@color/colorPrimaryDark" />
 
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/marcoText"
+        android:layout_marginBottom="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/marco_friends_list"
+        android:visibility="gone" />
+
+    <ScrollView
+        android:id="@+id/friends_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView1"
+        android:layout_above="@+id/button_bar">
+
+        <LinearLayout
+            android:id="@+id/check_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="vertical">
+
+        </LinearLayout>
+    </ScrollView>
+
     <LinearLayout
         android:id="@+id/button_bar"
         android:layout_width="match_parent"
@@ -106,33 +135,5 @@
             android:textAllCaps="false"
             android:textColor="@color/white" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/marcoText"
-        android:layout_marginBottom="5dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/marco_friends_list"
-        android:visibility="gone" />
-
-    <ScrollView
-        android:id="@+id/friends_list"
-        android:layout_width="match_parent"
-        android:layout_height="240dp"
-        android:layout_below="@+id/textView1">
-
-        <LinearLayout
-            android:id="@+id/check_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:orientation="vertical">
-
-        </LinearLayout>
-    </ScrollView>
 
 </RelativeLayout>
