@@ -43,7 +43,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             final String imgUrl = payload.get("imgUrl");
             final String userId = payload.get("userId");
 
-            try {
+           /* try {
                 final Bitmap bitmap = Picasso.with(this).load(imgUrl).get();
                 Handler mainHandler = new Handler(this.getBaseContext().getMainLooper());
                 Runnable r = new Runnable() {
@@ -55,7 +55,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 mainHandler.post(r);
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            }*/
         } else {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
             builder.setSmallIcon(R.drawable.ic_launcher);

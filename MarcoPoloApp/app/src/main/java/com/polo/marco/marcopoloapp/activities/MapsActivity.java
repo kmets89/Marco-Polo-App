@@ -3,7 +3,6 @@ package com.polo.marco.marcopoloapp.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
@@ -11,19 +10,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -31,13 +22,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.polo.marco.marcopoloapp.api.marker.MarkerTask;
 import com.polo.marco.marcopoloapp.api.notifications.Notifications;
 import com.polo.marco.marcopoloapp.R;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -50,22 +41,16 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.api.directions.Route;
 import com.polo.marco.marcopoloapp.api.directions.RouteFinder;
 import com.polo.marco.marcopoloapp.api.directions.RouteFinderListener;
-import com.polo.marco.marcopoloapp.api.notifications.Notifications;
 import com.polo.marco.marcopoloapp.firebase.models.Marco;
 import com.polo.marco.marcopoloapp.firebase.models.Polo;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
@@ -128,9 +113,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
-                        Marco marco = child.getValue(Marco.class);
-                        if (marco.isPublic())
-                            addMarcoMarker(marco.getLatitude(), marco.getLongitude(), marco.getMessage(), marco.getName(), marco.getUserId(), false);
+                        final Marco marco = child.getValue(Marco.class);
+                        if (marco.isPublic()) {
+                            databaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot != null) {
+                                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+                                            if (child.getKey().equalsIgnoreCase(marco.getUserId())) {
+                                                addMarcoMarker(marco.getLatitude(), marco.getLongitude(), marco.getMessage(), marco.getName(), marco.getUserId(), child.child("imgUrl").getValue().toString(), false);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
                     }
                 }
             }
@@ -147,7 +149,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (dataSnapshot.exists()) {
                     for (final DataSnapshot child : dataSnapshot.getChildren()) {
                         for (final DataSnapshot childs : child.getChildren()) {
-                            Polo polo = childs.getValue(Polo.class);
+                            final Polo polo = childs.getValue(Polo.class);
                             Log.d("MapsActivity", "Poloer key: " + child.getKey() + ", my key: " + LoginActivity.currentUser.getUserId());
                             if (child.getKey().equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
                                 if (polo.getMessage().equalsIgnoreCase("delete") || preventReloop) {
@@ -191,7 +193,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 Marker m = getMarker(childs.getKey());
                                 if (!hasActivePolo && m == null) {
                                     activePoloerUserId = childs.getKey();
-                                    addMarcoMarker(polo.getLatitude(), polo.getLongitude(), polo.getMessage(), polo.getSenderName(), childs.getKey(), true);
+
+                                    databaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            if (dataSnapshot != null) {
+                                                for (DataSnapshot c : dataSnapshot.getChildren()) {
+                                                    if (c.getKey().equalsIgnoreCase(childs.getKey())) {
+                                                        addMarcoMarker(polo.getLatitude(), polo.getLongitude(), polo.getMessage(), polo.getSenderName(), childs.getKey(), c.child("imgUrl").getValue().toString(), false);
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
 
                                     databasePolos.addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
@@ -253,7 +272,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
     }
-    public  void onMapLongClick (LatLng destination) {
+
+    public void onMapLongClick(LatLng destination) {
         Location currentLocationHolder;
 
         currentLocationHolder = lastLocation;
@@ -315,7 +335,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mIsInForegroundMode = true;
     }
 
-    public void onClickExpandButton (View view){
+    public void onClickExpandButton(View view) {
         menuOpened = !menuOpened;
         int visibility;
 
@@ -324,8 +344,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (menuOpened) {
             visibility = View.VISIBLE;
             floatingActionButton.setImageResource(R.drawable.ic_clear_white_24dp);
-        }
-        else {
+        } else {
             visibility = View.INVISIBLE;
             floatingActionButton.setImageResource(R.drawable.ic_menu_white_24dp);
         }
@@ -351,27 +370,27 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         floatingActionButton.setImageResource(R.drawable.ic_lock_white_24dp);
     }
 
-    public void onClickNavAccount (View view){
+    public void onClickNavAccount(View view) {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
 
-    public void onClickNavNotifications (View view){
+    public void onClickNavNotifications(View view) {
         Intent intent = new Intent(this, Notifications.class);
         startActivity(intent);
     }
 
-    public void onClickNavFriends (View view){
+    public void onClickNavFriends(View view) {
         Intent intent = new Intent(this, FriendsListActivity.class);
         startActivity(intent);
     }
 
-    public void onClickNavHelp (View view){
+    public void onClickNavHelp(View view) {
         //Intent intent = new Intent(this, HelpActivity.class);
         //startActivity(intent);
     }
 
-    public void onClickNavPrivacyPolicy (View view){
+    public void onClickNavPrivacyPolicy(View view) {
         Intent intent = new Intent(this, PrivacyPolicyActivity.class);
         startActivity(intent);
     }
@@ -598,19 +617,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-
-    public static void addMarcoMarker(double lat, double lng, String message, String sender, String userId, boolean privat) {
+    public void addMarcoMarker(final double lat, final double lng, final String message, final String sender, final String userId, final String imgUrl, final boolean privat) {
         LatLng extraLatlng = new LatLng(lat, lng);
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(extraLatlng);
-
-        if (privat) {
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        try {
+            MarkerOptions markerOptions = new MarkerTask().execute(imgUrl).get();
+            markerOptions.position(extraLatlng);
+            markerOptions.snippet(privat + "|" + sender + "|" + message + "|" + userId).title(userId);
+            Marker marker = mMap.addMarker(markerOptions);
+            mapMarkerArray.add(marker);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
-
-        markerOptions.snippet(privat + "|" + sender + "|" + message + "|" + userId).title(userId);
-        Marker marker = mMap.addMarker(markerOptions);
-        mapMarkerArray.add(marker);
     }
 
     public static Marker getMarker(String userId) {
@@ -633,7 +652,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        if(pathCleared && destinationMarker != null && destinationMarker.getPosition().latitude == marker.getPosition().latitude && destinationMarker.getPosition().longitude == marker.getPosition().longitude){
+        if (pathCleared && destinationMarker != null && destinationMarker.getPosition().latitude == marker.getPosition().latitude && destinationMarker.getPosition().longitude == marker.getPosition().longitude) {
             String currentLatitude = String.valueOf(lastLocation.getLatitude());
             String currentLongitude = String.valueOf(lastLocation.getLongitude());
             String destinationLatitude = String.valueOf(destinationPoint.latitude);

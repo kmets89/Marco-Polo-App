@@ -39,15 +39,20 @@ public class FriendsListActivity extends AppCompatActivity {
     public static boolean changedFriends = false;
     private DatabaseReference databaseUsers = FirebaseDatabase.getInstance().getReference("users");
 
-    @Override protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_list);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        if(LoginActivity.currentUser.friendsListIds.size() == 0){
+        if (LoginActivity.currentUser.friendsListIds == null) {
+            LoginActivity.currentUser.friendsListIds = new ArrayList<>();
+        }
+
+        if (LoginActivity.currentUser.friendsListIds != null && LoginActivity.currentUser.friendsListIds.size() == 0) {
             Toast.makeText(this, "You don't seem to have any friends who use this app!", Toast.LENGTH_LONG).show();
-        }else{
-            if(LoginActivity.currentUser.friendsList.size() != LoginActivity.currentUser.friendsListIds.size())
+        } else {
+            if (LoginActivity.currentUser.friendsList.size() != LoginActivity.currentUser.friendsListIds.size())
                 pullFriendsFromDB();
             else
                 pullLocalFriends();
@@ -71,13 +76,13 @@ public class FriendsListActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onSupportNavigateUp(){
+    public boolean onSupportNavigateUp() {
         finish();
         return true;
     }
 
-    public void onClickSearch(View view){
-        String searchText = ((EditText)findViewById(R.id.searchBar)).getText().toString();
+    public void onClickSearch(View view) {
+        String searchText = ((EditText) findViewById(R.id.searchBar)).getText().toString();
         if (searchText.equals(""))
             return;
 
@@ -86,14 +91,13 @@ public class FriendsListActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void pullFriendsFromDB(){
-        for (int i = 0; i < LoginActivity.currentUser.getFriendsListIds().size(); i++){
+    public void pullFriendsFromDB() {
+        for (int i = 0; i < LoginActivity.currentUser.getFriendsListIds().size(); i++) {
             databaseUsers.child(LoginActivity.currentUser.friendsListIds.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
                     if (!snapshot.exists()) {
-                    }
-                    else {
+                    } else {
                         final User retrieved = snapshot.getValue(User.class);
                         //LoginActivity.currentUser.friendsList.add(retrieved);
                         Log.d("TESTING", "added friend! " + retrieved.getName());
@@ -123,6 +127,7 @@ public class FriendsListActivity extends AppCompatActivity {
                         });
                     }
                 }
+
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                 }
@@ -130,7 +135,7 @@ public class FriendsListActivity extends AppCompatActivity {
         }
     }
 
-    public void pullLocalFriends(){
+    public void pullLocalFriends() {
         for (int i = 0; i < LoginActivity.currentUser.getFriendsListIds().size(); i++) {
             final User retrieved = LoginActivity.currentUser.friendsList.get(i);
             LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
