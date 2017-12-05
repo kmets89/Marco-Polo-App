@@ -83,6 +83,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public String tmpImgUrl = "";
 
     // Active Polo Session Variables
+    public static final double END_DISTANCE = 0.025;
     public boolean hasActivePolo = false;
     public boolean preventReloop = false;
     public String activePoloerUserId = "000000000000000000000000";
@@ -157,7 +158,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     return;
                                 }
 
-                                if (!hasActivePolo && distance(LoginActivity.currentUser.getLatitude(), LoginActivity.currentUser.getLongitude(), polo.getLatitude(), polo.getLongitude()) <= 0.01) {
+                                if (!hasActivePolo && distance(LoginActivity.currentUser.getLatitude(), LoginActivity.currentUser.getLongitude(), polo.getLatitude(), polo.getLongitude()) <= END_DISTANCE) {
                                     Toast.makeText(getBaseContext(), "You are already in the same location!", Toast.LENGTH_LONG).show();
                                     removeMarcoMarker(getMarker(childs.getKey()));
                                     removeMarcoMarker(getMarker(activePoloerUserId));
@@ -235,7 +236,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     }
                                 }
 
-                                if (distance(LoginActivity.currentUser.getLatitude(), LoginActivity.currentUser.getLongitude(), polo.getLatitude(), polo.getLongitude()) <= 0.01) {
+                                if (distance(LoginActivity.currentUser.getLatitude(), LoginActivity.currentUser.getLongitude(), polo.getLatitude(), polo.getLongitude()) <= END_DISTANCE) {
                                     Toast.makeText(getBaseContext(), "You have found eachother, congrats!", Toast.LENGTH_LONG).show();
                                     hasActivePolo = false;
 
