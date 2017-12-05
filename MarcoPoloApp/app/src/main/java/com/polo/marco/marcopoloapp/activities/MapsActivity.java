@@ -120,23 +120,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         final Marco marco = child.getValue(Marco.class);
                         if (marco.isPublic()) {
-                            databaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    if (dataSnapshot != null) {
-                                        for (DataSnapshot child : dataSnapshot.getChildren()) {
-                                            if (child.getKey().equalsIgnoreCase(marco.getUserId())) {
-                                                addMarcoMarker(marco.getLatitude(), marco.getLongitude(), marco.getMessage(), marco.getName(), marco.getUserId(), child.child("imgUrl").getValue().toString(), false);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
+                            redrawPins();
                         }
                     }
                 }
@@ -338,6 +322,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onResume() {
         super.onResume();
         mIsInForegroundMode = true;
+
     }
 
     public void onClickExpandButton(View view) {
@@ -680,55 +665,55 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         final String[] data = marker.getSnippet().split("\\|");
 
-        if (data[0].equalsIgnoreCase("false")) {
-            databasePolos.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    boolean responded = false;
-                    if (dataSnapshot != null) {
-                        for (DataSnapshot child : dataSnapshot.getChildren()) {
-                            if (child.exists() && child.getKey().equalsIgnoreCase(data[3])) {
-                                for (DataSnapshot c : child.getChildren()) {
-                                    if (c.exists() && c.child("responded").getValue().toString().equalsIgnoreCase("true")) {
-                                        responded = true;
-                                        break;
-                                    }
-                                }
-
-                                if (responded)
-                                    Toast.makeText(getBaseContext(), "This user currently has an active polo!", Toast.LENGTH_LONG).show();
-                                break;
-                            }
-                        }
-
-                        if (!responded) {
-                            Handler mainHandler = new Handler(getBaseContext().getMainLooper());
-                            Runnable r = new Runnable() {
-                                @Override
-                                public void run() {
-                                    Log.d("MapsActivity", "wat");
-
-                                    Intent intent = new Intent(getBaseContext(), QuickMarcoActivity.class);
-                                    if (marker.getSnippet() != null && marker.getSnippet().contains("|")) {
-                                        intent.putExtra("private", data[0]);
-                                        intent.putExtra("sender", data[1]);
-                                        intent.putExtra("message", data[2]);
-                                        intent.putExtra("userId", data[3]);
-                                    }
-                                    startActivity(intent);
-                                }
-                            };
-                            mainHandler.post(r);
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        } else {
+//        if (data[0].equalsIgnoreCase("false")) {
+//            databasePolos.addListenerForSingleValueEvent(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//                    boolean responded = false;
+//                    if (dataSnapshot != null) {
+//                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+//                            if (child.exists() && child.getKey().equalsIgnoreCase(data[3])) {
+//                                for (DataSnapshot c : child.getChildren()) {
+//                                    if (c.exists() && c.child("responded").getValue().toString().equalsIgnoreCase("true")) {
+//                                        responded = true;
+//                                        break;
+//                                    }
+//                                }
+//
+//                                if (responded)
+//                                    Toast.makeText(getBaseContext(), "This user currently has an active polo!", Toast.LENGTH_LONG).show();
+//                                break;
+//                            }
+//                        }
+//
+//                        /*if (!responded) {
+//                            Handler mainHandler = new Handler(getBaseContext().getMainLooper());
+//                            Runnable r = new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    Log.d("MapsActivity", "wat");
+//
+//                                    Intent intent = new Intent(getBaseContext(), QuickMarcoActivity.class);
+//                                    if (marker.getSnippet() != null && marker.getSnippet().contains("|")) {
+//                                        intent.putExtra("private", data[0]);
+//                                        intent.putExtra("sender", data[1]);
+//                                        intent.putExtra("message", data[2]);
+//                                        intent.putExtra("userId", data[3]);
+//                                    }
+//                                    startActivity(intent);
+//                                }
+//                            };
+//                            mainHandler.post(r);
+//                        }*/
+//                    }
+//                }
+//
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//
+//                }
+//            });
+//        } else {
             Intent intent = new Intent(this, PoloActivity.class);
             if (marker.getSnippet() != null && marker.getSnippet().contains("|")) {
                 intent.putExtra("private", data[0]);
@@ -737,7 +722,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 intent.putExtra("userId", data[3]);
             }
             startActivity(intent);
-        }
+        //}
         lastMarkerClicked = marker;
         return false;
     }
@@ -769,5 +754,47 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+    }
+
+    public void redrawPins(){
+        for (Marker marker : mapMarkerArray){
+            marker.remove();
+        }
+        mapMarkerArray.clear();
+
+        databaseMarcos.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        final Marco marco = child.getValue(Marco.class);
+                        if (marco.isPublic()) {
+                            databaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot != null) {
+                                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+                                            if (child.getKey().equalsIgnoreCase(marco.getUserId())) {
+                                                addMarcoMarker(marco.getLatitude(), marco.getLongitude(), marco.getMessage(), marco.getName(), marco.getUserId(), child.child("imgUrl").getValue().toString(), false);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }
