@@ -74,7 +74,7 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="marco_title">Send a Marco</string>
-    <string name="quick_marco_title">Send a Map Marco</string>
+    <string name="quick_marco_title">Polo a Public Marco</string>
     <string name="polo_title">Send a Polo</string>
     <string name="message_blank">empty message</string>
     <string name="nulled_object">This polo has nulled out; ignore it</string>
@@ -158,5 +158,7 @@
 
     <string name="sync_function">You have the option to sync contacts from your phone through your My Account page.  We will find any emails \nin
     your contact list that currently have accounts with us.</string>
+    <string name="sender">Sender:</string>
+    <string name="message">Message:</string>
 
 </resources>

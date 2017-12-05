@@ -6,19 +6,6 @@
     android:animateLayoutChanges="true"
     android:background="@color/streetGray">
 
-    <EditText
-        android:id="@+id/marcoText2"
-        android:layout_width="220sp"
-        android:layout_height="160sp"
-        android:layout_below="@+id/publicText"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:background="@color/streetGray"
-        android:gravity="top|start"
-        android:hint="@string/marco_message_hint"
-        android:maxLength="252"
-        android:textColor="@color/colorPrimaryDark" />
-
     <TextView
         android:id="@+id/marco_title"
         android:layout_width="match_parent"
@@ -72,8 +59,23 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Widget.Switch"
         android:textColor="@color/colorPrimaryDark" />
 
+    <EditText
+        android:id="@+id/marcoText"
+        android:layout_width="match_parent"
+        android:layout_height="160sp"
+        android:layout_below="@+id/switch_public"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="10sp"
+        android:layout_marginRight="10sp"
+        android:layout_marginTop="10sp"
+        android:background="@color/streetGray"
+        android:gravity="top|start"
+        android:maxLength="252"
+        android:hint="@string/marco_message_hint"
+        android:textColor="@color/colorPrimaryDark" />
+
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/chooseFriendsMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -88,8 +90,9 @@
         android:id="@+id/friends_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"
-        android:layout_above="@+id/button_bar">
+        android:layout_below="@+id/chooseFriendsMessage"
+        android:layout_above="@+id/button_bar"
+        android:layout_marginBottom="5dp">
 
         <LinearLayout
             android:id="@+id/check_layout"

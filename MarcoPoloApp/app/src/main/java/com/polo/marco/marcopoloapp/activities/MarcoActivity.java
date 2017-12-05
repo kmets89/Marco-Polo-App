@@ -30,8 +30,6 @@ import com.polo.marco.marcopoloapp.firebase.models.Marco;
 import com.polo.marco.marcopoloapp.firebase.models.Polo;
 import com.polo.marco.marcopoloapp.firebase.models.User;
 
-import org.w3c.dom.Text;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -89,8 +87,8 @@ public class MarcoActivity extends AppCompatActivity {
             textView.setVisibility(View.GONE);
             textView = (TextView) findViewById(R.id.privateText);
             textView.setVisibility(View.GONE);
-            setWinSize(winWidth, 0.475);
-            findViewById(R.id.textView1).setVisibility(View.VISIBLE);
+            setWinSize(winWidth, 0.55);
+            findViewById(R.id.chooseFriendsMessage).setVisibility(View.VISIBLE);
             int userPosition = findUser(extras.getStringExtra("userId"));
             checkBox = new CheckBox(MarcoActivity.this);
             checkBox.setId(0);
