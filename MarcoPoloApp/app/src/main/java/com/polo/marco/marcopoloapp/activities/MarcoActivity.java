@@ -106,13 +106,13 @@ public class MarcoActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     setWinSize(winWidth, privateHeight);
-                    findViewById(R.id.textView1).setVisibility(View.VISIBLE);
+                    findViewById(R.id.chooseFriendsMessage).setVisibility(View.VISIBLE);
 
                     //create checklist from FriendsList and add to view
                     if (LoginActivity.currentUser == null || LoginActivity.currentUser.friendsList == null || LoginActivity.currentUser.friendsListIds == null || friends.length == 0) {
                         showAlert(getResources().getString(R.string.empty_friends_list));
                         publicSwitch.setChecked(false);
-                        findViewById(R.id.textView1).setVisibility(View.GONE);
+                        findViewById(R.id.chooseFriendsMessage).setVisibility(View.GONE);
                         setWinSize(winWidth, publicHeight);
                         return;
                     }
@@ -133,7 +133,7 @@ public class MarcoActivity extends AppCompatActivity {
                 } else {
                     for (int j = 0; j < friends.length; j++)
                         findViewById(j).setVisibility(View.GONE);
-                    findViewById(R.id.textView1).setVisibility(View.GONE);
+                    findViewById(R.id.chooseFriendsMessage).setVisibility(View.GONE);
                     setWinSize(winWidth, publicHeight);
                 }
             }
