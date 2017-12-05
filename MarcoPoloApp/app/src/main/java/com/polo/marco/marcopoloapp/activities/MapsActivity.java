@@ -152,7 +152,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             final Polo polo = childs.getValue(Polo.class);
                             Log.d("MapsActivity", "Poloer key: " + child.getKey() + ", my key: " + LoginActivity.currentUser.getUserId());
                             if (child.getKey().equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
-                                if (polo.getMessage().equalsIgnoreCase("delete") || preventReloop) {
+                                if ((polo.getMessage() != null && polo.getMessage().equalsIgnoreCase("delete")) || preventReloop) {
                                     preventReloop = false;
                                     return;
                                 }
