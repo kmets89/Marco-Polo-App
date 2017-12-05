@@ -2,6 +2,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/no_results_text"
+        android:text="Sorry, no users found!"
+        android:textColor="@color/veryDarkGray"
+        android:textSize="25sp"
+        android:layout_centerInParent="true"
+        android:textAlignment="center"
+        android:visibility="gone"/>
+
+    <ProgressBar
+        android:id="@+id/search_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
 
     <ScrollView
         android:layout_width="match_parent"
