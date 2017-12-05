@@ -386,8 +386,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void onClickNavHelp(View view) {
-        //Intent intent = new Intent(this, HelpActivity.class);
-        //startActivity(intent);
+        Intent intent = new Intent(this, HelpActivity.class);
+        startActivity(intent);
     }
 
     public void onClickNavPrivacyPolicy(View view) {
