@@ -74,7 +74,10 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="marco_title">Send a Marco</string>
+    <string name="quick_marco_title">Send a Map Marco</string>
     <string name="polo_title">Send a Polo</string>
+    <string name="message_blank">empty message</string>
+    <string name="nulled_object">This polo has nulled out; ignore it</string>
     <string name="marco_switch_public">Public</string>
     <string name="marco_switch_private">Private</string>
     <string name="marco_message_hint">What would you like to say?</string>

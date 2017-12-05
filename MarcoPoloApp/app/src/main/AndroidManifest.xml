@@ -54,6 +54,13 @@
             android:screenOrientation="portrait"></activity>
 
         <activity
+            android:name=".activities.QuickMarcoActivity"
+            android:label="QuickMarco"
+            android:theme="@style/AppTheme.ScreenBelow"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"></activity>
+
+        <activity
             android:name=".activities.PoloActivity"
             android:label="Polo"
             android:theme="@style/AppTheme.ScreenBelow"

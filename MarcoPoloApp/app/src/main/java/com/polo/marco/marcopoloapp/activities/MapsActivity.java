@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -49,6 +50,7 @@ import com.polo.marco.marcopoloapp.firebase.models.Polo;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -104,8 +106,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
 
@@ -450,7 +451,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 MapStyleOptions.loadRawResourceStyle(
                         this, R.raw.style_json));
 
-        mMap.setPadding(575, 300, 0, 0);
+        mMap.setPadding(0, 300, 0, 0);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             buildGoogleApiClient();
@@ -652,7 +653,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public static Marker lastMarkerClicked = null;
 
     @Override
-    public boolean onMarkerClick(Marker marker) {
+    public boolean onMarkerClick(final Marker marker) {
         if (pathCleared && destinationMarker != null && destinationMarker.getPosition().latitude == marker.getPosition().latitude && destinationMarker.getPosition().longitude == marker.getPosition().longitude) {
             String currentLatitude = String.valueOf(lastLocation.getLatitude());
             String currentLongitude = String.valueOf(lastLocation.getLongitude());
@@ -673,17 +674,67 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return false;
         }
 
-        lastMarkerClicked = marker;
-        Intent intent = new Intent(this, PoloActivity.class);
+        final String[] data = marker.getSnippet().split("\\|");
 
-        if (marker.getSnippet() != null && marker.getSnippet().contains("|")) {
-            String[] data = marker.getSnippet().split("\\|");
-            intent.putExtra("private", data[0]);
-            intent.putExtra("sender", data[1]);
-            intent.putExtra("message", data[2]);
-            intent.putExtra("userId", data[3]);
+        if (data[0].equalsIgnoreCase("false")) {
+            databasePolos.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    boolean responded = false;
+                    if (dataSnapshot != null) {
+                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+                            if (child.exists() && child.getKey().equalsIgnoreCase(data[3])) {
+                                for (DataSnapshot c : child.getChildren()) {
+                                    if (c.exists() && c.child("responded").getValue().toString().equalsIgnoreCase("true")) {
+                                        responded = true;
+                                        break;
+                                    }
+                                }
+
+                                if (responded)
+                                    Toast.makeText(getBaseContext(), "This user currently has an active polo!", Toast.LENGTH_LONG).show();
+                                break;
+                            }
+                        }
+
+                        if (!responded) {
+                            Handler mainHandler = new Handler(getBaseContext().getMainLooper());
+                            Runnable r = new Runnable() {
+                                @Override
+                                public void run() {
+                                    Log.d("MapsActivity", "wat");
+
+                                    Intent intent = new Intent(getBaseContext(), QuickMarcoActivity.class);
+                                    if (marker.getSnippet() != null && marker.getSnippet().contains("|")) {
+                                        intent.putExtra("private", data[0]);
+                                        intent.putExtra("sender", data[1]);
+                                        intent.putExtra("message", data[2]);
+                                        intent.putExtra("userId", data[3]);
+                                    }
+                                    startActivity(intent);
+                                }
+                            };
+                            mainHandler.post(r);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        } else {
+            Intent intent = new Intent(this, PoloActivity.class);
+            if (marker.getSnippet() != null && marker.getSnippet().contains("|")) {
+                intent.putExtra("private", data[0]);
+                intent.putExtra("sender", data[1]);
+                intent.putExtra("message", data[2]);
+                intent.putExtra("userId", data[3]);
+            }
+            startActivity(intent);
         }
-        startActivity(intent);
+        lastMarkerClicked = marker;
         return false;
     }
 }

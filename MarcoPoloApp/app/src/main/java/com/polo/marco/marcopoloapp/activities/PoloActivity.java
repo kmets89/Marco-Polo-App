@@ -14,8 +14,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.polo.marco.marcopoloapp.R;
 import com.polo.marco.marcopoloapp.firebase.models.Polo;
 
@@ -102,13 +105,23 @@ public class PoloActivity extends AppCompatActivity {
     }
 
     public void onClickSendPolo(View v) {
+        if (getIntent().getStringExtra("userId") == null) {
+            Toast.makeText(this, getResources().getString(R.string.nulled_object), Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
         if (poloText.getText() == null || poloText.getText().length() <= 0) {
             showAlert(getResources().getString(R.string.empty_message));
             return;
         }
 
-        databasePolos.child(LoginActivity.currentUser.getUserId()).child(getIntent().getStringExtra("userId")).child("responded").setValue(true);
+        if (getIntent().getStringExtra("userId") != null && getIntent().getStringExtra("userId").equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
+            showAlert("You cannot send a polo to yourself!");
+            return;
+        }
 
+        databasePolos.child(LoginActivity.currentUser.getUserId()).child(getIntent().getStringExtra("userId")).child("responded").setValue(true);
         Polo polo = new Polo(getIntent().getStringExtra("userId"), poloText.getText().toString(), LoginActivity.currentUser.getName(), currentDate, lat, lng, true);
         databasePolos.child(getIntent().getStringExtra("userId")).child(LoginActivity.currentUser.getUserId()).setValue(polo);
 

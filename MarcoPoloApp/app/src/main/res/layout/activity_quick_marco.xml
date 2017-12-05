@@ -12,52 +12,31 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:background="@color/colorPrimary"
-        android:text="@string/polo_title"
+        android:text="@string/quick_marco_title"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="24sp" />
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/marcoText"
-        android:layout_marginBottom="5dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/marco_friends_list"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/sender"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/marco_title"
-        android:layout_marginStart="14dp"
-        android:layout_marginTop="13dp"
-        android:layout_toEndOf="@+id/textView1"
-        android:text="Sender:" />
-
-    <TextView
-        android:id="@+id/message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/marco_title"
-        android:layout_marginStart="14dp"
-        android:layout_marginTop="40dp"
-        android:layout_toEndOf="@+id/textView1"
-        android:text="Message:" />
+    <EditText
+        android:id="@+id/message_text"
+        android:layout_width="220sp"
+        android:inputType="none"
+        android:layout_height="50sp"
+        android:layout_marginTop="50sp"
+        android:maxLength="255"
+        android:layout_centerHorizontal="true"
+        android:background="@color/streetGray"
+        android:gravity="top|start"
+        android:hint="@string/message_blank"
+        android:textColor="@color/veryDarkGray" />
 
     <EditText
-        android:id="@+id/poloText"
-        android:layout_width="match_parent"
+        android:id="@+id/marcoText"
+        android:layout_width="220sp"
         android:layout_height="160sp"
-        android:layout_below="@+id/message"
-        android:layout_above="@+id/button_bar"
-        android:layout_marginTop="17dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="110dp"
+        android:maxLength="252"
         android:background="@color/streetGray"
         android:gravity="top|start"
         android:hint="@string/marco_message_hint"
@@ -72,30 +51,31 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/cancelPolo"
+            android:id="@+id/cancelMarco"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:elevation="12dp"
-            android:onClick="onClickDeletePolo"
-            android:text="@string/delete"
+            android:onClick="onClickCancelMarco"
+            android:text="@string/cancel"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:textColor="@color/white" />
 
         <Button
-            android:id="@+id/sendPolo"
+            android:id="@+id/sendMarco"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:elevation="12dp"
-            android:onClick="onClickSendPolo"
+            android:onClick="onClickSendMarco"
             android:text="@string/send"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:textColor="@color/white" />
     </LinearLayout>
+
 
 </RelativeLayout>
