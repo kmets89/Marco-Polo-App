@@ -3,13 +3,16 @@ package com.polo.marco.marcopoloapp.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -74,7 +77,6 @@ public class SearchResultsActivity extends AppCompatActivity {
                 if (!snapshot.exists()) {
                     Log.d("SEARCHING", "not found!");
                 }
-
                 else {
                     for (DataSnapshot child : snapshot.getChildren()) {
                         Log.d("SEARCHING", "found name " + child.toString());
@@ -126,10 +128,133 @@ public class SearchResultsActivity extends AppCompatActivity {
                     newView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent intent = new Intent(SearchResultsActivity.this, CustomDialogActivity.class);
-                            intent.putExtra("userId", retrieved.getUserId());
-                            intent.putExtra("name", retrieved.getName());
-                            startActivity(intent);
+                            final String id = retrieved.getUserId();
+                            //If they are already in your friends list.
+                            if(LoginActivity.currentUser.getFriendsListIds().contains(id)){
+                                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(SearchResultsActivity.this);
+                                View view = getLayoutInflater().inflate(R.layout.dialog_select_friends, null);
+                                TextView txtViewFriend = (TextView) view.findViewById(R.id.txt_friend_name);
+                                Button btnUnfriend = (Button) view.findViewById(R.id.btn_unfriend);
+                                Button btnBlock = (Button) view.findViewById(R.id.btn_block);
+                                Button btnMarco = (Button) view.findViewById(R.id.btn_marco_in_friendslist);
+
+                                dialogBuilder.setView(view);
+                                final AlertDialog dialog = dialogBuilder.create();
+
+                                txtViewFriend.setText(retrieved.getName());
+
+                                btnUnfriend.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        LoginActivity.currentUser.friendsListIds.remove(retrieved.getUserId());
+                                        databaseUsers.child(LoginActivity.currentUser.getUserId()).child("friendsListIds").setValue(LoginActivity.currentUser.friendsListIds);
+                                        FriendsListActivity.changedFriends = true;
+                                        int position = findUser(retrieved.getUserId());
+                                        LoginActivity.currentUser.friendsList.remove(position);
+                                        dialog.dismiss();
+                                        onResume();
+                                    }
+                                });
+
+                                btnBlock.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        LoginActivity.currentUser.blockList.add(retrieved.getUserId());
+                                        databaseUsers.child(LoginActivity.currentUser.getUserId()).child("blockList").setValue(LoginActivity.currentUser.blockList);
+
+                                        if (LoginActivity.currentUser.friendsListIds.contains(retrieved.getUserId())) {
+                                            LoginActivity.currentUser.friendsListIds.remove(retrieved.getUserId());
+                                            databaseUsers.child(LoginActivity.currentUser.getUserId()).child("friendsListIds").setValue(LoginActivity.currentUser.friendsListIds);
+                                            FriendsListActivity.changedFriends = true;
+                                            int position = findUser(retrieved.getUserId());
+                                            LoginActivity.currentUser.friendsList.remove(position);
+                                            dialog.dismiss();
+                                            onResume();
+                                        }
+                                    }
+                                });
+
+                                btnMarco.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent = new Intent(SearchResultsActivity.this, MarcoActivity.class);
+                                        intent.putExtra("callingActivity", "CustomDialog");
+                                        intent.putExtra("userId", retrieved.getUserId());
+                                        startActivity(intent);
+                                        dialog.dismiss();
+                                    }
+                                });
+
+                                dialog.show();
+                            }
+                            //If they are in your block list
+                            else if(LoginActivity.currentUser.getBlockList().contains(id)){
+                                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(SearchResultsActivity.this);
+                                View view = getLayoutInflater().inflate(R.layout.dialog_select_unblock, null);
+                                TextView txtViewFriend = (TextView) view.findViewById(R.id.txt_friend_name);
+                                Button btnUnblock = (Button) view.findViewById(R.id.btn_unBlock);
+
+                                dialogBuilder.setView(view);
+                                final AlertDialog dialog = dialogBuilder.create();
+
+                                txtViewFriend.setText(retrieved.getName());
+
+                                btnUnblock.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        LoginActivity.currentUser.blockList.remove(id);
+                                        databaseUsers.child(LoginActivity.currentUser.getUserId()).child("blockList").setValue(LoginActivity.currentUser.blockList);
+                                        dialog.dismiss();
+                                    }
+                                });
+                                dialog.show();
+                            }
+                            //If it is not yourself
+                            else if(!id.equals(LoginActivity.currentUser.getUserId())){
+                                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(SearchResultsActivity.this);
+                                View view = getLayoutInflater().inflate(R.layout.dialog_select_search_results, null);
+                                TextView txtViewFriend = (TextView) view.findViewById(R.id.txt_friend_name);
+                                Button btnAddFriend = (Button) view.findViewById(R.id.btn_unfriend);
+                                Button btnBlock = (Button) view.findViewById(R.id.btn_block);
+
+                                dialogBuilder.setView(view);
+                                final AlertDialog dialog = dialogBuilder.create();
+
+                                txtViewFriend.setText(retrieved.getName());
+
+                                btnAddFriend.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        LoginActivity.currentUser.friendsListIds.add(id);
+                                        databaseUsers.child(LoginActivity.currentUser.getUserId()).child("friendsListIds").setValue(LoginActivity.currentUser.friendsListIds);
+                                        FriendsListActivity.changedFriends = true;
+                                        addtoFriendsList(id);
+                                        dialog.dismiss();
+                                    }
+                                });
+                                btnBlock.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        LoginActivity.currentUser.blockList.add(retrieved.getUserId());
+                                        databaseUsers.child(LoginActivity.currentUser.getUserId()).child("blockList").setValue(LoginActivity.currentUser.blockList);
+
+                                        if (LoginActivity.currentUser.friendsListIds.contains(retrieved.getUserId())) {
+                                            LoginActivity.currentUser.friendsListIds.remove(retrieved.getUserId());
+                                            databaseUsers.child(LoginActivity.currentUser.getUserId()).child("friendsListIds").setValue(LoginActivity.currentUser.friendsListIds);
+                                            FriendsListActivity.changedFriends = true;
+                                            int position = findUser(retrieved.getUserId());
+                                            LoginActivity.currentUser.friendsList.remove(position);
+                                        }
+                                        dialog.dismiss();
+                                        onResume();
+                                    }
+                                });
+                                dialog.show();
+                            }
+                            //If it is yourself
+                            else if(id.equals(LoginActivity.currentUser.getUserId())){
+                                Toast.makeText(SearchResultsActivity.this, "You found yourself!", Toast.LENGTH_LONG).show();
+                            }
                         }
                     });
 
@@ -143,5 +268,29 @@ public class SearchResultsActivity extends AppCompatActivity {
 
             }
         });
+    }
+    public void addtoFriendsList(String id){
+        databaseUsers.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                }
+                else {
+                    com.polo.marco.marcopoloapp.firebase.models.User retrieved = snapshot.getValue(com.polo.marco.marcopoloapp.firebase.models.User.class);
+                    LoginActivity.currentUser.friendsList.add(retrieved);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+    public int findUser(String id){
+        for (int i = 0; i < LoginActivity.currentUser.friendsList.size(); i++)
+            if (LoginActivity.currentUser.friendsList.get(i).getUserId().equals(id))
+                return i;
+        return -1;
     }
 }
