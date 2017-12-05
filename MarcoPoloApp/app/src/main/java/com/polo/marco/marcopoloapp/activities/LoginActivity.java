@@ -65,7 +65,7 @@ public class LoginActivity extends AppCompatActivity implements
     private CallbackManager facebookCallbackManager;
     private AccessTokenTracker accessTokenTracker;
 
-    public static User currentUser = null;
+    public static User currentUser = new User();
     public static String firebaseToken = null;
 
     private DatabaseReference databaseUsers;
