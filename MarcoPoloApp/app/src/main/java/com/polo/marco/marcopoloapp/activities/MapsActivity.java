@@ -3,7 +3,6 @@ package com.polo.marco.marcopoloapp.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
@@ -144,7 +143,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        /*databasePolos.addValueEventListener(new ValueEventListener() {
+        databasePolos.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -184,8 +183,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         @Override
                                         public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });*/
                                         }
                                     });
 
@@ -391,9 +388,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onClickNavHelp(View view) {
         //Intent intent = new Intent(this, HelpActivity.class);
         //startActivity(intent);
-    public void onClickNavHelp (View view){
-        Intent intent = new Intent(this, HelpActivity.class);
-        startActivity(intent);
     }
 
     public void onClickNavPrivacyPolicy(View view) {
