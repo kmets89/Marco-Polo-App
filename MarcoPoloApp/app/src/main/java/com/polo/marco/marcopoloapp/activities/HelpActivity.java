@@ -1,10 +1,17 @@
 package com.polo.marco.marcopoloapp.activities;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.polo.marco.marcopoloapp.R;
@@ -13,6 +20,8 @@ import com.polo.marco.marcopoloapp.api.notifications.DetailInfo;
 import com.polo.marco.marcopoloapp.api.notifications.HeaderInfo;
 import com.polo.marco.marcopoloapp.api.notifications.Notifications;
 import com.squareup.picasso.Picasso;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -31,14 +40,32 @@ public class HelpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help);
+
+        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.help_nav_account);
+        floatingActionButton.setImageResource(R.drawable.ic_person_white_24dp);
+
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.help_nav_friends);
+        floatingActionButton.setImageResource(R.drawable.ic_people_white_24dp);
+
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.help_nav_notifications);
+        floatingActionButton.setImageResource(R.drawable.ic_notifications_white_24dp);
+
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.help_nav_help);
+        floatingActionButton.setImageResource(R.drawable.ic_help_outline_white_24dp);
+
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.help_nav_privacy_policy);
+        floatingActionButton.setImageResource(R.drawable.ic_lock_white_24dp);
+
+
         addDatum("About", getString(R.string.help_about));
-        addDatum("Icons", getString(R.string.help_icons));
         addDatum("Marco", getString(R.string.help_marco));
         addDatum("Public", getString(R.string.help_public));
         addDatum("Private", getString(R.string.help_private));
         addDatum("Polo", getString(R.string.help_polo));
         addDatum("Friends", getString(R.string.help_friends));
-        expandableListView = (ExpandableListView) findViewById(R.id.Help_View);
+        addDatum("Sync Contacts", getString(R.string.sync_function));
+
+        expandableListView = (ExpandableListView) findViewById(R.id.help_view);
         listAdapter = new CustomListAdapter(HelpActivity.this, sectionList);
         expandableListView.setAdapter(listAdapter);
 
@@ -100,12 +127,6 @@ public class HelpActivity extends AppCompatActivity {
         int listSize = childList.size();
         listSize++;
         DetailInfo detailInfo = new DetailInfo();
-
-        if(group.equals("Icons")) {
-            setContentView(R.layout.help_list_items);
-
-        }
-
         detailInfo.setName(child);
         childList.add(detailInfo);
         headerInfo.setChildList(childList);

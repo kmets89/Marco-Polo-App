@@ -99,6 +99,7 @@
             android:onClick="onClickDeleteMarco"
             android:layout_marginTop="10dp"
             android:text="Delete My Marco"
+            android:enabled="false"
             android:layout_alignLeft="@+id/my_marco_scroll_box"
             android:layout_below="@+id/my_marco_scroll_box"
             android:textColor="@color/streetGray"

@@ -122,7 +122,8 @@
     </string>
     <string name = "help_polo">
         When a friend sends you a Marco you will need to let them know if you will be joining them.\n
-        In order to do this you do the polo thing to let them know! (Not sure exactly what the process is EDIT THIS)\n
+        In order to do this, you can tap "accept" from the dialog box that pops up when you receive a private Marco.\n
+        You can also Polo to any recent Marcos through your Notifications.
     </string>
     <string name = "help_friends">
         To add friends you may select Friends from the main menu and search for them by name or email address. \n
@@ -130,13 +131,11 @@
         Please note that the app may not find all friends in your contacts automatically. \n
     </string>
 
-    <string name="current_meetup">Active Meetups</string>
-    <string name="DummyUser">User</string>
-    <string name="NoUser">No Profile</string>
-    <string name="Username">Username:</string>
-    <string name="about_me_from_facebook">We can pull this from your facebook profile or feel free to write something new! </string>
-    <string name="FacebookProfile">Facebook Profile Attached</string>
-    <string name="GoogleProfile">Google Profile Attached</string>
-    <string name="Logout">Logout</string>
-    <string name="notification_window_icon">Notification Window Icon</string>
+    <string name = "help_icons">
+        Here are the icons! They do stuff!
+    </string>
+
+    <string name="sync_function">You have the option to sync contacts from your phone through your My Account page.  We will find any emails \nin
+    your contact list that currently have accounts with us.</string>
+
 </resources>

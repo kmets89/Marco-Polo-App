@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/help_nav_menu_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/veryDarkGray"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="25dp"
+                android:text="Navigation Menu:"
+                android:textStyle="bold"
+                android:textSize="18sp"/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/help_nav_account"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="25dp"
+                android:icon="@drawable/ic_person_white_24dp"
+                android:layout_below="@+id/help_nav_menu_text"
+                android:enabled="false"
+                app:backgroundTint="@color/MarcoBlue"
+                app:fabSize="mini" />
+
+            <TextView
+                android:id="@+id/help_nav_account_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/veryDarkGray"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="25dp"
+                android:layout_toRightOf="@+id/help_nav_account"
+                android:layout_alignTop="@+id/help_nav_account"
+                android:text="My Account"
+                android:textSize="18sp"/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/help_nav_friends"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/help_nav_account"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="25dp"
+                android:enabled="false"
+                app:fabSize="mini"
+                app:backgroundTint="@color/MarcoBlue"
+                tools:icon="@drawable/ic_people_white_24dp" />
+
+            <TextView
+                android:id="@+id/help_nav_friends_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/veryDarkGray"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="25dp"
+                android:layout_toRightOf="@+id/help_nav_friends"
+                android:layout_alignTop="@+id/help_nav_friends"
+                android:text="My Friends"
+                android:textSize="18sp"/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/help_nav_notifications"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/help_nav_friends"
+                android:enabled="false"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="25dp"
+                tools:icon="@drawable/ic_notifications_white_24dp"
+                app:backgroundTint="@color/MarcoBlue"
+                app:fabSize="mini"/>
+
+            <TextView
+                android:id="@+id/help_nav_notifications_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/veryDarkGray"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="25dp"
+                android:layout_toRightOf="@+id/help_nav_notifications"
+                android:layout_alignTop="@+id/help_nav_notifications"
+                android:text="Notifications"
+                android:textSize="18sp"/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/help_nav_help"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/help_nav_notifications"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="25dp"
+                android:enabled="false"
+                tools:icon="@drawable/ic_help_outline_white_24dp"
+                app:backgroundTint="@color/MarcoBlue"
+                app:fabSize="mini"/>
+
+            <TextView
+                android:id="@+id/help_nav_help_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/veryDarkGray"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="25dp"
+                android:layout_toRightOf="@+id/help_nav_help"
+                android:layout_alignTop="@+id/help_nav_help"
+                android:text="Help Menu.  You are here!"
+                android:textSize="18sp"/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/help_nav_privacy_policy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/help_nav_help"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="25dp"
+                android:enabled="false"
+                tools:icon="@drawable/ic_lock_white_24dp"
+                app:backgroundTint="@color/MarcoBlue"
+                app:fabSize="mini" />
+
+            <TextView
+                android:id="@+id/help_nav_privacy_policy_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/veryDarkGray"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="25dp"
+                android:layout_toRightOf="@+id/help_nav_privacy_policy"
+                android:layout_alignTop="@+id/help_nav_privacy_policy"
+                android:text="Our privacy policy"
+                android:textSize="18sp"/>
+
+            <ExpandableListView
+                android:id="@+id/help_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/help_nav_privacy_policy"
+                android:layout_marginTop="18dp"
+                android:background="@android:color/transparent"
+                android:divider="@color/MarcoBlue"
+                android:dividerHeight="2sp"
+                android:childDivider="@color/streetGray"
+                android:listSelector="@color/streetGray" />
+
+</RelativeLayout>
