@@ -1,6 +1,8 @@
 package com.polo.marco.marcopoloapp.activities;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -61,6 +63,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         LocationListener,
         GoogleMap.OnMarkerClickListener,
         GoogleMap.OnMapLongClickListener,
+        GoogleMap.OnMapClickListener,
         RouteFinderListener {
 
     //Google maps stuff
@@ -461,6 +464,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mMap.setOnMapLongClickListener(this);
         mMap.setOnMarkerClickListener(this);
+        mMap.setOnMapClickListener(this);
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -736,5 +740,34 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         lastMarkerClicked = marker;
         return false;
+    }
+
+    @Override
+    public void onMapClick(final LatLng latLng) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        alertDialogBuilder.setMessage("Do you want to send a Marco from this location?");
+
+        alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                Intent intent = new Intent(MapsActivity.this, MarcoActivity.class);
+                intent.putExtra("callingActivity", "MapsActivity");
+                intent.putExtra("latitude", latLng.latitude);
+                intent.putExtra("longitude", latLng.longitude);
+                startActivity(intent);
+                arg0.cancel();
+            }
+        });
+
+        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //do nothing here
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 }

@@ -97,6 +97,11 @@ public class MarcoActivity extends AppCompatActivity {
             checkView.addView(checkBox);
         }
 
+        if (extras.getStringExtra("callingActivity") != null && extras.getStringExtra("callingActivity").equals("MapsActivity")){
+            lat = extras.getDoubleExtra("latitude", lat);
+            lng = extras.getDoubleExtra("longitude", lng);
+        }
+
         checkForDuplicates();
 
         //Set behavior for the public/private toggle.  Default is public.  Private enlarges
