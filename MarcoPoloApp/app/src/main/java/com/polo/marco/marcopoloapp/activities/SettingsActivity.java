@@ -65,9 +65,10 @@ public class SettingsActivity extends AppCompatActivity {
         int service;
 
         //get user profile pic and name to display
-        TextView nameTextView = (TextView) findViewById(R.id.settings_textView);
-        ImageView profilePicView = (ImageView) findViewById(R.id.settings_imageView);
+        TextView nameTextView = (TextView) findViewById(R.id.settings_user_name);
+        ImageView profilePicView = (ImageView) findViewById(R.id.settings_profile_pic);
         Picasso.with(SettingsActivity.this).load(user.getImgUrl()).into(profilePicView);
+        Log.d(" Checking image", user.getImgUrl().toString());
         nameTextView.setText(user.getName());
         ImageView serviceLoggedInAs = (ImageView) findViewById(R.id.settings_logged_in_as);
 
@@ -286,17 +287,21 @@ public class SettingsActivity extends AppCompatActivity {
         databaseMarcos.child(LoginActivity.currentUser.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                TextView textView = (TextView) findViewById(R.id.my_marco_text_view);
+
                 if (!snapshot.exists()) {
+                    textView.setText("You don't have a current Marco!");
                 }
                 else {
                     Marco myMarco = snapshot.getValue(Marco.class);
+                    String sentDate = myMarco.getTimestamp().split(" ")[0];
+
+                    textView = (TextView) findViewById(R.id.my_marco_text_view);
+                    textView.setText(myMarco.getMessage() + "\nSent on: " + sentDate);
+
                     Button button = (Button) findViewById(R.id.delete_marco);
                     button.setEnabled(true);
-                    TextView textView = (TextView) findViewById(R.id.my_marco_text_view);
-                    textView.setText(myMarco.getMessage() + "\nSent on: " + myMarco.getTimestamp());
-                    textView.setVisibility(View.VISIBLE);
-                    textView = (TextView) findViewById(R.id.marco_description);
-                    textView.setVisibility(View.VISIBLE);
+                    button.setTextColor(getResources().getColor(R.color.white));
                 }
             }
             @Override

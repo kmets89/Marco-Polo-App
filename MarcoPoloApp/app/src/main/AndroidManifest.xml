@@ -82,6 +82,10 @@
             android:theme="@style/Theme.AppCompat.Translucent"
             android:screenOrientation="portrait">
         </activity>
+        <activity android:name=".activities.HelpActivity"
+            android:label="Help"
+            android:screenOrientation="portrait">
+        </activity>
         <activity
             android:name=".activities.PrivacyPolicyActivity"
             android:label="@string/title_activity_privacy_policy"

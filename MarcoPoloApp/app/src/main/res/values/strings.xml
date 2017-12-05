@@ -28,7 +28,7 @@
     <string name="polo_prompt">Do you want to Polo back?</string>
 
     <!-- Account settings activity strings -->
-    <string name="title_activity_account_settings">Account</string>
+    <string name="title_activity_account_settings">My Account</string>
 
     <!-- Friends list activity strings -->
     <string name="title_activity_friends">Friends</string>
@@ -101,14 +101,42 @@
     <string name="delete_marco_prompt">Do you want to delete your current Marco?</string>
     <string name="header_logo">Header Logo</string>
 
+    <!-- Help Activity Strings -->
+    <string name = "help_about">
+        Marco Polo is a location enabled social app, designed to make meeting up with your friends easier!\n
+    </string>
+    <string name = "help_marco">
+        To share your location with a friend you can send them a Marco. There are two types of Marcos, public and private.\n
+    </string>
+    <string name = "help_public">
+        A public Marco will be shared with everyone that uses the Marco Polo App.\n
+        To create a public marco tap Marco on the main page and enter a description of the event you are marking.\n
+        Keep in mind you may only have one public Marco at a time.\n
+    </string>
+    <string name = "help_private">
+        A private Marco will be shared only with the people that you choose. To create a private Marco tap Marco on the main page and tap the switch at the top.\n
+        Then you can enter a message to send with your location.\n
+        Finally you may select the friends that you wish to send the Marco to!\n
+        A few things to keep in mind:\n
+            \t\t Your friends will have to Polo back to you to signify that they will be joining you.\n
+            \t\t If you do not have any friends you can not send a private Marco.\n
+    </string>
+    <string name = "help_polo">
+        When a friend sends you a Marco you will need to let them know if you will be joining them.\n
+        In order to do this, you can tap "accept" from the dialog box that pops up when you receive a private Marco.\n
+        You can also Polo to any recent Marcos through your Notifications.
+    </string>
+    <string name = "help_friends">
+        To add friends you may select Friends from the main menu and search for them by name or email address. \n
+        If you allow this app to access your contacts then Marco Polo will attempt to automatically add contacts that also use the app to your friends list. \n
+        Please note that the app may not find all friends in your contacts automatically. \n
+    </string>
 
-    <string name="current_meetup">Active Meetups</string>
-    <string name="DummyUser">User</string>
-    <string name="NoUser">No Profile</string>
-    <string name="Username">Username:</string>
-    <string name="about_me_from_facebook">We can pull this from your facebook profile or feel free to write something new! </string>
-    <string name="FacebookProfile">Facebook Profile Attached</string>
-    <string name="GoogleProfile">Google Profile Attached</string>
-    <string name="Logout">Logout</string>
-    <string name="notification_window_icon">Notification Window Icon</string>
+    <string name = "help_icons">
+        Here are the icons! They do stuff!
+    </string>
+
+    <string name="sync_function">You have the option to sync contacts from your phone through your My Account page.  We will find any emails \nin
+    your contact list that currently have accounts with us.</string>
+
 </resources>

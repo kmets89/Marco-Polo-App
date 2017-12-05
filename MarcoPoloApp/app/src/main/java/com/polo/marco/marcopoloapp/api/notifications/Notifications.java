@@ -1,13 +1,16 @@
 package com.polo.marco.marcopoloapp.api.notifications;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -64,14 +67,17 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
         params.dimAmount = 0.6f;
         win.setAttributes(params);
 
-
-
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.notification_outer_layout);
+        ViewGroup.LayoutParams layoutParams = linearLayout.getLayoutParams();
+        layoutParams.height = (int) (height * 0.4);
+        layoutParams.width = (int) (width * 0.65);
+        linearLayout.setLayoutParams(layoutParams);
 
         //Creates an adapter to pipe in data to the list view.  For now ignore the spinner
         //that we're not using
         //Spinner spinner = (Spinner) findViewById(R.id.spinGroup);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.dept_array, android.R.layout.simple_spinner_dropdown_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.dept_array, android.R.layout.simple_spinner_dropdown_item);
+        //adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //spinner.setAdapter(adapter);
 
         addData();

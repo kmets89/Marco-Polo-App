@@ -22,8 +22,6 @@
             android:contentDescription="@string/logo"
             app:srcCompat="@drawable/login_logo" />
 
-        <!--android:contentDescription="Marco Polo Logo"-->
-        <!--tools:ignore="HardcodedText" />-->
     </LinearLayout>
 
     <RelativeLayout
