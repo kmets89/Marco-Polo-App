@@ -6,6 +6,19 @@
     android:animateLayoutChanges="true"
     android:background="@color/streetGray">
 
+    <EditText
+        android:id="@+id/marcoText2"
+        android:layout_width="220sp"
+        android:layout_height="160sp"
+        android:layout_below="@+id/publicText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:background="@color/streetGray"
+        android:gravity="top|start"
+        android:hint="@string/marco_message_hint"
+        android:maxLength="252"
+        android:textColor="@color/colorPrimaryDark" />
+
     <TextView
         android:id="@+id/marco_title"
         android:layout_width="match_parent"
@@ -57,19 +70,6 @@
         android:text="@string/marco_switch_public"
         android:textAllCaps="false"
         android:textAppearance="@style/TextAppearance.AppCompat.Widget.Switch"
-        android:textColor="@color/colorPrimaryDark" />
-
-    <EditText
-        android:id="@+id/marcoText"
-        android:layout_width="match_parent"
-        android:layout_height="160sp"
-        android:layout_below="@+id/switch_public"
-        android:layout_marginLeft="10sp"
-        android:layout_marginRight="10sp"
-        android:layout_marginTop="10sp"
-        android:background="@color/streetGray"
-        android:gravity="top|start"
-        android:hint="@string/marco_message_hint"
         android:textColor="@color/colorPrimaryDark" />
 
     <TextView
