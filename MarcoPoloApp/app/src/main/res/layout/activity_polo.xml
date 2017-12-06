@@ -95,7 +95,7 @@
             android:layout_weight="1"
             android:elevation="12dp"
             android:onClick="onClickSendPolo"
-            android:text="@string/send"
+            android:text="@string/polo"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:textColor="@color/white" />

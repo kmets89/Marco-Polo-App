@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -120,14 +121,14 @@ public class PoloActivity extends AppCompatActivity {
             return;
         }
 
-//        if (poloText.getText() == null || poloText.getText().length() <= 0) {
-//            showAlert(getResources().getString(R.string.empty_message));
-//            return;
-//        }
-
         if (getIntent().getStringExtra("userId") != null && getIntent().getStringExtra("userId").equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
             showAlert("You cannot send a polo to yourself!");
             return;
+        }
+
+        if (getIntent().getStringExtra("private") != null && getIntent().getStringExtra("private").equalsIgnoreCase("false")) {
+            Polo polo = new Polo(getIntent().getStringExtra("userId"), "", "senderName", currentDate, getIntent().getDoubleArrayExtra("latlng")[0], getIntent().getDoubleArrayExtra("latlng")[1], true);
+            databasePolos.child(LoginActivity.currentUser.getUserId()).child(getIntent().getStringExtra("userId")).setValue(polo);
         }
 
         databasePolos.child(LoginActivity.currentUser.getUserId()).child(getIntent().getStringExtra("userId")).child("responded").setValue(true);

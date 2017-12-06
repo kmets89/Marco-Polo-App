@@ -35,7 +35,7 @@ import java.util.LinkedHashMap;
 //This class provides a popup window detailing a user's notifications inside an expandable list
 //For alterations/debugging, consult CustomListAdapter, DetailInfo, and HeaderInfo classes and their
 //XML files
-public class Notifications extends AppCompatActivity implements OnClickListener{
+public class Notifications extends AppCompatActivity implements OnClickListener {
 
     private LinkedHashMap<String, HeaderInfo> mySection = new LinkedHashMap<>();
     private ArrayList<HeaderInfo> sectionList = new ArrayList<>();
@@ -88,117 +88,120 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
 
         collapseAll();
 
-        expandableListView.setOnChildClickListener(myListItemClicked);
+        //  expandableListView.setOnChildClickListener(myListItemClicked);
         expandableListView.setOnGroupClickListener(myListGroupClicked);
     }
 
-   private void expandAll(){
-       int count = listAdapter.getGroupCount();
-       for (int i = 0; i < count; i++){
-           expandableListView.expandGroup(i);
-       }
-   }
+    private void expandAll() {
+        int count = listAdapter.getGroupCount();
+        for (int i = 0; i < count; i++) {
+            expandableListView.expandGroup(i);
+        }
+    }
 
-   private void collapseAll(){
-       int count = listAdapter.getGroupCount();
-       for (int i = 0; i < count; i ++){
-           expandableListView.collapseGroup(i);
-       }
-   }
+    private void collapseAll() {
+        int count = listAdapter.getGroupCount();
+        for (int i = 0; i < count; i++) {
+            expandableListView.collapseGroup(i);
+        }
+    }
 
-   //dummy data for testing.  This is where our database query stuff will go
-   private void addData(){
-       databasePolos.child(LoginActivity.currentUser.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
-           @Override
-           public void onDataChange(DataSnapshot snapshot) {
-               if (!snapshot.exists()) {
-                   Log.d("TESTING", "it doesnt exist!");
-                   TextView textview = (TextView) findViewById(R.id.notifications_empty);
-                   textview.setVisibility(View.VISIBLE);
-               }
-               else {
-                   for (DataSnapshot child : snapshot.getChildren()) {
-                       Polo retrievedPolo = child.getValue(Polo.class);
-                       String shortDate = retrievedPolo.getTimestamp().split(" ")[0];
-                       addDatum(child.getKey(), "Marco from: "+ retrievedPolo.getSenderName(), "Sent on: " + shortDate + "\n" + retrievedPolo.getMessage());
+    //dummy data for testing.  This is where our database query stuff will go
+    private void addData() {
+        databasePolos.child(LoginActivity.currentUser.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                    Log.d("TESTING", "it doesnt exist!");
+                    TextView textview = (TextView) findViewById(R.id.notifications_empty);
+                    textview.setVisibility(View.VISIBLE);
+                } else {
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        Polo retrievedPolo = child.getValue(Polo.class);
+                        if (retrievedPolo == null)
+                            continue;
 
-                       expandableListView = (ExpandableListView) findViewById(R.id.notificationListView);
-                       listAdapter = new CustomListAdapter(Notifications.this, sectionList);
-                       expandableListView.setAdapter(listAdapter);
+                        String shortDate = retrievedPolo.getTimestamp().split(" ")[0];
+                        addDatum(child.getKey(), "Marco from: " + retrievedPolo.getSenderName(), "Sent on: " + shortDate + "\n" + retrievedPolo.getMessage());
 
-                       collapseAll();
+                        expandableListView = (ExpandableListView) findViewById(R.id.notificationListView);
+                        listAdapter = new CustomListAdapter(Notifications.this, sectionList);
+                        expandableListView.setAdapter(listAdapter);
 
-                       expandableListView.setOnChildClickListener(myListItemClicked);
-                       expandableListView.setOnGroupClickListener(myListGroupClicked);
-                   }
-               }
-           }
-           @Override
-           public void onCancelled(DatabaseError databaseError) {
+                        collapseAll();
 
-           }
-       });
-   }
+                        expandableListView.setOnChildClickListener(myListItemClicked);
+                        expandableListView.setOnGroupClickListener(myListGroupClicked);
+                    }
+                }
+            }
 
-   //For now clicking on a child only prints out to screen, we can add functionality if needed
-   private OnChildClickListener myListItemClicked = new OnChildClickListener() {
-       @Override
-       public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-           HeaderInfo headerInfo = sectionList.get(groupPosition);
-           DetailInfo detailInfo = headerInfo.getChildList().get(childPosition);
-           //Toast.makeText(getBaseContext(), "Clicked on detail " + headerInfo.getName() + "/" + detailInfo.getName(), Toast.LENGTH_LONG).show();
-           showGoAheadDialog(getResources().getString(R.string.polo_prompt), detailInfo.getId());
-           return false;
-       }
-   };
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-   //clicking on a group item expands that group and prints to screen
-   private OnGroupClickListener myListGroupClicked = new OnGroupClickListener() {
-       @Override
-       public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-           HeaderInfo headerInfo = sectionList.get(groupPosition);
-           //Toast.makeText(getBaseContext(), "Child on header " + headerInfo.getName(), Toast.LENGTH_LONG).show();
-           return false;
-       }
-   };
+            }
+        });
+    }
 
-   //adds one key, value pair to the expandable list
-   private int addDatum(String id, String group, String child){
-       int groupPosition = 0;
+    //For now clicking on a child only prints out to screen, we can add functionality if needed
+    private OnChildClickListener myListItemClicked = new OnChildClickListener() {
+        @Override
+        public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+            HeaderInfo headerInfo = sectionList.get(groupPosition);
+            DetailInfo detailInfo = headerInfo.getChildList().get(childPosition);
+            //Toast.makeText(getBaseContext(), "Clicked on detail " + headerInfo.getName() + "/" + detailInfo.getName(), Toast.LENGTH_LONG).show();
+            showGoAheadDialog(getResources().getString(R.string.polo_prompt), detailInfo.getId());
+            return false;
+        }
+    };
 
-       HeaderInfo headerInfo = mySection.get(group);
-       if (headerInfo == null){
-           headerInfo = new HeaderInfo();
-           headerInfo.setName(group);
-           mySection.put(group, headerInfo);
-           sectionList.add(headerInfo);
-       }
+    //clicking on a group item expands that group and prints to screen
+    private OnGroupClickListener myListGroupClicked = new OnGroupClickListener() {
+        @Override
+        public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+            HeaderInfo headerInfo = sectionList.get(groupPosition);
+            //Toast.makeText(getBaseContext(), "Child on header " + headerInfo.getName(), Toast.LENGTH_LONG).show();
+            return false;
+        }
+    };
 
-       ArrayList<DetailInfo> childList = headerInfo.getChildList();
-       int listSize = childList.size();
-       listSize++;
+    //adds one key, value pair to the expandable list
+    private int addDatum(String id, String group, String child) {
+        int groupPosition = 0;
 
-       DetailInfo detailInfo = new DetailInfo();
-       detailInfo.setName(child);
-       detailInfo.setId(id);
-       childList.add(detailInfo);
-       headerInfo.setChildList(childList);
+        HeaderInfo headerInfo = mySection.get(group);
+        if (headerInfo == null) {
+            headerInfo = new HeaderInfo();
+            headerInfo.setName(group);
+            mySection.put(group, headerInfo);
+            sectionList.add(headerInfo);
+        }
 
-       groupPosition = sectionList.indexOf(headerInfo);
-       return groupPosition;
-   }
+        ArrayList<DetailInfo> childList = headerInfo.getChildList();
+        int listSize = childList.size();
+        listSize++;
 
-   //stub for handling button clicks in the expandable list view.  Since we have no buttons, this
+        DetailInfo detailInfo = new DetailInfo();
+        detailInfo.setName(child);
+        detailInfo.setId(id);
+        childList.add(detailInfo);
+        headerInfo.setChildList(childList);
+
+        groupPosition = sectionList.indexOf(headerInfo);
+        return groupPosition;
+    }
+
+    //stub for handling button clicks in the expandable list view.  Since we have no buttons, this
     //is only here to satisfy implementing the abstract class
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             default:
                 break;
         }
     }
 
-    public void showGoAheadDialog(String prompt, String id){
+    public void showGoAheadDialog(String prompt, String id) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
         alertDialogBuilder.setMessage(prompt);
@@ -206,7 +209,6 @@ public class Notifications extends AppCompatActivity implements OnClickListener{
         alertDialogBuilder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
-                databasePolos.child(LoginActivity.currentUser.getUserId()).child(senderId).child("responded").setValue(true);
                 sectionList.clear();
                 mySection.clear();
                 addData();

@@ -160,9 +160,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                 for (DataSnapshot c : snap.getChildren()) {
                                                     if (c.exists()) {
                                                         if (c.getKey().equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
-                                                            for (DataSnapshot d : c.getChildren()) {
+                                                            for (final DataSnapshot d : c.getChildren()) {
                                                                 if (d.exists()) {
                                                                     databasePolos.child(LoginActivity.currentUser.getUserId()).child(d.getKey()).child("message").setValue("DELETE");
+
+                                                                    databaseMarcos.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                        @Override
+                                                                        public void onDataChange(DataSnapshot snapshot) {
+                                                                            if (snapshot != null && snapshot.child(d.getKey()).exists()) {
+                                                                                if (snapshot.child(d.getKey()).child("public").getValue().toString().equalsIgnoreCase("true")) {
+                                                                                    databasePolos.child(d.getKey()).child(LoginActivity.currentUser.getUserId()).child("message").setValue("DELETE");
+                                                                                }
+                                                                            }
+                                                                        }
+
+                                                                        @Override
+                                                                        public void onCancelled(DatabaseError databaseError) {
+
+                                                                        }
+                                                                    });
+                                                                    break;
                                                                 }
                                                             }
                                                         }
@@ -222,6 +239,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 } else if (m != null) {
                                     m.setPosition(new LatLng(polo.getLatitude(), polo.getLongitude()));
                                     if (polo.getResponded() == true) {
+                                        activePoloerUserId = childs.getKey();
                                         hasActivePolo = true;
                                     }
                                 }
@@ -266,6 +284,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapLongClick(final LatLng latLng) {
+        if (hasActivePolo) {
+            Toast.makeText(this, getResources().getString(R.string.has_active_polo), Toast.LENGTH_LONG).show();
+            return;
+        }
+
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
         alertDialogBuilder.setMessage("Do you want to send a Marco from this location?");
@@ -606,6 +629,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     }
                 });
+
+                if (currentLocationMarker.getPosition().latitude != lastMarkerClicked.getPosition().latitude && currentLocationMarker.getPosition().longitude != lastMarkerClicked.getPosition().longitude) {
+                    String currentLatitude = String.valueOf(lastLocation.getLatitude());
+                    String currentLongitude = String.valueOf(lastLocation.getLongitude());
+                    String destinationLatitude = String.valueOf(lastMarkerClicked.getPosition().latitude);
+                    String destinationLongitude = String.valueOf(lastMarkerClicked.getPosition().longitude);
+
+                    try {
+                        new RouteFinder(this, currentLatitude + "," + currentLongitude, destinationLatitude + "," + destinationLongitude).execute();
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }
@@ -646,17 +682,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onMarkerClick(final Marker marker) {
         destinationMarker = marker;
-        if (currentLocationMarker.getPosition().latitude != marker.getPosition().latitude && currentLocationMarker.getPosition().longitude != marker.getPosition().longitude) {
-            String currentLatitude = String.valueOf(lastLocation.getLatitude());
-            String currentLongitude = String.valueOf(lastLocation.getLongitude());
-            String destinationLatitude = String.valueOf(marker.getPosition().latitude);
-            String destinationLongitude = String.valueOf(marker.getPosition().longitude);
 
-            try {
-                new RouteFinder(this, currentLatitude + "," + currentLongitude, destinationLatitude + "," + destinationLongitude).execute();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+        if (marker.getSnippet() == null) {
+            return false;
         }
 
         marker.setInfoWindowAnchor(10000, 10000);
@@ -739,64 +767,29 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return false;
         }
 
-//        if (data[0].equalsIgnoreCase("false")) {
-//            databasePolos.addListenerForSingleValueEvent(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(DataSnapshot dataSnapshot) {
-//                    boolean responded = false;
-//                    if (dataSnapshot != null) {
-//                        for (DataSnapshot child : dataSnapshot.getChildren()) {
-//                            if (child.exists() && child.getKey().equalsIgnoreCase(data[3])) {
-//                                for (DataSnapshot c : child.getChildren()) {
-//                                    if (c.exists() && c.child("responded").getValue().toString().equalsIgnoreCase("true")) {
-//                                        responded = true;
-//                                        break;
-//                                    }
-//                                }
-//
-//                                if (responded)
-//                                    Toast.makeText(getBaseContext(), "This user currently has an active polo!", Toast.LENGTH_LONG).show();
-//                                break;
-//                            }
-//                        }
-//
-//                        /*if (!responded) {
-//                            Handler mainHandler = new Handler(getBaseContext().getMainLooper());
-//                            Runnable r = new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    Log.d("MapsActivity", "wat");
-//
-//                                    Intent intent = new Intent(getBaseContext(), QuickMarcoActivity.class);
-//                                    if (marker.getSnippet() != null && marker.getSnippet().contains("|")) {
-//                                        intent.putExtra("private", data[0]);
-//                                        intent.putExtra("sender", data[1]);
-//                                        intent.putExtra("message", data[2]);
-//                                        intent.putExtra("userId", data[3]);
-//                                    }
-//                                    startActivity(intent);
-//                                }
-//                            };
-//                            mainHandler.post(r);
-//                        }*/
-//                    }
-//                }
-//
-//                @Override
-//                public void onCancelled(DatabaseError databaseError) {
-//
-//                }
-//            });
-//        } else {
+        if (currentLocationMarker.getPosition().latitude != marker.getPosition().latitude && currentLocationMarker.getPosition().longitude != marker.getPosition().longitude) {
+            String currentLatitude = String.valueOf(lastLocation.getLatitude());
+            String currentLongitude = String.valueOf(lastLocation.getLongitude());
+            String destinationLatitude = String.valueOf(marker.getPosition().latitude);
+            String destinationLongitude = String.valueOf(marker.getPosition().longitude);
+
+            try {
+                new RouteFinder(this, currentLatitude + "," + currentLongitude, destinationLatitude + "," + destinationLongitude).execute();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+
         Intent intent = new Intent(this, PoloActivity.class);
         if (marker.getSnippet() != null && marker.getSnippet().contains("|")) {
             intent.putExtra("private", data[0]);
             intent.putExtra("sender", data[1]);
             intent.putExtra("message", data[2]);
             intent.putExtra("userId", data[3]);
+            intent.putExtra("latlng", new double[] { marker.getPosition().latitude, marker.getPosition().longitude });
         }
         startActivity(intent);
-        //}
+
         lastMarkerClicked = marker;
         return false;
     }

@@ -71,6 +71,7 @@
 
     <string name="current_user"></string>
     <string name="send">Send</string>
+    <string name="polo">Polo</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="marco_title">Send a Marco</string>
