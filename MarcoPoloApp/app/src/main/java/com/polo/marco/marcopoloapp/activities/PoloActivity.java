@@ -8,6 +8,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -30,7 +31,7 @@ public class PoloActivity extends AppCompatActivity {
 
     private final double winWidth = 0.8;
     private final double privateHeight = 0.75;
-    private final double publicHeight = 0.42;
+    private final double publicHeight = 0.35;
     private TextView sender;
     private TextView message;
     private Button cancelPolo;
@@ -54,17 +55,24 @@ public class PoloActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        Window win = getWindow();
+        win.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        WindowManager.LayoutParams params = win.getAttributes();
+        params.dimAmount = 0.6f;
+        win.setAttributes(params);
+
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_polo);
         setWinSize(winWidth, publicHeight);
 
         sender = (TextView) findViewById(R.id.sender);
         message = (TextView) findViewById(R.id.message);
-        cancelPolo = (Button) findViewById(R.id.cancelPolo);
-        poloText = (EditText) findViewById(R.id.poloText);
+        //cancelPolo = (Button) findViewById(R.id.cancelPolo);
+        //poloText = (EditText) findViewById(R.id.poloText);
 
-        if (getIntent().getStringExtra("private") != null && getIntent().getStringExtra("private").equalsIgnoreCase("false")) {
-            cancelPolo.setText("Dismiss");
-        }
+//        if (getIntent().getStringExtra("private") != null && getIntent().getStringExtra("private").equalsIgnoreCase("false")) {
+//            cancelPolo.setText("Dismiss");
+//        }
 
         sender.append(" " + getIntent().getStringExtra("sender"));
         message.append(" " + getIntent().getStringExtra("message"));
@@ -111,10 +119,10 @@ public class PoloActivity extends AppCompatActivity {
             return;
         }
 
-        if (poloText.getText() == null || poloText.getText().length() <= 0) {
-            showAlert(getResources().getString(R.string.empty_message));
-            return;
-        }
+//        if (poloText.getText() == null || poloText.getText().length() <= 0) {
+//            showAlert(getResources().getString(R.string.empty_message));
+//            return;
+//        }
 
         if (getIntent().getStringExtra("userId") != null && getIntent().getStringExtra("userId").equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
             showAlert("You cannot send a polo to yourself!");

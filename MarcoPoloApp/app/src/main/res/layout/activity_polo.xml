@@ -17,51 +17,54 @@
         android:textColor="@color/white"
         android:textSize="24sp" />
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/marcoText"
-        android:layout_marginBottom="5dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/marco_friends_list"
-        android:visibility="gone" />
-
+    <ScrollView
+        android:id="@+id/sender_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/marco_title">
     <TextView
         android:id="@+id/sender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/marco_title"
         android:layout_marginStart="14dp"
-        android:layout_marginTop="13dp"
-        android:layout_toEndOf="@+id/textView1"
-        android:text="@string/sender" />
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="10dp"
+        android:text=""
+        android:textSize="18sp"
+        android:textColor="@color/veryDarkGray" />
+    </ScrollView>
 
+    <ScrollView
+        android:id="@+id/message_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:layout_below="@+id/sender_scroll_view">
     <TextView
         android:id="@+id/message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/marco_title"
         android:layout_marginStart="14dp"
-        android:layout_marginTop="40dp"
-        android:layout_toEndOf="@+id/textView1"
-        android:text="@string/message" />
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="10dp"
+        android:text=""
+        android:textSize="22sp"
+        android:textColor="@color/veryDarkGray"/>
+    </ScrollView>
 
     <EditText
         android:id="@+id/poloText"
         android:layout_width="match_parent"
-        android:layout_height="160sp"
-        android:layout_below="@+id/message"
+        android:layout_height="60sp"
         android:layout_above="@+id/button_bar"
         android:layout_marginTop="17dp"
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
-        android:background="@color/streetGray"
+        android:background="@color/colorAccent"
         android:gravity="top|start"
-        android:hint="@string/marco_message_hint"
-        android:textColor="@color/colorPrimaryDark" />
+        android:hint="Want to include a message?"
+        android:textColor="@color/colorPrimaryDark"
+        android:maxLength="255"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/button_bar"
@@ -79,7 +82,7 @@
             android:layout_weight="1"
             android:elevation="12dp"
             android:onClick="onClickDeletePolo"
-            android:text="@string/delete"
+            android:text="Dismiss"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:textColor="@color/white" />
