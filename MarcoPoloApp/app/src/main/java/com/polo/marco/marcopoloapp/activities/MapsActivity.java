@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.Polyline;
 import com.facebook.login.LoginManager;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -77,7 +78,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Marker destinationMarker = null;
     final private int PERMISSIONS_REQUEST_CODE = 124;
     private static boolean friendsRead = false;
-    private Boolean pathCleared = true;
+    private Polyline polyline = null;
 
     private DatabaseReference databaseUsers = FirebaseDatabase.getInstance().getReference("users");
     private DatabaseReference databaseMarcos = FirebaseDatabase.getInstance().getReference("marcos");
@@ -294,18 +295,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void getRoute(List<Route> routes) {
 
-        mMap.clear();
+        if(polyline !=  null){
+            polyline.remove();
+        }
 
         for (Route route : routes) {
-            currentLocationMarker = mMap.addMarker(new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                    .title(route.startAddress)
-                    .position(route.startPoint));
-            destinationMarker = mMap.addMarker(new MarkerOptions()
-                    .title(route.endAddress)
-                    .snippet("Expected time: " + route.duration.text + ", Distance: " + route.distance.text)
-                    .position(route.endPoint));
-
 
             PolylineOptions polylineOptions = new PolylineOptions().
                     geodesic(true).
@@ -315,8 +309,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             for (int i = 0; i < route.points.size(); i++)
                 polylineOptions.add(route.points.get(i));
 
-            mMap.addPolyline(polylineOptions);
-            pathCleared = false;
+            polyline = mMap.addPolyline(polylineOptions);
         }
 
     }
@@ -458,7 +451,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         mMap.setOnMapLongClickListener(this);
-        mMap.setOnMarkerClickListener(this);
+
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -652,11 +645,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onMarkerClick(final Marker marker) {
-        if (pathCleared && destinationMarker != null && destinationMarker.getPosition().latitude == marker.getPosition().latitude && destinationMarker.getPosition().longitude == marker.getPosition().longitude) {
+        destinationMarker = marker;
+        if (currentLocationMarker.getPosition().latitude != marker.getPosition().latitude && currentLocationMarker.getPosition().longitude != marker.getPosition().longitude) {
             String currentLatitude = String.valueOf(lastLocation.getLatitude());
             String currentLongitude = String.valueOf(lastLocation.getLongitude());
-            String destinationLatitude = String.valueOf(destinationPoint.latitude);
-            String destinationLongitude = String.valueOf(destinationPoint.longitude);
+            String destinationLatitude = String.valueOf(marker.getPosition().latitude);
+            String destinationLongitude = String.valueOf(marker.getPosition().longitude);
 
             try {
                 new RouteFinder(this, currentLatitude + "," + currentLongitude, destinationLatitude + "," + destinationLongitude).execute();
