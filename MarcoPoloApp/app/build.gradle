@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 26
     buildToolsVersion "27.0.1"
     defaultConfig {
         applicationId "com.polo.marco.marcopoloapp"
@@ -34,13 +34,13 @@ dependencies {
     implementation 'com.amazonaws:aws-android-sdk-ddb:2.2.+'
     implementation 'com.amazonaws:aws-android-sdk-ddb-mapper:2.2.+'
     implementation('com.amazonaws:aws-android-sdk-auth-core:2.6.0@aar') { transitive = true; }
-    implementation 'com.android.support:appcompat-v7:27.0.0'
+    implementation 'com.android.support:appcompat-v7:26.0.0'
     implementation 'com.google.android.gms:play-services-maps:11.0.4'
     implementation 'com.google.android.gms:play-services-location:11.0.4'
     implementation 'com.google.android.gms:play-services-auth:11.0.4'
-    implementation 'com.android.support:design:27.0.0'
-    implementation 'com.android.support:cardview-v7:27.0.0'
-    implementation 'com.android.support:gridlayout-v7:27.0.0'
+    implementation 'com.android.support:design:26.0.0'
+    implementation 'com.android.support:cardview-v7:26.0.0'
+    implementation 'com.android.support:gridlayout-v7:26.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.android.support:multidex:1.0.1'
     testImplementation 'junit:junit:4.12'

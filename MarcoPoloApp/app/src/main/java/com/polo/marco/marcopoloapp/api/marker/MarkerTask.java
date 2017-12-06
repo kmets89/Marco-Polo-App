@@ -21,7 +21,7 @@ public class MarkerTask extends AsyncTask<String, Void, MarkerOptions> {
 
         try {
             URL url = new URL(args[0]);
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(BitmapFactory.decodeStream(url.openConnection().getInputStream()), 100, 100, false)));
+            //markerOptions.icon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(BitmapFactory.decodeStream(url.openConnection().getInputStream()), 100, 100, false)));
         } catch (IOException e) {
             e.printStackTrace();
         }
