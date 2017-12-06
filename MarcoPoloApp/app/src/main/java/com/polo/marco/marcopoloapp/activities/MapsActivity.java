@@ -25,6 +25,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.polo.marco.marcopoloapp.api.marker.MarkerInfo;
 import com.polo.marco.marcopoloapp.api.marker.MarkerTask;
 import com.polo.marco.marcopoloapp.api.notifications.Notifications;
 import com.polo.marco.marcopoloapp.R;
@@ -63,7 +64,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         LocationListener,
         GoogleMap.OnMarkerClickListener,
         GoogleMap.OnMapLongClickListener,
-        GoogleMap.OnMapClickListener,
         RouteFinderListener {
 
     //Google maps stuff
@@ -262,24 +262,33 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-    public void onMapLongClick(LatLng destination) {
-        Location currentLocationHolder;
+    @Override
+    public void onMapLongClick(final LatLng latLng) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
-        currentLocationHolder = lastLocation;
-        mMap.clear();
-        lastLocation = currentLocationHolder;
-        pathCleared = true;
+        alertDialogBuilder.setMessage("Do you want to send a Marco from this location?");
 
-        destinationPoint = new LatLng(destination.latitude, destination.longitude);
-        LatLng currentLocation = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.draggable(true);
-        markerOptions.title("destination");
+        alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                Intent intent = new Intent(MapsActivity.this, MarcoActivity.class);
+                intent.putExtra("callingActivity", "MapsActivity");
+                intent.putExtra("latitude", latLng.latitude);
+                intent.putExtra("longitude", latLng.longitude);
+                startActivity(intent);
+                arg0.cancel();
+            }
+        });
 
-        currentLocationMarker = mMap.addMarker(markerOptions.position(currentLocation).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-        destinationMarker = mMap.addMarker(markerOptions.position(destination).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-        destinationMarker.showInfoWindow();
+        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //do nothing here
+            }
+        });
 
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
     public void getRoute(List<Route> routes) {
@@ -449,7 +458,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mMap.setOnMapLongClickListener(this);
         mMap.setOnMarkerClickListener(this);
-        mMap.setOnMapClickListener(this);
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -611,7 +619,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void addMarcoMarker(final double lat, final double lng, final String message, final String sender, final String userId, final String imgUrl, final boolean privat) {
         LatLng extraLatlng = new LatLng(lat, lng);
         try {
-            MarkerOptions markerOptions = new MarkerTask().execute(imgUrl).get();
+            MarkerOptions markerOptions = new MarkerTask().execute(new MarkerInfo(getBaseContext(), imgUrl)).get();
             markerOptions.position(extraLatlng);
             markerOptions.snippet(privat + "|" + sender + "|" + message + "|" + userId).title(userId);
             Marker marker = mMap.addMarker(markerOptions);
@@ -714,50 +722,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //                }
 //            });
 //        } else {
-            Intent intent = new Intent(this, PoloActivity.class);
-            if (marker.getSnippet() != null && marker.getSnippet().contains("|")) {
-                intent.putExtra("private", data[0]);
-                intent.putExtra("sender", data[1]);
-                intent.putExtra("message", data[2]);
-                intent.putExtra("userId", data[3]);
-            }
-            startActivity(intent);
+        Intent intent = new Intent(this, PoloActivity.class);
+        if (marker.getSnippet() != null && marker.getSnippet().contains("|")) {
+            intent.putExtra("private", data[0]);
+            intent.putExtra("sender", data[1]);
+            intent.putExtra("message", data[2]);
+            intent.putExtra("userId", data[3]);
+        }
+        startActivity(intent);
         //}
         lastMarkerClicked = marker;
         return false;
     }
 
-    @Override
-    public void onMapClick(final LatLng latLng) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
-        alertDialogBuilder.setMessage("Do you want to send a Marco from this location?");
-
-        alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface arg0, int arg1) {
-                Intent intent = new Intent(MapsActivity.this, MarcoActivity.class);
-                intent.putExtra("callingActivity", "MapsActivity");
-                intent.putExtra("latitude", latLng.latitude);
-                intent.putExtra("longitude", latLng.longitude);
-                startActivity(intent);
-                arg0.cancel();
-            }
-        });
-
-        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //do nothing here
-            }
-        });
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-    }
-
-    public void redrawPins(){
-        for (Marker marker : mapMarkerArray){
+    public void redrawPins() {
+        for (Marker marker : mapMarkerArray) {
             marker.remove();
         }
         mapMarkerArray.clear();
