@@ -703,6 +703,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             dialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+                    if (polyline != null) {
+                        polyline.remove();
+                    }
                     removeMarcoMarker(marker);
                     redrawPins();
                     databasePolos.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -743,9 +746,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             AlertDialog dialog = dialogBuilder.create();
             dialog.show();
 
-            if (this.polyline != null) {
-                this.polyline.remove();
-            }
+
             return false;
         } else if (data[3].equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
             AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
