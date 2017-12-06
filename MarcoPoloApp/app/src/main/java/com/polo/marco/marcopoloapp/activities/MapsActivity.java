@@ -93,6 +93,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public static final double END_DISTANCE = 0.025;
     public boolean hasActivePolo = false;
     public boolean preventReloop = false;
+    public boolean canceled = false;
     public String activePoloerUserId = "000000000000000000000000";
     public static ArrayList<Marker> mapMarkerArray = new ArrayList<>();
 
@@ -225,8 +226,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         public void onDataChange(DataSnapshot snap) {
                                             if (snap.exists()) {
                                                 if (snap.child(childs.getKey()).exists()) {
-                                                    Log.d("MapsActivity", "Now has active polo");
-                                                    hasActivePolo = true;
+                                                    for (DataSnapshot child : childs.getChildren()) {
+                                                        if (child.exists() && child.getKey().equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
+                                                            if (!child.child("message").getValue().toString().equalsIgnoreCase("delete")) {
+                                                                Log.d("MapsActivity", "Now has active polo");
+                                                                hasActivePolo = true;
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -318,7 +325,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void getRoute(List<Route> routes) {
 
-        if(polyline !=  null){
+        if (polyline != null) {
             polyline.remove();
         }
 
@@ -630,7 +637,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
 
-                if (currentLocationMarker.getPosition().latitude != lastMarkerClicked.getPosition().latitude && currentLocationMarker.getPosition().longitude != lastMarkerClicked.getPosition().longitude) {
+                if (lastMarkerClicked != null && currentLocationMarker.getPosition().latitude != lastMarkerClicked.getPosition().latitude && currentLocationMarker.getPosition().longitude != lastMarkerClicked.getPosition().longitude) {
                     String currentLatitude = String.valueOf(lastLocation.getLatitude());
                     String currentLongitude = String.valueOf(lastLocation.getLongitude());
                     String destinationLatitude = String.valueOf(lastMarkerClicked.getPosition().latitude);
@@ -690,12 +697,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         marker.setInfoWindowAnchor(10000, 10000);
         final String[] data = marker.getSnippet().split("\\|");
 
-        Toast.makeText(this, LoginActivity.currentUser.getUserId() + ":" + data[3], Toast.LENGTH_SHORT).show();
-
-
-        if (hasActivePolo && LoginActivity.currentUser.getUserId().equalsIgnoreCase(data[3])) {
+        if (hasActivePolo && (LoginActivity.currentUser.getUserId().equalsIgnoreCase(data[3]) || data[3].equalsIgnoreCase(activePoloerUserId))) {
             AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-            dialogBuilder.setTitle("Do you want to delete your polo?");
+            dialogBuilder.setTitle("Do you want to cancel your polo?");
             dialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -708,9 +712,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 for (DataSnapshot child : snapshot.getChildren()) {
                                     if (child.getKey().equalsIgnoreCase(data[3])) {
                                         for (DataSnapshot c : child.getChildren()) {
-                                            if (c.child("responded").toString().equalsIgnoreCase("true")) {
-                                                databasePolos.child(data[3]).removeValue();
-                                                databasePolos.child(c.getKey()).removeValue();
+                                            if (c.child("responded").getValue().toString().equalsIgnoreCase("true")) {
+                                                databasePolos.child(data[3]).child(c.getKey()).child("message").setValue("DELETE");
+                                                databasePolos.child(c.getKey()).child(data[3]).child("message").setValue("DELETE");
+                                                hasActivePolo = false;
+                                                activePoloerUserId = "0000000000000000";
                                                 break;
                                             }
                                         }
@@ -736,9 +742,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             AlertDialog dialog = dialogBuilder.create();
             dialog.show();
+
+            if (this.polyline != null) {
+                this.polyline.remove();
+            }
+            return false;
         } else if (data[3].equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
             AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-            dialogBuilder.setTitle("Do you want to delete your marco?");
+            dialogBuilder.setTitle("Do you want to cancel your marco?");
             dialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -768,8 +779,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         if (currentLocationMarker.getPosition().latitude != marker.getPosition().latitude && currentLocationMarker.getPosition().longitude != marker.getPosition().longitude) {
-            String currentLatitude = String.valueOf(lastLocation.getLatitude());
-            String currentLongitude = String.valueOf(lastLocation.getLongitude());
+            String currentLatitude = String.valueOf(LoginActivity.currentUser.getLatitude());
+            String currentLongitude = String.valueOf(LoginActivity.currentUser.getLongitude());
             String destinationLatitude = String.valueOf(marker.getPosition().latitude);
             String destinationLongitude = String.valueOf(marker.getPosition().longitude);
 
@@ -786,10 +797,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             intent.putExtra("sender", data[1]);
             intent.putExtra("message", data[2]);
             intent.putExtra("userId", data[3]);
-            intent.putExtra("latlng", new double[] { marker.getPosition().latitude, marker.getPosition().longitude });
+            intent.putExtra("latlng", new double[]{marker.getPosition().latitude, marker.getPosition().longitude});
         }
         startActivity(intent);
-
         lastMarkerClicked = marker;
         return false;
     }
