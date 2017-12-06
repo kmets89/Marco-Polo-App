@@ -209,6 +209,7 @@ public class Notifications extends AppCompatActivity implements OnClickListener 
         alertDialogBuilder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
+                databasePolos.child(LoginActivity.currentUser.getUserId()).child(senderId).child("responded").setValue(true);
                 sectionList.clear();
                 mySection.clear();
                 addData();
