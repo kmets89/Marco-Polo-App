@@ -130,7 +130,7 @@ public class PoloActivity extends AppCompatActivity {
         }
 
         databasePolos.child(LoginActivity.currentUser.getUserId()).child(getIntent().getStringExtra("userId")).child("responded").setValue(true);
-        Polo polo = new Polo(getIntent().getStringExtra("userId"), poloText.getText().toString(), LoginActivity.currentUser.getName(), currentDate, lat, lng, true);
+        Polo polo = new Polo(getIntent().getStringExtra("userId"), "", LoginActivity.currentUser.getName(), currentDate, lat, lng, true);
         databasePolos.child(getIntent().getStringExtra("userId")).child(LoginActivity.currentUser.getUserId()).setValue(polo);
 
         finish();
