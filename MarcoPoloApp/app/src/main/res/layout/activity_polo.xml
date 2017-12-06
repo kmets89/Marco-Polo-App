@@ -82,7 +82,7 @@
             android:layout_weight="1"
             android:elevation="12dp"
             android:onClick="onClickDeletePolo"
-            android:text="Dismiss"
+            android:text="@string/delete"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:textColor="@color/white" />

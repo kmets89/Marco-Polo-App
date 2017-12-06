@@ -73,8 +73,8 @@ public class MarcoActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_marco);
         checkView = (LinearLayout) findViewById(R.id.check_layout);
-
         publicSwitch = (Switch) findViewById(R.id.switch_public);
+
         setWinSize(winWidth, publicHeight);
 
         friends = new String[LoginActivity.currentUser.friendsListIds.size()];

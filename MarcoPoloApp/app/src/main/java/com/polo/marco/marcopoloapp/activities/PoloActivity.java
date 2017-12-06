@@ -47,6 +47,7 @@ public class PoloActivity extends AppCompatActivity {
     private DatabaseReference databaseMarcos = FirebaseDatabase.getInstance().getReference("marcos");
     private DatabaseReference databaseUsers = FirebaseDatabase.getInstance().getReference("users");
     private DatabaseReference databasePolos = FirebaseDatabase.getInstance().getReference("polos");
+    private DatabaseReference databaseNotifs = FirebaseDatabase.getInstance().getReference("notifs");
 
     @Override
     //Opens a popup window for entering and storing Marco information.
@@ -67,12 +68,12 @@ public class PoloActivity extends AppCompatActivity {
 
         sender = (TextView) findViewById(R.id.sender);
         message = (TextView) findViewById(R.id.message);
-        //cancelPolo = (Button) findViewById(R.id.cancelPolo);
+        cancelPolo = (Button) findViewById(R.id.cancelPolo);
         //poloText = (EditText) findViewById(R.id.poloText);
 
-//        if (getIntent().getStringExtra("private") != null && getIntent().getStringExtra("private").equalsIgnoreCase("false")) {
-//            cancelPolo.setText("Dismiss");
-//        }
+        if (getIntent().getStringExtra("private") != null && getIntent().getStringExtra("private") != null && getIntent().getStringExtra("private").equalsIgnoreCase("false")) {
+            cancelPolo.setText("Dismiss");
+        }
 
         sender.append(" " + getIntent().getStringExtra("sender"));
         message.append(" " + getIntent().getStringExtra("message"));
@@ -133,6 +134,19 @@ public class PoloActivity extends AppCompatActivity {
         Polo polo = new Polo(getIntent().getStringExtra("userId"), "", LoginActivity.currentUser.getName(), currentDate, lat, lng, true);
         databasePolos.child(getIntent().getStringExtra("userId")).child(LoginActivity.currentUser.getUserId()).setValue(polo);
 
+        databaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        databaseNotifs.child(getIntent().getStringExtra("userId")).child("message").setValue("You have received a polo!");
         finish();
     }
 

@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -665,13 +666,84 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         marker.setInfoWindowAnchor(10000, 10000);
+        final String[] data = marker.getSnippet().split("\\|");
 
-        if (hasActivePolo) {
-            Toast.makeText(this, getResources().getString(R.string.has_active_polo), Toast.LENGTH_LONG).show();
+        Toast.makeText(this, LoginActivity.currentUser.getUserId() + ":" + data[3], Toast.LENGTH_SHORT).show();
+
+
+        if (hasActivePolo && LoginActivity.currentUser.getUserId().equalsIgnoreCase(data[3])) {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+            dialogBuilder.setTitle("Do you want to delete your polo?");
+            dialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    removeMarcoMarker(marker);
+                    redrawPins();
+                    databasePolos.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                for (DataSnapshot child : snapshot.getChildren()) {
+                                    if (child.getKey().equalsIgnoreCase(data[3])) {
+                                        for (DataSnapshot c : child.getChildren()) {
+                                            if (c.child("responded").toString().equalsIgnoreCase("true")) {
+                                                databasePolos.child(data[3]).removeValue();
+                                                databasePolos.child(c.getKey()).removeValue();
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            });
+
+            dialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    return;
+                }
+            });
+
+            AlertDialog dialog = dialogBuilder.create();
+            dialog.show();
+        } else if (data[3].equalsIgnoreCase(LoginActivity.currentUser.getUserId())) {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+            dialogBuilder.setTitle("Do you want to delete your marco?");
+            dialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    databaseMarcos.child(data[3]).removeValue();
+                    removeMarcoMarker(marker);
+                    redrawPins();
+                }
+            });
+
+            dialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    return;
+                }
+            });
+
+            AlertDialog dialog = dialogBuilder.create();
+            dialog.show();
             return false;
         }
 
-        final String[] data = marker.getSnippet().split("\\|");
+        if (hasActivePolo) {
+            if (!LoginActivity.currentUser.getUserId().equalsIgnoreCase(data[3])) {
+                Toast.makeText(this, getResources().getString(R.string.has_active_polo), Toast.LENGTH_LONG).show();
+            }
+            return false;
+        }
 
 //        if (data[0].equalsIgnoreCase("false")) {
 //            databasePolos.addListenerForSingleValueEvent(new ValueEventListener() {
